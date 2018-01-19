@@ -81,7 +81,7 @@ namespace Hunter.WebUI.Controllers
             {
             }
             this.ViewData["id"] = id;
-            this.ViewData["dataID"] = id;
+            this.ViewData["dataID"] = dataID;
             return this.View(form);
         }
 
@@ -92,7 +92,7 @@ namespace Hunter.WebUI.Controllers
             var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(id));
             filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(dataID));
             var data = fills.FindSync<BsonDocument>(filter).FirstOrDefault();
-            return this.Json(data.ToDictionary());
+            return this.Json(data?.ToDictionary());
         }
 
         [HttpPost]
