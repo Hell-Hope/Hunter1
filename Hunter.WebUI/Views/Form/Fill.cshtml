@@ -7,13 +7,12 @@
 @this.Html.Raw(this.Model.TryGetValue("html"))
 
 <button class="btn-block btn btn-primary" id="btn-save" type="button">保存</button>
-@this.Model.TryGetValue("data").ToJson(jsonWriterSettings)
 
 @section Scripts
 {
     <script>
-        var _id = "@this.Model.TryGetValue("_id").ToString()"
-        var _dataID = "@this.Model.TryGetValue("data").AsBsonDocument.TryGetValue("_id").ToString()"
+        var _id = "@this.ViewData["id"]"
+        var _dataID = "@this.ViewData["dataID"]"
         var saveData = function (obj) {
             $.ajax({
                 url: '@this.Url.Content("~/Form/Fill")' + '?id=' + _id + '&dataID=' + _dataID,
@@ -21,28 +20,17 @@
                 contentType: 'application/json',
                 data: JSON.stringify(obj),
                 success: function () {
-
+                    alert("保存成功")
                 }
             })
         }
         $(function () {
+            @this.Html.Raw("var initializeData = " + this.Model.TryGetValue("data").ToJson(jsonWriterSettings))
+            fillData(initializeData)
             $("#btn-save").click(function () {
-                var obj = {};
-                $("input").each(function (index, element) {
-                    var $element = $(element);
-                    var name = $element.attr("name");
-                    var type = $element.attr("type");
-                    var value = obj[name];
-                    if (type == "checkbox") {
-                        value = value ? value : []
-                        if (element.checked)
-                            value.push($element.val())
-                    } else {
-                        value = $element.val()
-                    }
-                    obj[name] = value;
-                });
-                saveData(obj)
+                var obj = $("body").SerializeData();
+                console.log(obj)
+                //saveData(obj)
             });
         })
     </script>

@@ -75,28 +75,32 @@ namespace Hunter.WebUI.Controllers
             var form = forms.FindSync<BsonDocument>(filter).First();
             if (String.IsNullOrWhiteSpace(dataID))
             {
-                form["data"] = new BsonDocument()
-                {
-                    { "_id", ObjectId.GenerateNewId() }
-                };
+                dataID = ObjectId.GenerateNewId().ToString();
             }
             else
             {
-                filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(dataID));
-                form["data"] = fills.FindSync<BsonDocument>(filter).First();
             }
+            this.ViewData["id"] = id;
+            this.ViewData["dataID"] = id;
             return this.View(form);
+        }
+
+        public IActionResult GetData(string id, string dataID)
+        {
+            var db = this.MongoClient.GetDatabase("admin");
+            var fills = db.GetCollection<BsonDocument>("F" + id);
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(id));
+            filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(dataID));
+            var data = fills.FindSync<BsonDocument>(filter).FirstOrDefault();
+            return this.Json(data.ToDictionary());
         }
 
         [HttpPost]
         public IActionResult Fill(string id, string dataID, [FromBody]Dictionary<string, object> dictionary)
         {
             var db = this.MongoClient.GetDatabase("admin");
-            var forms = db.GetCollection<BsonDocument>("form");
             var fills = db.GetCollection<BsonDocument>("F" + id);
-            var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(id));
-            var form = forms.FindSync<BsonDocument>(filter).First();
-            filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(dataID));
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(dataID));
             var data = fills.FindSync<BsonDocument>(filter).FirstOrDefault();
             if (data == null)
             {
@@ -105,23 +109,14 @@ namespace Hunter.WebUI.Controllers
             }
             else
             {
-                var set = Builders<BsonDocument>.Update.Set("_", "");
-                foreach (var item in data)
+                var sets = new List<UpdateDefinition<BsonDocument>>();
+                foreach (var item in dictionary)
                 {
-                    set = set.Set(item.Name, item.Value);
+                    sets.Add(Builders<BsonDocument>.Update.Set(item.Key, item.Value));
                 }
-                fills.UpdateOne(filter, set);
+                fills.UpdateOne(filter, Builders<BsonDocument>.Update.Combine(sets));
             }
             return this.Ok();
-        }
-
-        protected Dictionary<string, object> GetObject()
-        {
-            //this.Request.Body.Seek(0, System.IO.SeekOrigin.Begin);
-            var jsonSerializer = new Newtonsoft.Json.JsonSerializer();
-            var jsonTextReader = new Newtonsoft.Json.JsonTextReader(new System.IO.StreamReader(this.Request.Body));
-            var result = jsonSerializer.Deserialize<Dictionary<string, object>>(jsonTextReader);
-            return result;
         }
 
     }

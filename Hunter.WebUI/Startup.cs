@@ -22,7 +22,9 @@ namespace Hunter.WebUI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient(provider => new MongoDB.Driver.MongoClient("mongodb://127.0.0.1:27017"));
-            services.AddMvc();
+            services.AddMvc().AddJsonOptions(options =>
+            {
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
