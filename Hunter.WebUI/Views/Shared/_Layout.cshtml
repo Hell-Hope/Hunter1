@@ -23,6 +23,7 @@
     <environment include="Development">
         <script src="~/Libraries/jquery/jquery-3.2.1.js"></script>
         <script src="~/Libraries/bootstrap/3.3.7/js/bootstrap.js"></script>
+        <script src="~/Scripts/jQuery.extension.js"></script>
     </environment>
     <environment exclude="Development">
         <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
@@ -37,58 +38,8 @@
                 crossorigin="anonymous"
                 integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
         </script>
+        <script src="~/Scripts/jQuery.extension.js"></script>
     </environment>
-    <script>
-        (function ($, undefined) {
-            $.fn.SerializeData = function () {
-                var obj = {}
-                this.find('input').each(function (index, element) {
-                    var $element = $(element);
-                    var name = $element.attr('name');
-                    if (!name) {
-                        return;
-                    }
-                    var type = $element.attr('type');
-                    var value = obj[name];
-                    if (type == 'checkbox') {
-                        value = value ? value : []
-                        if (element.checked)
-                            value.push($element.val())
-                    } else if (type == 'radio') { 
-                        if (element.checked)
-                            value = $element.val()
-                    } else {
-                        value = $element.val()
-                    }
-                    obj[name] = value === undefined ? null : value;
-                })
-                return obj
-            }
-
-            $.fn.FillData = function (data) {
-                for (var name in data) {
-                    var value = data[name];
-                    var $element = this.find("[name=" + name + "]");
-                    if ($element.length == 0) {
-
-                    } else if ($element.is("input")) {
-                        var type = $element.attr("type")
-                        if (type == "checkbox") {
-
-                        } else if (type == "radio") {
-
-                        } else {
-                            $element.val(value)
-                        }
-                    } else if ($element.is("select")) {
-
-                    } else if ($element.is("textarea")) {
-                        $element.val(value)
-                    }
-                }
-            }
-        })(jQuery)
-    </script>
     @this.RenderSection("Scripts", false)
 </body>
 </html>

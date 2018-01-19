@@ -10,9 +10,19 @@
 
 @section Scripts
 {
-    <script>
+<script>
         var _id = "@this.ViewData["id"]"
         var _dataID = "@this.ViewData["dataID"]"
+        var initData = function () {
+            $.ajax({
+                url: '@this.Url.Content("~/Form/GetData")' + '?id=' + _id + '&dataID=' + _dataID,
+                type: 'post',
+                contentType: 'application/json',
+                success: function (data) {
+                    $("body").fillData(data)
+                }
+            })
+        }
         var saveData = function (obj) {
             $.ajax({
                 url: '@this.Url.Content("~/Form/Fill")' + '?id=' + _id + '&dataID=' + _dataID,
@@ -25,13 +35,11 @@
             })
         }
         $(function () {
-            @this.Html.Raw("var initializeData = " + this.Model.TryGetValue("data").ToJson(jsonWriterSettings))
-            fillData(initializeData)
+            initData();
             $("#btn-save").click(function () {
-                var obj = $("body").SerializeData();
-                console.log(obj)
-                //saveData(obj)
+                var obj = $("body").serializeData();
+                saveData(obj)
             });
         })
-    </script>
+</script>
 }
