@@ -23,6 +23,20 @@
 
   <ItemGroup>
     <None Include="Views\Shared\_Layout.cshtml" />
+    <None Include="wwwroot\Libraries\bootstrap\4.0.0\css\bootstrap-grid.css.map" />
+    <None Include="wwwroot\Libraries\bootstrap\4.0.0\css\bootstrap-grid.min.css.map" />
+    <None Include="wwwroot\Libraries\bootstrap\4.0.0\css\bootstrap-reboot.css.map" />
+    <None Include="wwwroot\Libraries\bootstrap\4.0.0\css\bootstrap-reboot.min.css.map" />
+    <None Include="wwwroot\Libraries\bootstrap\4.0.0\css\bootstrap.css.map" />
+    <None Include="wwwroot\Libraries\bootstrap\4.0.0\css\bootstrap.min.css.map" />
+    <None Include="wwwroot\Libraries\bootstrap\4.0.0\js\bootstrap.bundle.js" />
+    <None Include="wwwroot\Libraries\bootstrap\4.0.0\js\bootstrap.bundle.js.map" />
+    <None Include="wwwroot\Libraries\bootstrap\4.0.0\js\bootstrap.bundle.min.js" />
+    <None Include="wwwroot\Libraries\bootstrap\4.0.0\js\bootstrap.bundle.min.js.map" />
+    <None Include="wwwroot\Libraries\bootstrap\4.0.0\js\bootstrap.js" />
+    <None Include="wwwroot\Libraries\bootstrap\4.0.0\js\bootstrap.js.map" />
+    <None Include="wwwroot\Libraries\bootstrap\4.0.0\js\bootstrap.min.js" />
+    <None Include="wwwroot\Libraries\bootstrap\4.0.0\js\bootstrap.min.js.map" />
   </ItemGroup>
 
 </Project>
