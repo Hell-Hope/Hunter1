@@ -85,6 +85,20 @@
 				width: $('body').width(),
 				height: $('body').height()
 			});
+
+			var edit = function (id) {
+				id = id ? id : ''
+				window.top.layer.open({
+					type: 2,
+					title: '编辑',
+					maxmin: false, //开启最大化最小化按钮
+					area: ['893px', '600px'],
+					content: '@this.Url.Action("Edit", "Form")'
+				})
+			}
+			$("#btn-insert").click(function () {
+				edit(null)
+			})
 		})
 	</script>
 }

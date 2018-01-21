@@ -26,6 +26,11 @@ namespace Hunter.WebUI.Controllers
             return this.View();
         }
 
+        public IActionResult Edit()
+        {
+            return this.View();
+        }
+
         public IActionResult Query(Models.PageParam<Models.Form.Condition> pageParam)
         {
             var result = this.FormManager.Query(pageParam);
