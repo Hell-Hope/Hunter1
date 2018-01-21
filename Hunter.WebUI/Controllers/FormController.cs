@@ -16,12 +16,21 @@ namespace Hunter.WebUI.Controllers
             this.FormManager = formManager;
             this.DynamicFormManager = dynamicFormManager;
         }
-
-        protected MongoClient MongoClient { get; private set; }
-
+        
         protected FormManager FormManager { get; set; }
 
         protected DynamicFormManager DynamicFormManager { get; set; }
+
+        public IActionResult List()
+        {
+            return this.View();
+        }
+
+        public IActionResult Query(Models.PageParam<Models.Form.Condition> pageParam)
+        {
+            var result = this.FormManager.Query(pageParam);
+            return this.Json(result);
+        }
 
         [HttpGet]
         public IActionResult Design(string id)
@@ -42,12 +51,6 @@ namespace Hunter.WebUI.Controllers
         }
 
 
-        public IActionResult GetDynamicData(string id, string dataID)
-        {
-            var data = this.DynamicFormManager.Find(id, dataID);
-            return this.Json(data?.ToDictionary());
-        }
-
         [HttpGet]
         public IActionResult Fill(string id, string dataID)
         {
@@ -65,6 +68,12 @@ namespace Hunter.WebUI.Controllers
         {
             this.DynamicFormManager.Save(id, dataID, dictionary);
             return this.Ok();
+        }
+
+        public IActionResult GetDynamicData(string id, string dataID)
+        {
+            var data = this.DynamicFormManager.Find(id, dataID);
+            return this.Json(data?.ToDictionary());
         }
 
     }

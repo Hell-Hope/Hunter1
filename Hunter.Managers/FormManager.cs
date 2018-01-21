@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 using MongoDB.Driver;
+using MongoDB.Bson;
 
 namespace Hunter.Managers
 {
@@ -49,6 +51,31 @@ namespace Hunter.Managers
                 this.Forms.UpdateOne(filter, set);
             }
             return entity;
+        }
+
+        public Models.PageResult<Entities.Form> Query(Models.PageParam<Models.Form.Condition> pageParam)
+        {
+            var filter = this.BuildFilter(pageParam.Condition);
+            var collection = this.Forms.Find(filter);
+            var result = new Models.PageResult<Entities.Form>();
+            result.Total = collection.Count();
+            result.Data = collection.Pagination(pageParam).ToList();
+            return result;
+        }
+
+        protected FilterDefinition<Entities.Form> BuildFilter(Models.Form.Condition condition)
+        {
+            return this.BuildFilter(this.BuildFilters(condition));
+        }
+
+        protected List<FilterDefinition<Entities.Form>> BuildFilters(Models.Form.Condition condition)
+        {
+            var list = new List<FilterDefinition<Entities.Form>>();
+            if (condition == null)
+                return list;
+            if (!String.IsNullOrWhiteSpace(condition.Name))
+                list.Add(Builders<Entities.Form>.Filter.Regex(nameof(Entities.Form.Name), new BsonRegularExpression(condition.Name)));
+            return list;
         }
 
     }
