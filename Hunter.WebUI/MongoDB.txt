@@ -1,1 +1,13 @@
 ﻿mongod --dbpath E:\workspace\Database\MongoDB
+
+
+db.Dynamic0ED1F5C63F07CA8A82784D44C5.aggregate([
+    {
+        $lookup:{
+            from: "Form",
+		    localField:	"ID",
+		    foreignField: "_id", 
+		    as: "stuffFromRight" 
+        }
+    }
+])

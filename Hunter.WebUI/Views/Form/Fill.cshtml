@@ -1,10 +1,6 @@
-﻿
-@model MongoDB.Bson.BsonDocument
-@{ 
-    var jsonWriterSettings = new MongoDB.Bson.IO.JsonWriterSettings { OutputMode = MongoDB.Bson.IO.JsonOutputMode.Strict };
-}
+﻿@model Hunter.Entities.Form
 
-@this.Html.Raw(this.Model.TryGetValue("html"))
+@this.Html.Raw(this.Model.Html)
 
 <button class="btn-block btn btn-primary" id="btn-save" type="button">保存</button>
 
@@ -15,7 +11,7 @@
         var _dataID = "@this.ViewData["dataID"]"
         var initData = function () {
             $.ajax({
-                url: '@this.Url.Content("~/Form/GetData")' + '?id=' + _id + '&dataID=' + _dataID,
+                url: '@this.Url.Content("~/Form/GetDynamicData")' + '?id=' + _id + '&dataID=' + _dataID,
                 type: 'post',
                 contentType: 'application/json',
                 success: function (data) {

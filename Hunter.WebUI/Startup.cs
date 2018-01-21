@@ -22,6 +22,8 @@ namespace Hunter.WebUI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient(provider => new MongoDB.Driver.MongoClient("mongodb://127.0.0.1:27017"));
+            services.AddTransient<Managers.FormManager>();
+            services.AddTransient<Managers.DynamicFormManager>();
             services.AddMvc().AddJsonOptions(options =>
             {
             });
@@ -46,7 +48,7 @@ namespace Hunter.WebUI
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Main}/{action=Index}/{id?}");
             });
         }
     }

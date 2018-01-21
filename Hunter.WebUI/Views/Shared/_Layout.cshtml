@@ -8,10 +8,7 @@
         <link rel="stylesheet" href="~/Libraries/bootstrap/3.3.7/css/bootstrap.css" />
     </environment>
     <environment exclude="Development">
-        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
-              asp-fallback-href="~/Libraries/bootstrap/3.3.7/css/bootstrap.min.css"
-              asp-fallback-test-class="sr-only" asp-fallback-test-property="position"
-              asp-fallback-test-value="absolute" />
+        <link rel="stylesheet" href="~/Libraries/bootstrap/4.0.0/css/bootstrap.min.css"  />
     </environment>
     <style>
         html, body { width: 100%; height: 100%; }
@@ -22,22 +19,12 @@
     @this.RenderBody()
     <environment include="Development">
         <script src="~/Libraries/jquery/jquery-3.2.1.js"></script>
-        <script src="~/Libraries/bootstrap/3.3.7/js/bootstrap.js"></script>
+        <script src="~/Libraries/bootstrap/4.0.0/js/bootstrap.js"></script>
         <script src="~/Scripts/jQuery.extension.js"></script>
     </environment>
     <environment exclude="Development">
-        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
-                asp-fallback-src="~/Libraries/jquery/jquery-3.2.1.min.js"
-                asp-fallback-test="window.jQuery"
-                crossorigin="anonymous"
-                integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
-        </script>
-        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
-                asp-fallback-src="~/Libraries/bootstrap/3.3.7/js/bootstrap.min.js"
-                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
-                crossorigin="anonymous"
-                integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
-        </script>
+        <script src="~/Libraries/jQuery/jquery-3.2.1.min.js"></script>
+        <script src="~/Libraries/bootstrap/4.0.0/js/bootstrap.min.js"></script>
         <script src="~/Scripts/jQuery.extension.js"></script>
     </environment>
     @this.RenderSection("Scripts", false)

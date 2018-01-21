@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.3" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.0" />
     <PackageReference Include="MongoDB.Bson" Version="2.5.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.5.0" />
   </ItemGroup>
@@ -37,6 +38,13 @@
     <None Include="wwwroot\Libraries\bootstrap\4.0.0\js\bootstrap.js.map" />
     <None Include="wwwroot\Libraries\bootstrap\4.0.0\js\bootstrap.min.js" />
     <None Include="wwwroot\Libraries\bootstrap\4.0.0\js\bootstrap.min.js.map" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hunter.Agent\Hunter.Agent.csproj" />
+    <ProjectReference Include="..\Hunter.Entities\Hunter.Entities.csproj" />
+    <ProjectReference Include="..\Hunter.Managers\Hunter.Managers.csproj" />
+    <ProjectReference Include="..\Hunter.Models\Hunter.Models.csproj" />
   </ItemGroup>
 
 </Project>

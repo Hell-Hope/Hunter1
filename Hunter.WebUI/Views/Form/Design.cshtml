@@ -1,8 +1,8 @@
-﻿@model MongoDB.Bson.BsonDocument
+﻿@model Hunter.Entities.Form
 
 <form asp-controller="Form" asp-action="Design" method="post">
-    <input type="hidden" name="id" value="@this.Model.TryGetValue("_id").TryToString()" />
-    <textarea name="html" id="editor" style="width: 100%; height: 100%;">@this.Model.TryGetValue("html").TryToString()</textarea>
+    <input type="hidden" name="id" value="@this.Model.ID" />
+    <textarea name="html" id="editor" style="width: 100%; height: 100%;">@this.Model.Html</textarea>
 </form>
 
 @section Scripts

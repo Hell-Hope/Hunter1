@@ -5,6 +5,13 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="MongoDB.Driver" Version="2.5.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Hunter.Agent\Hunter.Agent.csproj" />
+      <ProjectReference Include="..\Hunter.Entities\Hunter.Entities.csproj" />
+      <ProjectReference Include="..\Hunter.Models\Hunter.Models.csproj" />
     </ItemGroup>
 
 </Project>
