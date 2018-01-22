@@ -12,5 +12,7 @@ namespace Hunter.Entities
 
         public string Html { get; set; }
 
+        public string Remark { get; set; }
+
     }
 }

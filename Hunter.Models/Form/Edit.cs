@@ -9,7 +9,9 @@ namespace Hunter.Models.Form
 
         public string ID { get; set; }
 
-        public string Html { get; set; }
+        public string Name { get; set; }
+
+        public string Remark { get; set; }
 
     }
 }
