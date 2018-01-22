@@ -1,14 +1,14 @@
 ﻿@model Hunter.Models.Form.Edit
 
 <div class="position-absolute layout" style="left: 1em; right: 1em; bottom: 4.5em;">
-    <input asp-for="ID" type="hidden" />
+    <input type="hidden" name="ID" value="@this.Model.ID" />
     <table class="table">
         <tr>
             <td style="width: 80px">
                 <label for="name">表单名称</label>
             </td>
             <td>
-                <input asp-for="Name" type="text" class="form-control" placeholder="请输入表单名称" />
+                <input type="text" class="form-control" placeholder="请输入表单名称" name="Name" value="@this.Model.Name" />
             </td>
         </tr>
         <tr>
@@ -16,7 +16,7 @@
                 <label for="name">备注</label>
             </td>
             <td>
-                <textarea asp-for="Remark" class="form-control"></textarea>
+                <textarea class="form-control" name="Remark">@this.Model.Remark</textarea>
             </td>
         </tr>
     </table>
@@ -42,8 +42,9 @@
                     type: 'post',
                     contentType: 'application/json',
                     data: JSON.stringify(obj),
-                    success: function () {
-                        alert('保存成功')
+					success: function () {
+						window.top.layer.msg('保存成功', { icon: 1 })
+						window.top.RefreshList && window.top.RefreshList()
                     }
                 })
             })

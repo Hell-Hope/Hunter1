@@ -29,7 +29,11 @@ namespace Hunter.Managers
 
         public void Save(Models.Form.Edit edit)
         {
-            var entity = AutoMapper.Mapper.Map<Entities.Form>(edit);
+            var entity = this.Find(edit.ID);
+            if (entity == null)
+                entity = AutoMapper.Mapper.Map<Entities.Form>(edit);
+            else
+                AutoMapper.Mapper.Map(edit, entity);
             this.Forms.ReplaceOne(m => m.ID == edit.ID, entity, UpdateOptions);
         }
 

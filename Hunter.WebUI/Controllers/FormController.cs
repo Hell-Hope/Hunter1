@@ -28,7 +28,9 @@ namespace Hunter.WebUI.Controllers
 
         public IActionResult Edit(string id)
         {
-            var edit = this.FormManager.GetEdit(id) ?? new Models.Form.Edit() { ID = this.FormManager.GenerateMongoID };
+            Models.Form.Edit edit = this.FormManager.GetEdit(id) ?? new Models.Form.Edit();
+            if (String.IsNullOrWhiteSpace(edit.ID))
+                edit.ID = this.FormManager.GenerateMongoID;
             return this.View(edit);
         }
 
@@ -38,7 +40,7 @@ namespace Hunter.WebUI.Controllers
             return this.Ok();
         }
 
-        public IActionResult Query(Models.PageParam<Models.Form.Condition> pageParam)
+        public IActionResult Query([FromBody]Models.PageParam<Models.Form.Condition> pageParam)
         {
             var result = this.FormManager.Query(pageParam);
             return this.Json(result);

@@ -10,8 +10,12 @@
     <script src="~/Libraries/ckeditor/4.8.0/ckeditor.js"></script>
     <script>
         $(function () {
-            var editor = CKEDITOR.replace('editor');
-            console.log(editor)
+			var editor = CKEDITOR.replace('editor', {
+				height: $(window.document).height() - 140
+			})
+			$(window).resize(function () {
+				CKEDITOR.instances.editor.resize($(window).width(), $('body').height() - 1)
+			})
         })
     </script>
 }
