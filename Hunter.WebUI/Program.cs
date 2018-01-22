@@ -14,6 +14,10 @@ namespace Hunter.WebUI
     {
         public static void Main(string[] args)
         {
+            AutoMapper.Mapper.Initialize(cfg =>
+            {
+                cfg.AddProfile<Managers.MapperProfile>();
+            });
             BuildWebHost(args).Run();
         }
 

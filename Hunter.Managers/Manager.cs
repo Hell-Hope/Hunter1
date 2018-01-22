@@ -19,6 +19,17 @@ namespace Hunter.Managers
 
     public class Manager
     {
+        static Manager()
+        {
+            UpdateOptions = new UpdateOptions()
+            {
+                IsUpsert = true
+            };
+        }
+
+        public static UpdateOptions UpdateOptions { get; private set; }
+
+        public static MongoCollectionSettings MongoCollectionSettings { get; set; }
 
         public Manager(MongoClient mongoClient)
         {

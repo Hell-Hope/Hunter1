@@ -1,12 +1,14 @@
-﻿
+﻿@model Hunter.Models.Form.Edit
+
 <div class="position-absolute layout" style="left: 1em; right: 1em; bottom: 4.5em;">
+    <input asp-for="ID" type="hidden" />
     <table class="table">
         <tr>
             <td style="width: 80px">
                 <label for="name">表单名称</label>
             </td>
             <td>
-                <input type="text" class="form-control" id="name" name="Name" placeholder="请输入表单名称" />
+                <input asp-for="Name" type="text" class="form-control" placeholder="请输入表单名称" />
             </td>
         </tr>
         <tr>
@@ -14,7 +16,7 @@
                 <label for="name">备注</label>
             </td>
             <td>
-                <textarea name="Remark" class="form-control"></textarea>
+                <textarea asp-for="Remark" class="form-control"></textarea>
             </td>
         </tr>
     </table>
@@ -23,8 +25,28 @@
     <table class="table border-0" style="height: 100%; margin: 0px;">
         <tr>
             <td>
-                <input type="button" class="btn btn-default" value="保存" />
+                <input type="button" class="btn btn-default" id="btn-save" value="保存" />
             </td>
         </tr>
     </table>
 </div>
+
+@section Scripts
+{
+    <script>
+        $(function () {
+            $('#btn-save').click(function (event) {
+                var obj = $('body').serializeData();
+                $.ajax({
+                    url: '@this.Url.Action("Save")',
+                    type: 'post',
+                    contentType: 'application/json',
+                    data: JSON.stringify(obj),
+                    success: function () {
+                        alert('保存成功')
+                    }
+                })
+            })
+        })
+    </script>
+}

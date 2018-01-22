@@ -26,9 +26,16 @@ namespace Hunter.WebUI.Controllers
             return this.View();
         }
 
-        public IActionResult Edit()
+        public IActionResult Edit(string id)
         {
-            return this.View();
+            var edit = this.FormManager.GetEdit(id) ?? new Models.Form.Edit() { ID = this.FormManager.GenerateMongoID };
+            return this.View(edit);
+        }
+
+        public IActionResult Save([FromBody]Models.Form.Edit edit)
+        {
+            this.FormManager.Save(edit);
+            return this.Ok();
         }
 
         public IActionResult Query(Models.PageParam<Models.Form.Condition> pageParam)
@@ -51,7 +58,8 @@ namespace Hunter.WebUI.Controllers
         [HttpPost]
         public IActionResult Design(string id, string html)
         {
-            var entity = this.FormManager.SaveHtml(id, html);
+            this.FormManager.SaveHtml(id, html);
+            var entity = this.FormManager.Find(id);
             return this.View(entity);
         }
 

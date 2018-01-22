@@ -27,30 +27,30 @@ namespace Hunter.Managers
             return this.Forms.Find(filter).FirstOrDefault();
         }
 
+        public void Save(Models.Form.Edit edit)
+        {
+            var entity = AutoMapper.Mapper.Map<Entities.Form>(edit);
+            this.Forms.ReplaceOne(m => m.ID == edit.ID, entity, UpdateOptions);
+        }
+
+        public Models.Form.Edit GetEdit(string id)
+        {
+            var entity = this.Find(id);
+            if (entity == null)
+                return null;
+            return AutoMapper.Mapper.Map<Models.Form.Edit>(entity);
+        }
+
         /// <summary> 保存Html数据
         /// </summary>
         /// <param name="id"></param>
         /// <param name="html"></param>
         /// <returns></returns>
-        public Entities.Entity SaveHtml(string id, string html)
+        public void SaveHtml(string id, string html)
         {
-            var entity = this.Find(id);
-            if (entity == null)
-            {
-                this.Forms.InsertOne(entity = new Entities.Form()
-                {
-                    ID = id,
-                    Html = html
-                });
-            }
-            else
-            {
-                entity.Html = html;
-                var filter = this.BuildFilterEqualID<Entities.Form>(id);
-                var set = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Html), html);
-                this.Forms.UpdateOne(filter, set);
-            }
-            return entity;
+            var filter = this.BuildFilterEqualID<Entities.Form>(id);
+            var set = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Html), html);
+            this.Forms.UpdateOne(filter, set, UpdateOptions);
         }
 
         public Models.PageResult<Entities.Form> Query(Models.PageParam<Models.Form.Condition> pageParam)
