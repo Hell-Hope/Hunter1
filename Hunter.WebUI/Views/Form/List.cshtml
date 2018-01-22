@@ -94,10 +94,12 @@
 					sortable: true
 				}]
 			});
-			$table.bootstrapTable('resetView', {
-				height: $('body').height()
-			});
-
+			
+			$(window).resize(function () {
+				$table.bootstrapTable('resetView', {
+					height: $('body').height()
+				});
+			}).resize()
 			var edit = function (id) {
 				id = id ? id : ''
 				window.top.layer.open({
