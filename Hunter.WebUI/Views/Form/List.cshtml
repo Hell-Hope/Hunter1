@@ -69,9 +69,9 @@
 				},
 				responseHandler: function (res) {//这里我查看源码的，在ajax请求成功后，发放数据之前可以对返回的数据进行处理，返回什么部分的数据，比如我的就需要进行整改的！
 					return {
-						rows: res.data,
-						count: Math.ceil(res.total / this.pageSize),
-						total: res.total
+						rows: res.Data,
+						count: Math.ceil(res.Total / this.pageSize),
+						total: res.Total
 					};
 				},
 				columns: [{
