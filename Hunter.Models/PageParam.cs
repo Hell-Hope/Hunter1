@@ -22,7 +22,7 @@ namespace Hunter.Models
 
         public T Condition { get; set; }
 
-        public List<Order> Orders { get; set; }
+        public Sort Sort { get; set; }
 
 
         

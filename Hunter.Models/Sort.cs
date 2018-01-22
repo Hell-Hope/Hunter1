@@ -4,10 +4,11 @@ using System.Text;
 
 namespace Hunter.Models
 {
-    public enum Sort
-    {
-        Ascending = 0,
-        Descending = 1,
-    }
 
+    public class Sort
+    {
+        public string Field { get; set; }
+
+        public Order Order { get; set; }
+    }
 }

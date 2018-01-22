@@ -61,9 +61,10 @@ namespace Hunter.Managers
         {
             var filter = this.BuildFilter(pageParam.Condition);
             var collection = this.Forms.Find(filter);
+            
             var result = new Models.PageResult<Entities.Form>();
             result.Total = collection.Count();
-            result.Data = collection.Pagination(pageParam).ToList();
+            result.Data = collection.Pagination(pageParam).Sort(pageParam).ToList();
             return result;
         }
 

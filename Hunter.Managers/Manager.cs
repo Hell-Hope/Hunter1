@@ -15,6 +15,24 @@ namespace Hunter.Managers
             temp = findFluent.Limit(pageParam.Size);
             return temp;
         }
+
+        public static IFindFluent<TDocument, TProjection> Sort<TDocument, TProjection, Condtion>(this IFindFluent<TDocument, TProjection> findFluent, Models.PageParam<Condtion> pageParam)
+        {
+            var temp = findFluent;
+            if (pageParam.Sort != null)
+            {
+                var sort = new SortDefinitionBuilder<TDocument>();
+                if (pageParam.Sort.Order == Models.Order.Ascending)
+                {
+                    temp = temp.Sort(sort.Ascending(pageParam.Sort.Field));
+                }
+                else if (pageParam.Sort.Order == Models.Order.Descending)
+                {
+                    temp = temp.Sort(sort.Descending(pageParam.Sort.Field));
+                }
+            }
+            return temp;
+        }
     }
 
     public class Manager
