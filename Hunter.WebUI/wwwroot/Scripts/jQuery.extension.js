@@ -21,6 +21,22 @@
             }
             obj[name] = value === undefined ? null : value;
         })
+        this.find('select').each(function (index, element) {
+            var $element = $(element);
+            var name = $element.attr('name');
+            if (!name) {
+                return;
+            }
+            obj[name] = $element.val();
+        })
+        this.find('textarea').each(function (index, element) {
+            var $element = $(element);
+            var name = $element.attr('name');
+            if (!name) {
+                return;
+            }
+            obj[name] = $element.val();
+        })
         return obj
     }
 
