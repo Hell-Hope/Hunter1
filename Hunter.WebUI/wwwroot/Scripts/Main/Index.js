@@ -1,5 +1,11 @@
 ﻿$(function () {
     $(".navbar-expand-toggle").click(function () {
+        var $sideMenu = $(".side-menu")
+        if ($sideMenu.width() == 250) {
+            $sideMenu.next().css("left", "60px")
+        } else {
+            $sideMenu.next().css("left", "250px") 
+        }
         $(".app-container").toggleClass("expanded");
         return $(".navbar-expand-toggle").toggleClass("fa-rotate-90");
     });
