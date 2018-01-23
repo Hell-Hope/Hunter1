@@ -1,12 +1,42 @@
 ﻿@model Hunter.Entities.Form
+@{
+    this.Layout = null;
+}
 
-@this.Html.Raw(this.Model.Html)
 
-<button class="btn-block btn btn-primary" id="btn-save" type="button">保存</button>
-
-@section Scripts
-{
-<script>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@this.Model.Name</title>
+    <environment include="Development">
+        <link rel="stylesheet" href="~/Libraries/ckeditor/4.8.0/contents.css" />
+        <link rel="stylesheet" href="~/Libraries/ckeditor/4.8.0/plugins/copyformatting/styles/copyformatting.css" />
+        <link rel="stylesheet" href="~/Libraries/ckeditor/4.8.0/plugins/tableselection/styles/tableselection.css" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/Libraries/ckeditor/4.8.0/contents.css" />
+        <link rel="stylesheet" href="~/Libraries/ckeditor/4.8.0/plugins/copyformatting/styles/copyformatting.css" />
+        <link rel="stylesheet" href="~/Libraries/ckeditor/4.8.0/plugins/tableselection/styles/tableselection.css" />
+    </environment>
+</head>
+<body class="cke_editable cke_editable_themed cke_contents_ltr cke_show_borders">
+    @this.Html.Raw(this.Model.Html)
+    <div style="position: fixed; top: 10px; right: 10px;">
+        <button id="btn-save" class="btn btn-primary">保存</button>
+    </div>
+    <environment include="Development">
+        <script src="~/Libraries/jquery/jquery-3.2.1.js"></script>
+        <script src="~/Libraries/bootstrap/3.3.7/js/bootstrap.js"></script>
+        <script src="~/Scripts/jQuery.extension.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/Libraries/jQuery/jquery-3.2.1.min.js"></script>
+        <script src="~/Libraries/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="~/Scripts/jQuery.extension.js"></script>
+    </environment>
+    <script>
         var _id = "@this.ViewData["id"]"
         var _dataID = "@this.ViewData["dataID"]"
         var initData = function () {
@@ -37,5 +67,7 @@
                 saveData(obj)
             });
         })
-</script>
-}
+    </script>
+</body>
+</html>
+
