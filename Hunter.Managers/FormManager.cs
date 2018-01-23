@@ -56,7 +56,7 @@ namespace Hunter.Managers
             var fields = ParseHtml(html);
             var filter = this.BuildFilterEqualID<Entities.Form>(id);
             var setHtml = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Html), html);
-            var setFields = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Fields), html);
+            var setFields = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Fields), fields);
             var set = Builders<Entities.Form>.Update.Combine(setHtml, setFields);
             this.Forms.UpdateOne(filter, set, UpdateOptions);
         }
