@@ -27,6 +27,14 @@ namespace Hunter.Managers
             return this.Forms.Find(filter).FirstOrDefault();
         }
 
+        public Models.Form.Edit GetEdit(string id)
+        {
+            var entity = this.Find(id);
+            if (entity == null)
+                return null;
+            return AutoMapper.Mapper.Map<Models.Form.Edit>(entity);
+        }
+
         public void Save(Models.Form.Edit edit)
         {
             var entity = this.Find(edit.ID);
@@ -34,15 +42,8 @@ namespace Hunter.Managers
                 entity = AutoMapper.Mapper.Map<Entities.Form>(edit);
             else
                 AutoMapper.Mapper.Map(edit, entity);
+            entity.Fields = this.ParseHtml(edit.Html);
             this.Forms.ReplaceOne(m => m.ID == edit.ID, entity, UpdateOptions);
-        }
-
-        public Models.Form.Edit GetEdit(string id)
-        {
-            var entity = this.Find(id);
-            if (entity == null)
-                return null;
-            return AutoMapper.Mapper.Map<Models.Form.Edit>(entity);
         }
 
         /// <summary> 保存Html数据
@@ -52,10 +53,69 @@ namespace Hunter.Managers
         /// <returns></returns>
         public void SaveHtml(string id, string html)
         {
+            var fields = ParseHtml(html);
             var filter = this.BuildFilterEqualID<Entities.Form>(id);
-            var set = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Html), html);
+            var setHtml = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Html), html);
+            var setFields = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Fields), html);
+            var set = Builders<Entities.Form>.Update.Combine(setHtml, setFields);
             this.Forms.UpdateOne(filter, set, UpdateOptions);
         }
+
+        protected Dictionary<string, Entities.Form.Field> ParseHtml(string html)
+        {
+            var htmlDocument = new HtmlAgilityPack.HtmlDocument();
+            htmlDocument.LoadHtml(html);
+            var result = new Dictionary<string, Entities.Form.Field>();
+            ParseHtml(htmlDocument.DocumentNode, result);
+            return result;
+        }
+
+        protected void ParseHtml(HtmlAgilityPack.HtmlNode htmlNode, Dictionary<string, Entities.Form.Field> fields)
+        {
+            if (htmlNode == null)
+                return;
+            foreach (var childNode in htmlNode.ChildNodes)
+            {
+                if (childNode.Name == "input")
+                {
+                    var name = childNode.Attributes["name"]?.Value;
+                    if (String.IsNullOrWhiteSpace(name))
+                        continue;
+                    fields[name] = new Entities.Form.Field()
+                    {
+                        Name = name,
+                        Type = childNode.Attributes["type"]?.Value
+                    };
+                } 
+                else if (childNode.Name == "select")
+                {
+                    var name = childNode.Attributes["name"]?.Value;
+                    if (String.IsNullOrWhiteSpace(name))
+                        continue;
+                    fields[name] = new Entities.Form.Field()
+                    {
+                        Name = name,
+                        Type = "select"
+                    };
+                }
+                else if (childNode.Name == "textarea")
+                {
+                    var name = childNode.Attributes["name"]?.Value;
+                    if (String.IsNullOrWhiteSpace(name))
+                        continue;
+                    fields[name] = new Entities.Form.Field()
+                    {
+                        Name = name,
+                        Type = "textarea"
+                    };
+                }
+                else
+                {
+                    ParseHtml(childNode, fields);
+                }
+            }
+        }
+
 
         public Models.PageResult<Entities.Form> Query(Models.PageParam<Models.Form.Condition> pageParam)
         {

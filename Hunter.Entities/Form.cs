@@ -14,5 +14,14 @@ namespace Hunter.Entities
 
         public string Remark { get; set; }
 
+        public Dictionary<string, Field> Fields { get; set; }
+
+        public class Field
+        {
+            public string Name { get; set; }
+
+            public string Type { get; set; }
+        }
+
     }
 }
