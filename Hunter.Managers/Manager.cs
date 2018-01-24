@@ -72,12 +72,12 @@ namespace Hunter.Managers
             }
         }
 
-        public FilterDefinition<T> BuildFilterEqualID<T>(string id)
+        protected FilterDefinition<T> BuildFilterEqualID<T>(string id)
         {
             return Builders<T>.Filter.Eq(nameof(Entities.Entity.ID), id);
         }
 
-        public FilterDefinition<T> BuildFilter<T>(List<FilterDefinition<T>> filters)
+        protected FilterDefinition<T> BuildFilter<T>(List<FilterDefinition<T>> filters)
         {
             if (filters.Count == 0)
             {
@@ -88,7 +88,7 @@ namespace Hunter.Managers
 
 
 
-        public FormManager formManager;
+        private FormManager formManager;
 
         public FormManager FormManager
         {
@@ -101,7 +101,7 @@ namespace Hunter.Managers
         }
 
 
-        public DynamicFormManager dynamicFormManager;
+        private DynamicFormManager dynamicFormManager;
 
         public DynamicFormManager DynamicFormManager
         {

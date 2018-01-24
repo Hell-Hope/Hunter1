@@ -1,0 +1,133 @@
+﻿@model Hunter.Entities.Form
+
+@section Styles
+{
+    <environment include="Development">
+        <link rel="stylesheet" href="~/Libraries/bootstrap-table/1.11.1/bootstrap-table.css" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/Libraries/bootstrap-table/1.11.1/bootstrap-table.min.css" />
+    </environment>
+}
+
+<div style="padding: 0px 2em;">
+    <div style="display: none;" id="panel-edit">
+        <table class="table">
+            <tr>
+                <td style="width: 100px">
+                    <label for="name">字段名称</label>
+                </td>
+                <td>
+                    <input type="text" class="form-control" name="field" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="name">宽度</label>
+                </td>
+                <td>
+                    <input type="text" class="form-control" name="width" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="name">水平居中</label>
+                </td>
+                <td>
+                    <select class="form-control" name="align">
+                        <option value="left">左</option>
+                        <option value="center" selected="selected">居中</option>
+                        <option value="right">右</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="name">垂直居中</label>
+                </td>
+                <td>
+                    <select class="form-control" name="align">
+                        <option value="top">上</option>
+                        <option value="middle" selected="selected">中间</option>
+                        <option value="bottom">下</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="toolbar" class="btn-group">
+        <button id="btn-insert" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            <span>新增</span>
+        </button>
+        <button id="btn-update" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+            <span>修改</span>
+        </button>
+        <button id="btn-delete" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+            <span>删除</span>
+        </button>
+    </div>
+    <table id="table"></table>
+</div>
+
+@section Scripts
+{
+    <environment include="Development">
+        <script src="~/Libraries/bootstrap-table/1.11.1/bootstrap-table.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/Libraries/bootstrap-table/1.11.1/bootstrap-table.min.js"></script>
+    </environment>
+    <script>
+        $(function () {
+            var data = []
+            var options = {
+                url: null,
+                data: data,
+                sidePagination: 'client',
+                columns: [
+                    { checkbox: true },
+                    { field: 'field', title: '字段名称' }
+                ]
+            }
+            var $table = $('#table').bootstrapTable($.extend($.BootstrapTable.DEFAULT, options));
+
+			$(window).resize(function () {
+				$table.bootstrapTable('resetView', {
+					height: $('body').height()
+				});
+            }).resize()
+
+			var edit = function (obj) {
+				window.top.layer.open({
+					type: 1,
+					title: '编辑',
+					maxmin: false, //开启最大化最小化按钮
+                    area: ['80%', '80%'],
+                    content: $('#panel-edit').html(),
+                    btn: ['确定'],
+                    success: function (layero, index) {
+                        layero.fillData(obj)
+                    },
+                    yes: function (index, layero) {
+                        var o = layero.serializeData();
+                    }
+				})
+			}
+            $("#btn-insert").click(function () {
+                edit({})
+			})
+			$("#btn-update").click(function () {
+				var selections = $table.bootstrapTable('getSelections');
+				if (selections.length == 0) {
+					window.top.layer.msg('请选择', { icon: 0 });
+				} else {
+					edit(selections[0])
+				}
+			})
+			
+		})
+    </script>
+}

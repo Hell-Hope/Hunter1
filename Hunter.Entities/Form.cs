@@ -18,6 +18,8 @@ namespace Hunter.Entities
 
         public Dictionary<string, Field> Fields { get; set; }
 
+        public List<Dictionary<string, object>> Columns { get; set; }
+
         public class Field
         {
             public string Name { get; set; }

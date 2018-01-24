@@ -27,7 +27,7 @@ namespace Hunter.Managers
             return this.Forms.Find(filter).FirstOrDefault();
         }
 
-        public List<Models.Form.MenuItem> GetMenuItem()
+        public List<Models.Form.MenuItem> GetMenuItems()
         {
             var id = Builders<Entities.Form>.Projection.Include(nameof(Entities.Form.ID));
             var name = Builders<Entities.Form>.Projection.Include(nameof(Entities.Form.Name));

@@ -63,6 +63,12 @@ namespace Hunter.WebUI.Controllers
             return this.View(entity);
         }
 
+        [HttpGet]
+        public IActionResult Columns(string id)
+        {
+            var entity = this.Manager.FormManager.Find(id);
+            return this.View(entity);
+        }
 
         [HttpGet]
         public IActionResult Fill(string id, string dataID)
