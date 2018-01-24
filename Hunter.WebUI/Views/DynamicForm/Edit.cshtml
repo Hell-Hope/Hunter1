@@ -40,7 +40,7 @@
         var _dataID = "@this.ViewData["dataID"]"
         var initData = function () {
             $.ajax({
-                url: '@this.Url.Content("~/Form/GetDynamicData")' + '?id=' + _id + '&dataID=' + _dataID,
+                url: '@this.Url.Action("GetData", new { id = this.Model.ID })' + '?dataID=' + _dataID,
                 type: 'post',
                 contentType: 'application/json',
                 success: function (data) {
@@ -50,7 +50,7 @@
         }
         var saveData = function (obj) {
             $.ajax({
-                url: '@this.Url.Content("~/Form/Fill")' + '?id=' + _id + '&dataID=' + _dataID,
+                url: '@this.Url.Action("Edit", new { id = this.Model.ID })' + '?dataID=' + _dataID,
                 type: 'post',
                 contentType: 'application/json',
                 data: JSON.stringify(obj),

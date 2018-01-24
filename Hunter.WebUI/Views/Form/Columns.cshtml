@@ -15,6 +15,14 @@
         <table class="table">
             <tr>
                 <td style="width: 100px">
+                    <label for="name">序号</label>
+                </td>
+                <td>
+                    <input type="number" class="form-control" name="sequence" />
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 100px">
                     <label for="name">字段名称</label>
                 </td>
                 <td>
@@ -46,7 +54,7 @@
                     <label for="name">垂直居中</label>
                 </td>
                 <td>
-                    <select class="form-control" name="align">
+                    <select class="form-control" name="valign">
                         <option value="top">上</option>
                         <option value="middle" selected="selected">中间</option>
                         <option value="bottom">下</option>
@@ -68,9 +76,14 @@
             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
             <span>删除</span>
         </button>
+        <button id="btn-save" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-save-file" aria-hidden="true"></span>
+            <span>保存</span>
+        </button>
     </div>
     <table id="table"></table>
 </div>
+<div style="display:none;" id="initialize-data">@this.Json.Serialize(this.Model.Columns)</div>
 
 @section Scripts
 {
@@ -81,26 +94,78 @@
         <script src="~/Libraries/bootstrap-table/1.11.1/bootstrap-table.min.js"></script>
     </environment>
     <script>
+        var getInitializeData = function () {
+            try {
+                var result = JSON.parse($('#initialize-data').text())
+                if (result)
+                    return result;
+                return [];
+            } catch (e) {
+                return []
+            }
+        }
+
         $(function () {
-            var data = []
-            var options = {
+            var options = $.extend($.BootstrapTable.DEFAULT, {
                 url: null,
-                data: data,
+                data: getInitializeData(),
                 sidePagination: 'client',
                 columns: [
                     { checkbox: true },
-                    { field: 'field', title: '字段名称' }
+                    { field: 'sequence', title: '序号', width: '60px' },
+                    { field: 'field', title: '字段名称' },
+                    { field: 'width', title: '宽度', width: '100px' }
                 ]
+            })
+            var $table = $('#table').bootstrapTable(options);
+            var getItem = function (field, timespan) {
+                for (var i = 0, length = options.data.length; i < length; i++) {
+                    var value = options.data[i];
+                    if (value.field == field && value.timespan != timespan)
+                        return { index: i, value: value }
+                }
+                return { index: -1, value: null };
             }
-            var $table = $('#table').bootstrapTable($.extend($.BootstrapTable.DEFAULT, options));
+            var upgradeData = function (obj) {
+                var insert = true;
+                var array = [];
+                for (var i = 0, length = options.data.length; i < length; i++) {
+                    var value = options.data[i];
+                    if (value.timespan == obj.timespan) { // update
+                        insert = false;
+                        var temp = getItem(value.field, value.timespan)
+                        if (temp.index >= 0) {
+                            return window.top.layer.msg('字段名称已经存在')
+                        } else {
+                            array.push(obj)
+                        }
+                    } else {
+                        array.push(value)
+                    }
+                }
+                if (insert) {
+                    var temp = getItem(obj.field, obj.timespan)
+                    if (temp.index >= 0) {
+                        return window.top.layer.msg('字段名称已经存在')
+                    } else {
+                        array.push(obj)
+                    }
+                }
+                refreshData(array)
+            }
+            var refreshData = function (array) {
+                options.data = array.sort(function (a, b) {
+                    return window.tryParseFloat(a.sequence, 0) - window.tryParseFloat(b.sequence, 0)
+                });
+                $table.bootstrapTable('destroy').bootstrapTable(options)
+                $(window).resize()
+            }
 
 			$(window).resize(function () {
-				$table.bootstrapTable('resetView', {
-					height: $('body').height()
-				});
+				$table.bootstrapTable('resetView', { height: $('body').height() });
             }).resize()
-
-			var edit = function (obj) {
+            var edit = function (obj) {
+                var update = obj.field
 				window.top.layer.open({
 					type: 1,
 					title: '编辑',
@@ -113,6 +178,12 @@
                     },
                     yes: function (index, layero) {
                         var o = layero.serializeData();
+                        o.title = o.field
+                        if (obj.timespan)
+                            o.timespan = obj.timespan
+                        else
+                            o.timespan = new Date().valueOf()
+                        upgradeData(o)
                     }
 				})
 			}
@@ -126,8 +197,41 @@
 				} else {
 					edit(selections[0])
 				}
-			})
-			
+            })
+            $('#btn-delete').click(function () {
+                var array = []
+                var selections = $table.bootstrapTable('getSelections');
+                if (selections.length == 0) {
+                    window.top.layer.msg('请选择', { icon: 0 });
+                    return
+                } 
+                for (var i = 0; i < options.data.length; i++) {
+                    var d = options.data[i]
+                    var contain = false
+                    for (var j = 0; j < selections.length; j++) {
+                        var s = selections[j]
+                        if (s.timespan == d.timespan) {
+                            contain = true;
+                            break;
+                        }
+                    }
+                    if (contain == false) {
+                        array.push(d)
+                    }
+                }
+                refreshData(array)
+            })
+            $('#btn-save').click(function () {
+                $.ajax({
+                    url: '@this.Url.Action("SaveColumns", new { id = this.Model.ID })',
+                    type: 'post',
+                    contentType: 'application/json',
+                    data: JSON.stringify(options.data),
+                    success: function () {
+                        window.top.layer.msg('保存成功')
+                    }
+                })
+            })
 		})
     </script>
 }

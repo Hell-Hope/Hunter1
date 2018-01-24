@@ -77,6 +77,13 @@ namespace Hunter.Managers
             this.Forms.UpdateOne(filter, set, UpdateOptions);
         }
 
+        public void SaveColumns(string id, List<Dictionary<string, object>> list)
+        {
+            var filter = this.BuildFilterEqualID<Entities.Form>(id);
+            var set = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Columns), list);
+            this.Forms.UpdateOne(filter, set, UpdateOptions);
+        }
+
         protected Dictionary<string, Entities.Form.Field> ParseHtml(string html)
         {
             var htmlDocument = new HtmlAgilityPack.HtmlDocument();
@@ -140,7 +147,7 @@ namespace Hunter.Managers
             
             var result = new Models.PageResult<Entities.Form>();
             result.Total = collection.Count();
-            result.Data = collection.Pagination(pageParam).Sort(pageParam).ToList();
+            result.Data = collection.Sort(pageParam).Pagination(pageParam).ToList();
             return result;
         }
 

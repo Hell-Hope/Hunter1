@@ -70,30 +70,13 @@ namespace Hunter.WebUI.Controllers
             return this.View(entity);
         }
 
-        [HttpGet]
-        public IActionResult Fill(string id, string dataID)
+        public IActionResult SaveColumns(string id, [FromBody]List<Dictionary<string, object>> list)
         {
-            var entity = this.Manager.FormManager.Find(id);
-            var data = this.Manager.DynamicFormManager.Find(id, dataID);
-            if (data == null)
-                dataID = this.Manager.DynamicFormManager.GenerateMongoID;
-            this.ViewData["id"] = id;
-            this.ViewData["DataID"] = dataID;
-            return this.View(entity);
-        }
-
-        [HttpPost]
-        public IActionResult Fill(string id, string dataID, [FromBody]Dictionary<string, object> dictionary)
-        {
-            this.Manager.DynamicFormManager.Save(id, dataID, dictionary);
+            this.Manager.FormManager.SaveColumns(id, list);
             return this.Ok();
         }
 
-        public IActionResult GetDynamicData(string id, string dataID)
-        {
-            var data = this.Manager.DynamicFormManager.Find(id, dataID);
-            return this.Json(data?.ToDictionary());
-        }
+        
 
     }
 }

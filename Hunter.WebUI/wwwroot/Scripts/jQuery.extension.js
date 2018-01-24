@@ -1,4 +1,17 @@
-﻿(function ($, undefined) {
+﻿
+
+(function ($, undefined) {
+    window.tryParseFloat = function (num, _default) {
+        try {
+            var result = window.parseFloat(num)
+            if (window.isNaN(result))
+                return _default;
+            return num;
+        } catch (e) {
+            return _default;
+        }
+    }
+
     $.fn.serializeData = function () {
         var obj = {}
         this.find('input').each(function (index, element) {
@@ -87,6 +100,7 @@
         showRefresh: true,                  //是否显示刷新按钮
         minimumCountColumns: 2,             //最少允许的列数
         clickToSelect: true,                //是否启用点击选中行
+        singleSelect: true,                 //设为true则允许复选框仅选择一行
         height: 500,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
         uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
         showToggle: false,                  //是否显示详细视图和列表视图的切换按钮
@@ -112,4 +126,20 @@
 
         }
     }
-})(jQuery)
+
+
+    $(function () {
+        if (!window.layer)
+            return
+        layer.msg.warning = function (msg) {
+            return layer.msg(msg, { icon: 0 })
+        }
+        layer.msg.success = function (msg) {
+            return layer.msg(msg, { icon: 1 })
+        }
+        layer.msg.error = function (msg) {
+            return layer.msg(msg, { icon: 2 })
+        }
+    })
+})(jQuery);
+

@@ -44,5 +44,32 @@ namespace Hunter.Managers
             }
         }
 
+        public Models.PageResult<Dictionary<string, object>> Query(string formID, Models.PageParam<Models.DynamicForm.Condition> pageParam)
+        {
+            var filter = this.BuildFilter(pageParam.Condition);
+            var collection = this.DynamicForms(formID).Find(filter);
+
+            var result = new Models.PageResult<Dictionary<string, object>>();
+            result.Total = collection.Count();
+            var list = collection.Sort(pageParam).Pagination(pageParam).ToList();
+            result.Data = new List<Dictionary<string, object>>();
+            foreach (var item in list)
+                result.Data.Add(item.ToDictionary());
+            return result;
+        }
+
+        protected FilterDefinition<BsonDocument> BuildFilter(Models.DynamicForm.Condition condition)
+        {
+            return this.BuildFilter(this.BuildFilters(condition));
+        }
+
+        protected List<FilterDefinition<BsonDocument>> BuildFilters(Models.DynamicForm.Condition condition)
+        {
+            var list = new List<FilterDefinition<BsonDocument>>();
+            if (condition == null)
+                return list;
+            return list;
+        }
+
     }
 }
