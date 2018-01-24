@@ -77,7 +77,6 @@ namespace Hunter.Managers
             return Builders<T>.Filter.Eq(nameof(Entities.Entity.ID), id);
         }
 
-
         public FilterDefinition<T> BuildFilter<T>(List<FilterDefinition<T>> filters)
         {
             if (filters.Count == 0)
@@ -85,6 +84,33 @@ namespace Hunter.Managers
                 return Builders<T>.Filter.Empty;
             }
             return Builders<T>.Filter.And(filters);
+        }
+
+
+
+        public FormManager formManager;
+
+        public FormManager FormManager
+        {
+            get
+            {
+                if (this.formManager == null)
+                    this.formManager = new FormManager(this.MongoClient);
+                return this.formManager;
+            }
+        }
+
+
+        public DynamicFormManager dynamicFormManager;
+
+        public DynamicFormManager DynamicFormManager
+        {
+            get
+            {
+                if (this.dynamicFormManager == null)
+                    this.dynamicFormManager = new DynamicFormManager(this.MongoClient);
+                return this.dynamicFormManager;
+            }
         }
 
     }

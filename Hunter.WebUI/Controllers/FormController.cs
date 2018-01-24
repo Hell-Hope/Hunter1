@@ -11,15 +11,13 @@ namespace Hunter.WebUI.Controllers
 {
     public class FormController : Controller
     {
-        public FormController(FormManager formManager, DynamicFormManager dynamicFormManager)
+        public FormController(Manager manager)
         {
-            this.FormManager = formManager;
-            this.DynamicFormManager = dynamicFormManager;
+            this.Manager = manager;       
         }
         
-        protected FormManager FormManager { get; set; }
-
-        protected DynamicFormManager DynamicFormManager { get; set; }
+        protected Manager Manager { get; set; }
+       
 
         public IActionResult List()
         {
@@ -28,31 +26,31 @@ namespace Hunter.WebUI.Controllers
 
         public IActionResult Edit(string id)
         {
-            Models.Form.Edit edit = this.FormManager.GetEdit(id) ?? new Models.Form.Edit();
+            Models.Form.Edit edit = this.Manager.FormManager.GetEdit(id) ?? new Models.Form.Edit();
             if (String.IsNullOrWhiteSpace(edit.ID))
-                edit.ID = this.FormManager.GenerateMongoID;
+                edit.ID = this.Manager.FormManager.GenerateMongoID;
             return this.View(edit);
         }
 
         public IActionResult Save([FromBody]Models.Form.Edit edit)
         {
-            this.FormManager.Save(edit);
+            this.Manager.FormManager.Save(edit);
             return this.Ok();
         }
 
         public IActionResult Query([FromBody]Models.PageParam<Models.Form.Condition> pageParam)
         {
-            var result = this.FormManager.Query(pageParam);
+            var result = this.Manager.FormManager.Query(pageParam);
             return this.Json(result);
         }
 
         [HttpGet]
         public IActionResult Design(string id)
         {
-            var entity = this.FormManager.Find(id);
+            var entity = this.Manager.FormManager.Find(id);
             if (entity == null)
             {
-                entity = new Entities.Form() { ID = this.FormManager.GenerateMongoID };
+                entity = new Entities.Form() { ID = this.Manager.FormManager.GenerateMongoID };
             }
             return this.View(entity);
         }
@@ -60,8 +58,8 @@ namespace Hunter.WebUI.Controllers
         [HttpPost]
         public IActionResult Design(string id, string html)
         {
-            this.FormManager.SaveHtml(id, html);
-            var entity = this.FormManager.Find(id);
+            this.Manager.FormManager.SaveHtml(id, html);
+            var entity = this.Manager.FormManager.Find(id);
             return this.View(entity);
         }
 
@@ -69,10 +67,10 @@ namespace Hunter.WebUI.Controllers
         [HttpGet]
         public IActionResult Fill(string id, string dataID)
         {
-            var entity = this.FormManager.Find(id);
-            var data = this.DynamicFormManager.Find(id, dataID);
+            var entity = this.Manager.FormManager.Find(id);
+            var data = this.Manager.DynamicFormManager.Find(id, dataID);
             if (data == null)
-                dataID = this.DynamicFormManager.GenerateMongoID;
+                dataID = this.Manager.DynamicFormManager.GenerateMongoID;
             this.ViewData["id"] = id;
             this.ViewData["DataID"] = dataID;
             return this.View(entity);
@@ -81,13 +79,13 @@ namespace Hunter.WebUI.Controllers
         [HttpPost]
         public IActionResult Fill(string id, string dataID, [FromBody]Dictionary<string, object> dictionary)
         {
-            this.DynamicFormManager.Save(id, dataID, dictionary);
+            this.Manager.DynamicFormManager.Save(id, dataID, dictionary);
             return this.Ok();
         }
 
         public IActionResult GetDynamicData(string id, string dataID)
         {
-            var data = this.DynamicFormManager.Find(id, dataID);
+            var data = this.Manager.DynamicFormManager.Find(id, dataID);
             return this.Json(data?.ToDictionary());
         }
 

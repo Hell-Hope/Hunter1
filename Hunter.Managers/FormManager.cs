@@ -27,6 +27,22 @@ namespace Hunter.Managers
             return this.Forms.Find(filter).FirstOrDefault();
         }
 
+        public List<Models.Form.MenuItem> GetMenuItem()
+        {
+            var id = Builders<Entities.Form>.Projection.Include(nameof(Entities.Form.ID));
+            var name = Builders<Entities.Form>.Projection.Include(nameof(Entities.Form.Name));
+            var projection = Builders<Entities.Form>.Projection.Combine(id, name);
+            var list = this.Forms.Find(Builders<Entities.Form>.Filter.Empty).Project(projection).ToList();
+            var result = new List<Models.Form.MenuItem>();
+            foreach (var item in list)
+            {
+                var temp = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<Entities.Form>(item);
+                var menuItem = AutoMapper.Mapper.Map<Models.Form.MenuItem>(temp);
+                result.Add(menuItem);
+            }
+            return result;
+        }
+
         public Models.Form.Edit GetEdit(string id)
         {
             var entity = this.Find(id);

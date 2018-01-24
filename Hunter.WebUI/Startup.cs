@@ -22,8 +22,7 @@ namespace Hunter.WebUI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient(provider => new MongoDB.Driver.MongoClient("mongodb://127.0.0.1:27017"));
-            services.AddTransient<Managers.FormManager>();
-            services.AddTransient<Managers.DynamicFormManager>();
+            services.AddTransient<Managers.Manager>();
             services.AddMvc().AddJsonOptions(op => 
             {
                 // json大小写

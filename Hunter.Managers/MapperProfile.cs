@@ -19,6 +19,7 @@ namespace Hunter.Managers
 
             // Entity to Model
             this.CreateMap<Entities.Form, Models.Form.Edit>();
+            this.CreateMap<Entities.Form, Models.Form.MenuItem>();
         }
 
     }
