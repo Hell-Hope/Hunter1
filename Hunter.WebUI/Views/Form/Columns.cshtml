@@ -1,5 +1,7 @@
 ﻿@model Hunter.Entities.Form
-
+@{
+    this.Model.Fields = this.Model.Fields ?? new Dictionary<string, Hunter.Entities.Form.Field>();
+}
 @section Styles
 {
     <environment include="Development">
@@ -26,7 +28,12 @@
                     <label for="name">字段名称</label>
                 </td>
                 <td>
-                    <input type="text" class="form-control" name="field" />
+                    <select class="form-control" name="field">
+                    @foreach(var item in this.Model.Fields)
+                    {
+                        <option value="@item.Key">@item.Key</option>
+                    }
+                    </select>
                 </td>
             </tr>
             <tr>

@@ -33,6 +33,13 @@ namespace Hunter.Managers
             }
             return temp;
         }
+
+        public static string FormatQueryString(string str)
+        {
+            if (str == null)
+                return String.Empty;
+            return str.Replace("\\", "\\\\");
+        }
     }
 
     public class Manager
@@ -113,5 +120,17 @@ namespace Hunter.Managers
             }
         }
 
+
+        private UserManager userManager;
+
+        public UserManager UserManager
+        {
+            get
+            {
+                if (this.userManager == null)
+                    this.userManager = new UserManager(this.MongoClient);
+                return this.userManager;
+            }
+        }
     }
 }

@@ -57,13 +57,13 @@
                         </button>
                     </div>
                     <ul class="nav navbar-nav">
-                        <li>
+                        <li class="active">
                             <a href="index.html">
                                 <span class="icon fa fa-tachometer"></span>
                                 <span class="title">Dashboard</span>
                             </a>
                         </li>
-                        <li class="active panel panel-default dropdown">
+                        <li class="panel panel-default dropdown">
                             <a data-toggle="collapse" href="#dropdown-system-setting">
                                 <span class="icon fa fa-desktop"></span>
                                 <span class="title">系统设置</span>
@@ -89,7 +89,6 @@
                                     <ul class="nav navbar-nav">
                                         @foreach (var item in formMenuItems)
                                         {
-
                                             <li>
                                                 <a href="@this.Url.Content("~/DynamicForm/List/" + item.ID)" target="content">
                                                     @item.Name

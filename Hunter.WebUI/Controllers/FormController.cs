@@ -26,10 +26,13 @@ namespace Hunter.WebUI.Controllers
 
         public IActionResult Edit(string id)
         {
-            Models.Form.Edit edit = this.Manager.FormManager.GetEdit(id) ?? new Models.Form.Edit();
+            var edit = this.Manager.FormManager.GetEdit(id) ?? new Models.Form.Edit();
             if (String.IsNullOrWhiteSpace(edit.ID))
                 edit.ID = this.Manager.FormManager.GenerateMongoID;
-            return this.View(edit);
+            if (String.Equals(this.Request.Method, "post", StringComparison.OrdinalIgnoreCase))
+                return this.Ok(edit);
+            else
+                return this.View(edit);
         }
 
         public IActionResult Save([FromBody]Models.Form.Edit edit)

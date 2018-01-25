@@ -4,6 +4,8 @@ namespace Hunter.Models
 {
     public class Result
     {
+
+
         public static string TranslateCode(Code code)
         {
             return code.ToString();

@@ -167,7 +167,7 @@ namespace Hunter.Managers
             if (condition == null)
                 return list;
             if (!String.IsNullOrWhiteSpace(condition.Name))
-                list.Add(Builders<Entities.Form>.Filter.Regex(nameof(Entities.Form.Name), new BsonRegularExpression(condition.Name)));
+                list.Add(Builders<Entities.Form>.Filter.Regex(nameof(Entities.Form.Name), Helper.FormatQueryString(condition.Name)));
             return list;
         }
 

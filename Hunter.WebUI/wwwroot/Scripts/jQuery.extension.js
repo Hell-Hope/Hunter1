@@ -107,6 +107,7 @@
         cardView: false,                    //是否显示详细视图
         detailView: false,                  //是否显示父子表
         searchText: 'GetSearchCondition',
+        locale: 'zh-CN',
         queryParams: function (params) { //传递参数（*）
             var condition = window[this.searchText];
             if (condition && $.isFunction(condition))

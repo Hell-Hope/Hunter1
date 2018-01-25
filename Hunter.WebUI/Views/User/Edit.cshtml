@@ -1,22 +1,22 @@
-﻿@model Hunter.Models.Form.Edit
+﻿@model Hunter.Models.User.Edit
 
 <div class="position-absolute layout" style="left: 1em; right: 1em; bottom: 4.5em;">
     <input type="hidden" name="ID" value="@this.Model.ID" />
     <table class="table">
         <tr>
             <td style="width: 80px">
-                <label asp-for="Name">表单名称</label>
+                <label asp-for="Account">帐号</label>
             </td>
             <td>
-                <input type="text" class="form-control" placeholder="请输入表单名称" name="Name" value="@this.Model.Name" />
+                <input type="text" class="form-control" asp-for="Account" />
             </td>
         </tr>
         <tr>
             <td>
-                <label asp-for="Html">Html</label>
+                <label asp-for="Password"></label>
             </td>
             <td>
-                <textarea class="form-control" name="Html" rows="10">@this.Model.Html</textarea>
+                <input type="password" class="form-control" asp-for="Password" />
             </td>
         </tr>
         <tr>

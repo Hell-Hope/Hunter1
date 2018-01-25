@@ -14,15 +14,13 @@ namespace Hunter.WebUI.Controllers
         }
 
         protected Managers.Manager Manager { get; set; }
-
-        [Route("DynamicForm/List/{id}")]
+        
         public IActionResult List(string id)
         {
             var entity = this.Manager.FormManager.Find(id);
             return View(entity);
         }
-
-        [Route("DynamicForm/Query/{id}")]
+        
         public IActionResult Query(string id, [FromBody]Models.PageParam<Models.DynamicForm.Condition> pageParam)
         {
             var result = this.Manager.DynamicFormManager.Query(id, pageParam);
