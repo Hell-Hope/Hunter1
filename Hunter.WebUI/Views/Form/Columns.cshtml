@@ -80,6 +80,7 @@
             <span class="glyphicon glyphicon-save-file" aria-hidden="true"></span>
             <span>保存</span>
         </button>
+        <span id="lbl-state" style="margin: auto 10px;"></span>
     </div>
     <table id="table"></table>
 </div>
@@ -112,9 +113,9 @@
                 sidePagination: 'client',
                 columns: [
                     { checkbox: true },
-                    { field: 'sequence', title: '序号', width: '60px' },
-                    { field: 'field', title: '字段名称' },
-                    { field: 'width', title: '宽度', width: '100px' }
+                    { halign: 'center', field: 'sequence', title: '序号', width: '60px' },
+                    { halign: 'center', field: 'field', title: '字段名称' },
+                    { halign: 'center', field: 'width', title: '宽度', width: '100px' }
                 ]
             })
             var $table = $('#table').bootstrapTable(options);
@@ -135,7 +136,8 @@
                         insert = false;
                         var temp = getItem(value.field, value.timespan)
                         if (temp.index >= 0) {
-                            return window.top.layer.msg('字段名称已经存在')
+                            window.top.layer.msg('字段名称已经存在')
+                            return false
                         } else {
                             array.push(obj)
                         }
@@ -146,12 +148,23 @@
                 if (insert) {
                     var temp = getItem(obj.field, obj.timespan)
                     if (temp.index >= 0) {
-                        return window.top.layer.msg('字段名称已经存在')
+                        window.top.layer.msg('字段名称已经存在')
+                        return false
                     } else {
                         array.push(obj)
                     }
                 }
                 refreshData(array)
+                setState(2)
+                return true
+            }
+            var setState = function (flag) {
+                var $lblState = $('#lbl-state');
+                $lblState.removeClass('text-success').removeClass('text-warning')
+                if (flag == 1)
+                    $lblState.addClass('text-success').text('已保存')
+                else if (flag == 2)
+                    $lblState.addClass('text-warning').text('未保存')
             }
             var refreshData = function (array) {
                 options.data = array.sort(function (a, b) {
@@ -179,18 +192,20 @@
                     yes: function (index, layero) {
                         var o = layero.serializeData();
                         o.title = o.field
+                        o.halign = 'center'
                         if (obj.timespan)
                             o.timespan = obj.timespan
                         else
                             o.timespan = new Date().valueOf()
-                        upgradeData(o)
+                        if (upgradeData(o))
+                            window.top.layer.close(index)
                     }
 				})
 			}
-            $("#btn-insert").click(function () {
+            $('#btn-insert').click(function () {
                 edit({})
 			})
-			$("#btn-update").click(function () {
+			$('#btn-update').click(function () {
 				var selections = $table.bootstrapTable('getSelections');
 				if (selections.length == 0) {
 					window.top.layer.msg('请选择', { icon: 0 });
@@ -220,6 +235,7 @@
                     }
                 }
                 refreshData(array)
+                setState(2)
             })
             $('#btn-save').click(function () {
                 $.ajax({
@@ -229,6 +245,7 @@
                     data: JSON.stringify(options.data),
                     success: function () {
                         window.top.layer.msg('保存成功')
+                        setState(1)
                     }
                 })
             })

@@ -24,7 +24,7 @@
         </button>
         <button id="btn-columns" type="button" class="btn btn-default">
             <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-            <span>列</span>
+            <span>列表</span>
         </button>
         <button id="btn-delete" type="button" class="btn btn-default">
             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
@@ -48,8 +48,8 @@
                 url: '@this.Url.Content("~/Form/Query")',
                 columns: [
                     { checkbox: true },
-                    { field: 'Name', title: '表单名称', sortable: true, width: '200px' },
-                    { field: 'Remark', title: '备注', sortable: true, align: 'left' }
+                    { halign: 'center', field: 'Name', title: '表单名称', sortable: true, width: '200px' },
+                    { halign: 'center', field: 'Remark', title: '备注', sortable: true, align: 'left' }
                 ]
             }
             var $table = $('#table').bootstrapTable($.extend($.BootstrapTable.DEFAULT, options));
@@ -72,45 +72,59 @@
 					$table.bootstrapTable('refresh');
 				}
 			}
-            $("#btn-insert").click(function () {
+            $('#btn-insert').click(function () {
                 edit('')
 			})
-			$("#btn-update").click(function () {
+			$('#btn-update').click(function () {
 				var selections = $table.bootstrapTable('getSelections');
 				if (selections.length == 0) {
-					window.top.layer.msg('请选择', { icon: 0 });
+                    window.top.layer.msg.warning('请选择')
 				} else {
-					console.log(selections[0])
 					edit(selections[0].ID)
 				}
 			})
-			$("#btn-design").click(function () {
+			$('#btn-design').click(function () {
 				var selections = $table.bootstrapTable('getSelections');
 				if (selections.length == 0) {
-					window.top.layer.msg('请选择', { icon: 0 });
-				} else {
-					var url = '@this.Url.Action("Design")' + '/' + selections[0].ID
-					var specs = 'toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes'
-					specs += ", width=" + $(window.top).width()
-					specs += ", height=" + $(window.top).height()
-					window.open(url, '', specs)
+                    window.top.layer.msg.warning('请选择')
+                } else {
+                    window.top.layer.open({
+					    type: 2,
+					    title: '设计表单',
+					    maxmin: false, //开启最大化最小化按钮
+					    area: ['95%', '95%'],
+					    content: '@this.Url.Action("Design")' + '/' + selections[0].ID
+				    })
 				}
             })
-            $("#btn-columns").click(function () {
+            $('#btn-columns').click(function () {
                 var selections = $table.bootstrapTable('getSelections');
 				if (selections.length == 0) {
-					window.top.layer.msg('请选择', { icon: 0 });
+                    window.top.layer.msg.warning('请选择')
 				} else {
-					var url = '@this.Url.Action("Columns")' + '/' + selections[0].ID
 				    window.top.layer.open({
 					    type: 2,
 					    title: '编辑',
 					    maxmin: false, //开启最大化最小化按钮
 					    area: ['80%', '80%'],
-					    content: url
+					    content: '@this.Url.Action("Columns")' + '/' + selections[0].ID
 				    })
 				}
-
+            })
+            $('#btn-delete').click(function () {
+                var selections = $table.bootstrapTable('getSelections');
+                if (selections.length == 0) {
+                    window.top.layer.msg.warning('请选择')
+                } else {
+                    $.ajax({
+                        url: '@this.Url.Action("Remove")' + '/' + selections[0].ID,
+                        type: 'post',
+                        success: function () {
+                            window.top.layer.msg.success('删除成功')
+                            $table.bootstrapTable('refresh');
+                        }
+                    })
+                }
             })
 		})
     </script>

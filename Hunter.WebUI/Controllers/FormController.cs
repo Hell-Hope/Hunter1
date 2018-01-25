@@ -76,7 +76,12 @@ namespace Hunter.WebUI.Controllers
             return this.Ok();
         }
 
-        
+        [HttpPost]
+        public IActionResult Remove(string id)
+        {
+            this.Manager.FormManager.Remove(id);
+            return this.Ok();
+        }
 
     }
 }

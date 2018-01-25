@@ -53,5 +53,11 @@ namespace Hunter.WebUI.Controllers
             var data = this.Manager.DynamicFormManager.Find(id, dataID);
             return this.Json(data?.ToDictionary());
         }
+
+        public IActionResult Remove(string id, string dataID)
+        {
+            this.Manager.DynamicFormManager.Remove(id, dataID);
+            return this.Ok();
+        }
     }
 }

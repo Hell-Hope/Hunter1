@@ -73,7 +73,7 @@
 					title: '编辑',
 					maxmin: false, //开启最大化最小化按钮
 					area: ['80%', '80%'],
-					content: '@this.Url.Action("Edit", "DynamicForm", new { id = this.Model.ID })' + '?DataID=' + id
+					content: '@this.Url.Action("Edit", new { id = this.Model.ID })' + '?DataID=' + id
 				})
 				window.top.RefreshList = function () {
 					$table.bootstrapTable('refresh');
@@ -90,7 +90,22 @@
 					console.log(selections[0])
 					edit(selections[0].ID)
 				}
-			})
+            })
+            $('#btn-delete').click(function () {
+                var selections = $table.bootstrapTable('getSelections');
+                if (selections.length == 0) {
+                    window.top.layer.msg.warning('请选择')
+                } else {
+                    $.ajax({
+                        url: '@this.Url.Action("Remove", new { id = this.Model.ID })' + '?DataID=' + selections[0].ID,
+                        type: 'post',
+                        success: function () {
+                            window.top.layer.msg.success('删除成功')
+                            $table.bootstrapTable('refresh');
+                        }
+                    })
+                }
+            })
 		})
     </script>
 }

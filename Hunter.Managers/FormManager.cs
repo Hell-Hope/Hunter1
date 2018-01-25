@@ -62,6 +62,11 @@ namespace Hunter.Managers
             this.Forms.ReplaceOne(m => m.ID == edit.ID, entity, UpdateOptions);
         }
 
+        public void Remove(string id)
+        {
+            var r = this.Forms.DeleteOne(m => m.ID == id);
+        }
+
         /// <summary> 保存Html数据
         /// </summary>
         /// <param name="id"></param>

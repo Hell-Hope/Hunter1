@@ -44,6 +44,12 @@ namespace Hunter.Managers
             }
         }
 
+        public void Remove(string formID, string dataID)
+        {
+            var filter = Builders<BsonDocument>.Filter.Eq("ID", dataID);
+            this.DynamicForms(formID).DeleteOne(filter);
+        }
+
         public Models.PageResult<Dictionary<string, object>> Query(string formID, Models.PageParam<Models.DynamicForm.Condition> pageParam)
         {
             var filter = this.BuildFilter(pageParam.Condition);
