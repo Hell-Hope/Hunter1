@@ -50,12 +50,13 @@
         }
         var saveData = function (obj) {
             $.ajax({
-                url: '@this.Url.Action("Edit", new { id = this.Model.ID })' + '?dataID=' + _dataID,
+                url: '@this.Url.Action("Save", new { id = this.Model.ID })' + '?dataID=' + _dataID,
                 type: 'post',
                 contentType: 'application/json',
                 data: JSON.stringify(obj),
                 success: function () {
-                    alert("保存成功")
+                    window.top.layer.msg.success('保存成功')
+                    $.isFunction(window.top.RefreshList) && window.top.RefreshList()
                 }
             })
         }
