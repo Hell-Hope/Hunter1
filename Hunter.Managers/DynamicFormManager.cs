@@ -120,14 +120,21 @@ namespace Hunter.Managers
             doc.Close();
             return stream;
         }
+        */
 
-        public string GetCompleteHtml(string body, string basePath)
+        public string GetCompleteHtml(string body, Dictionary<string, object> data, string basePath)
         {
+            var doc = new HtmlAgilityPack.HtmlDocument();
+            doc.LoadHtml(body);
+            CompleteHtml(doc.DocumentNode, data, basePath);
+            body = doc.DocumentNode.InnerHtml;
+
             var css = System.IO.File.ReadAllText(System.IO.Path.Combine(basePath, @"Libraries\ckeditor\4.8.0\contents.css"));
             var format = $@"
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset=""UTF-8"" />
     <style>{css}</style>
 </head>
 <body class=""cke_editable cke_editable_themed cke_contents_ltr cke_show_borders"">
@@ -137,6 +144,41 @@ namespace Hunter.Managers
 ";
             return format;
         }
-        */
+
+        protected void CompleteHtml(HtmlAgilityPack.HtmlNode node, Dictionary<string, object> data, string basePath)
+        {
+            if (node == null)
+                return;
+            if (node.Name == "input")
+            {
+                var type = node.Attributes["type"]?.Value;
+                var name = node.Attributes["name"]?.Value;
+                if (String.IsNullOrWhiteSpace(name))
+                {
+                    return;
+                }
+                if (type == "checkbox")
+                {
+
+                }
+                else if (type == "radio")
+                {
+
+                }
+                else
+                {
+                    var value = Agent.Collection.TryGetClassValue(data, name);
+                    node.Attributes.Append("value", Agent.Convert.ToString(value));
+                }
+            }
+            else
+            {
+                foreach (var item in node.ChildNodes)
+                {
+                    CompleteHtml(item, data, basePath);
+                }
+            }
+        }
+
     }
 }

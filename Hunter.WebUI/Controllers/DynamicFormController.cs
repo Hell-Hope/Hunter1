@@ -61,16 +61,26 @@ namespace Hunter.WebUI.Controllers
             this.Manager.DynamicFormManager.Remove(id, dataID);
             return this.Ok();
         }
-
-        /*
+        
         public IActionResult Download(string id, string dataID, string type)
         {
             var entity = this.Manager.DynamicFormManager.Find(id, dataID);
-            //var html = this.Manager.DynamicFormManager.GetCompleteHtml(entity.Html, this.HostingEnvironment.WebRootPath);
-            var html = this.Manager.DynamicFormManager.GetCompleteHtml(entity.Html, @"C:\Users\Administrator\Source\Repos\Hunter\Hunter.WebUI\wwwroot");
-            var stream = this.Manager.DynamicFormManager.ParseHTML(html);
-            return this.File(stream, "application/pdf");
+            ////var html = this.Manager.DynamicFormManager.GetCompleteHtml(entity.Html, this.HostingEnvironment.WebRootPath);
+            var html = this.Manager.DynamicFormManager.GetCompleteHtml(entity.Html, entity.Data, @"C:\Users\Administrator\Source\Repos\Hunter\Hunter.WebUI\wwwroot");
+            //var stream = this.Manager.DynamicFormManager.ParseHTML(html);
+            //return this.File(stream, "application/pdf");
+            if (String.Equals("pdf", type, StringComparison.OrdinalIgnoreCase))
+            {
+                var stream = new System.IO.MemoryStream();
+                var fontProvider = new iText.Html2pdf.Resolver.Font.DefaultFontProvider(true, true, true);
+                var converterProperties = new iText.Html2pdf.ConverterProperties();
+                converterProperties.SetFontProvider(fontProvider);
+                iText.Html2pdf.HtmlConverter.ConvertToPdf(html, stream, converterProperties);
+                byte[] bytes = stream.ToArray();
+                return this.File(bytes, "application/pdf");
+            }
+            return this.Content(html, "text/html");
         }
-        */
+
     }
 }
