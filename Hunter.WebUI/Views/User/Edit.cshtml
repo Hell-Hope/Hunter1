@@ -1,14 +1,14 @@
 ﻿@model Hunter.Models.User.Edit
 
 <div class="position-absolute layout" style="left: 1em; right: 1em; bottom: 4.5em;">
-    <input type="hidden" name="ID" value="@this.Model.ID" />
+    <input type="hidden" asp-for="ID" />
     <table class="table">
         <tr>
             <td style="width: 80px">
-                <label asp-for="Account">帐号</label>
+                <label asp-for="Account"></label>
             </td>
             <td>
-                <input type="text" class="form-control" asp-for="Account" />
+                <input class="form-control" asp-for="Account" />
             </td>
         </tr>
         <tr>
@@ -16,15 +16,23 @@
                 <label asp-for="Password"></label>
             </td>
             <td>
-                <input type="password" class="form-control" asp-for="Password" />
+                <input class="form-control" asp-for="Password" />
             </td>
         </tr>
         <tr>
             <td>
-                <label asp-for="Remark">备注</label>
+                <label asp-for="Name"></label>
             </td>
             <td>
-                <textarea class="form-control" name="Remark">@this.Model.Remark</textarea>
+                <input class="form-control" asp-for="Name" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label asp-for="Remark"></label>
+            </td>
+            <td>
+                <textarea class="form-control" asp-for="Remark">@this.Model.Remark</textarea>
             </td>
         </tr>
     </table>
@@ -42,6 +50,15 @@
 @section Scripts
 {
     <script>
+        var initializeData = function () {
+            $.ajax({
+                type: 'post',
+                success: function (data) {
+
+                }
+            })
+        }
+
         $(function () {
             $('#btn-save').click(function (event) {
                 var obj = $('body').serializeData();

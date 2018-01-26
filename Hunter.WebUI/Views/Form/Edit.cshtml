@@ -1,30 +1,30 @@
 ﻿@model Hunter.Models.Form.Edit
 
 <div class="position-absolute layout" style="left: 1em; right: 1em; bottom: 4.5em;">
-    <input type="hidden" name="ID" value="@this.Model.ID" />
+    <input type="hidden" asp-for="ID" />
     <table class="table">
         <tr>
             <td style="width: 80px">
-                <label asp-for="Name">表单名称</label>
+                <label asp-for="Name"></label>
             </td>
             <td>
-                <input type="text" class="form-control" placeholder="请输入表单名称" name="Name" value="@this.Model.Name" />
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <label asp-for="Html">Html</label>
-            </td>
-            <td>
-                <textarea class="form-control" name="Html" rows="10">@this.Model.Html</textarea>
+                <input class="form-control" asp-for="Name" />
             </td>
         </tr>
         <tr>
             <td>
-                <label asp-for="Remark">备注</label>
+                <label asp-for="Html"></label>
             </td>
             <td>
-                <textarea class="form-control" name="Remark">@this.Model.Remark</textarea>
+                <textarea class="form-control" asp-for="Html"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label asp-for="Remark"></label>
+            </td>
+            <td>
+                <textarea class="form-control" asp-for="Remark"></textarea>
             </td>
         </tr>
     </table>
@@ -42,6 +42,8 @@
 @section Scripts
 {
     <script>
+
+
         $(function () {
             $('#btn-save').click(function (event) {
                 var obj = $('body').serializeData();
