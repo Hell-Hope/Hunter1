@@ -32,9 +32,14 @@ namespace Hunter.WebUI.Controllers
             if (String.IsNullOrWhiteSpace(edit.ID))
                 edit.ID = this.Manager.FormManager.GenerateMongoID;
             if (String.Equals(this.Request.Method, "post", StringComparison.OrdinalIgnoreCase))
+            {
                 return this.Ok(edit);
+            }
             else
+            {
+                this.ModelState.Clear();
                 return this.View(edit);
+            }
         }
 
         public IActionResult Save([FromBody]Models.User.Edit edit)

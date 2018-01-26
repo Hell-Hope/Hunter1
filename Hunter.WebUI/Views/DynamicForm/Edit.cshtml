@@ -27,12 +27,10 @@
     </div>
     <environment include="Development">
         <script src="~/Libraries/jquery/jquery-3.2.1.js"></script>
-        <script src="~/Libraries/bootstrap/3.3.7/js/bootstrap.js"></script>
         <script src="~/Scripts/jQuery.extension.js"></script>
     </environment>
     <environment exclude="Development">
         <script src="~/Libraries/jQuery/jquery-3.2.1.min.js"></script>
-        <script src="~/Libraries/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <script src="~/Scripts/jQuery.extension.js"></script>
     </environment>
     <script>
@@ -40,17 +38,17 @@
         var _dataID = "@this.ViewData["dataID"]"
         var initData = function () {
             $.ajax({
-                url: '@this.Url.Action("GetData", new { id = this.Model.ID })' + '?dataID=' + _dataID,
+                url: '@this.Url.Action("Find", new { id = this.Model.ID })' + '?dataID=' + _dataID,
                 type: 'post',
                 contentType: 'application/json',
                 success: function (data) {
-                    $("body").fillData(data)
+                    $("body").fillData(data.Data)
                 }
             })
         }
         var saveData = function (obj) {
             $.ajax({
-                url: '@this.Url.Action("Save", new { id = this.Model.ID })' + '?dataID=' + _dataID,
+                url: '@this.Url.Action("SaveData", new { id = this.Model.ID })' + '?dataID=' + _dataID,
                 type: 'post',
                 contentType: 'application/json',
                 data: JSON.stringify(obj),

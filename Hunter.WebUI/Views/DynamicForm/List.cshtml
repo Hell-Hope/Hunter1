@@ -24,6 +24,10 @@
             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
             <span>删除</span>
         </button>
+        <button id="btn-pdf" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-file" aria-hidden="true"></span>
+            <span>PDF</span>
+        </button>
     </div>
 	<table id="table"></table>
 </div>
@@ -51,6 +55,7 @@
             }
             var result = [{ checkbox: true }]
             for (var i = 0, length = temp.length; i < length; i++) {
+                temp[i].field = "Data." + temp[i].field
                 result.push(temp[i])
             }
             return result
@@ -58,7 +63,7 @@
 
         $(function () {
             var options = $.extend($.BootstrapTable.DEFAULT, {
-                url: '@this.Url.Content("~/DynamicForm/Query/" + this.Model.ID)',
+                url: '@this.Url.Action("Query", new { id = this.Model.ID })',
                 columns: getInitializeColumns()
             })
             var $table = $('#table').bootstrapTable(options);
@@ -105,6 +110,15 @@
                             $table.bootstrapTable('refresh');
                         }
                     })
+                }
+            })
+            $('#btn-pdf').click(function () {
+                var selections = $table.bootstrapTable('getSelections');
+                if (selections.length == 0) {
+                    window.top.layer.msg('请选择', { icon: 0 });
+                } else {
+                    var url = '@this.Url.Action("Download", new { id = this.Model.ID })' + '?type=PDF&DataID=' + selections[0].ID
+                    window.open(url)
                 }
             })
 		})

@@ -2,25 +2,29 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hunter.WebUI.Controllers
 {
     public class DynamicFormController : Controller
     {
-        public DynamicFormController(Managers.Manager manager)
+        public DynamicFormController(IHostingEnvironment hostingEnvironment, Managers.Manager manager)
         {
+            this.HostingEnvironment = hostingEnvironment;
             this.Manager = manager;
         }
 
+        protected IHostingEnvironment HostingEnvironment { get; set; }
+
         protected Managers.Manager Manager { get; set; }
-        
+
         public IActionResult List(string id)
         {
             var entity = this.Manager.FormManager.Find(id);
             return View(entity);
         }
-        
+
         public IActionResult Query(string id, [FromBody]Models.PageParam<Models.DynamicForm.Condition> pageParam)
         {
             var result = this.Manager.DynamicFormManager.Query(id, pageParam);
@@ -40,16 +44,16 @@ namespace Hunter.WebUI.Controllers
         }
 
         [HttpPost]
-        public IActionResult Save(string id, string dataID, [FromBody]Dictionary<string, object> dictionary)
+        public IActionResult SaveData(string id, string dataID, [FromBody]Dictionary<string, object> dictionary)
         {
-            this.Manager.DynamicFormManager.Save(id, dataID, dictionary);
+            this.Manager.DynamicFormManager.SaveData(id, dataID, dictionary);
             return this.Ok();
         }
 
-        public IActionResult GetData(string id, string dataID)
+        public IActionResult Find(string id, string dataID)
         {
             var data = this.Manager.DynamicFormManager.Find(id, dataID);
-            return this.Json(data?.ToDictionary());
+            return this.Json(data);
         }
 
         public IActionResult Remove(string id, string dataID)
@@ -57,5 +61,16 @@ namespace Hunter.WebUI.Controllers
             this.Manager.DynamicFormManager.Remove(id, dataID);
             return this.Ok();
         }
+
+        /*
+        public IActionResult Download(string id, string dataID, string type)
+        {
+            var entity = this.Manager.DynamicFormManager.Find(id, dataID);
+            //var html = this.Manager.DynamicFormManager.GetCompleteHtml(entity.Html, this.HostingEnvironment.WebRootPath);
+            var html = this.Manager.DynamicFormManager.GetCompleteHtml(entity.Html, @"C:\Users\Administrator\Source\Repos\Hunter\Hunter.WebUI\wwwroot");
+            var stream = this.Manager.DynamicFormManager.ParseHTML(html);
+            return this.File(stream, "application/pdf");
+        }
+        */
     }
 }
