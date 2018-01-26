@@ -76,7 +76,26 @@ namespace Hunter.WebUI.Controllers
                 var converterProperties = new iText.Html2pdf.ConverterProperties();
                 converterProperties.SetFontProvider(fontProvider);
                 iText.Html2pdf.HtmlConverter.ConvertToPdf(html, stream, converterProperties);
-                byte[] bytes = stream.ToArray();
+                
+
+                var result = new System.IO.MemoryStream();
+
+
+                String fieldName = "Signature1";
+                byte[] ownerPass = System.Text.Encoding.Default.GetBytes("World");
+                var reader = new iText.Kernel.Pdf.PdfReader(stream, new iText.Kernel.Pdf.ReaderProperties().SetPassword(ownerPass));
+                var signer = new iText.Signatures.PdfSigner(reader, result, true);
+                // Creating the appearance
+                var appearance = signer.GetSignatureAppearance().SetReason("Test1").SetLocation("TestCity");
+                signer.SetFieldName(fieldName);
+                // Creating the signature
+                var pks = new iText.Signatures.PrivateKeySignature(pk, iText.Signatures.DigestAlgorithms.SHA256);
+                signer.SignDetached(pks, chain, null, null, null, 0, iText.Signatures.PdfSigner.CryptoStandard.CADES);
+                //var verifier = new LtvVerifier(new PdfDocument(new PdfReader(dest, new ReaderProperties().SetPassword(ownerPass))));
+                //verifier.SetVerifyRootCertificate(false);
+                //verifier.Verify(null);
+                
+                byte[] bytes = result.ToArray();
                 return this.File(bytes, "application/pdf");
             }
             return this.Content(html, "text/html");
