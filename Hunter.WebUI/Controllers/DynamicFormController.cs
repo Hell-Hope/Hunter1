@@ -65,10 +65,7 @@ namespace Hunter.WebUI.Controllers
         public IActionResult Download(string id, string dataID, string type)
         {
             var entity = this.Manager.DynamicFormManager.Find(id, dataID);
-            ////var html = this.Manager.DynamicFormManager.GetCompleteHtml(entity.Html, this.HostingEnvironment.WebRootPath);
             var html = this.Manager.DynamicFormManager.GetCompleteHtml(entity.Html, entity.Data, this.HostingEnvironment.WebRootPath);
-            //var stream = this.Manager.DynamicFormManager.ParseHTML(html);
-            //return this.File(stream, "application/pdf");
             if (String.Equals("pdf", type, StringComparison.OrdinalIgnoreCase))
             {
                 var stream = new System.IO.MemoryStream();
@@ -76,28 +73,7 @@ namespace Hunter.WebUI.Controllers
                 var converterProperties = new iText.Html2pdf.ConverterProperties();
                 converterProperties.SetFontProvider(fontProvider);
                 iText.Html2pdf.HtmlConverter.ConvertToPdf(html, stream, converterProperties);
-
-
-                stream = new System.IO.MemoryStream(stream.ToArray());
-                var result = new System.IO.MemoryStream(stream.ToArray());
-
-
-                //String fieldName = "Signature1";
-                //byte[] ownerPass = System.Text.Encoding.Default.GetBytes("World");
-                //var reader = new iText.Kernel.Pdf.PdfReader(stream, new iText.Kernel.Pdf.ReaderProperties().SetPassword(ownerPass));
-                //var signer = new iText.Signatures.PdfSigner(reader, result, true);
-                //// Creating the appearance
-                //var appearance = signer.GetSignatureAppearance().SetReason("Test1").SetLocation("TestCity");
-                //signer.SetFieldName(fieldName);
-                // Creating the signature
-                
-                //var pks = new iText.Signatures.PrivateKeySignature(pk, iText.Signatures.DigestAlgorithms.SHA256);
-                //signer.SignDetached(pks, chain, null, null, null, 0, iText.Signatures.PdfSigner.CryptoStandard.CADES);
-                //var verifier = new LtvVerifier(new PdfDocument(new PdfReader(dest, new ReaderProperties().SetPassword(ownerPass))));
-                //verifier.SetVerifyRootCertificate(false);
-                //verifier.Verify(null);
-                
-                byte[] bytes = result.ToArray();
+                byte[] bytes = stream.ToArray();
                 return this.File(bytes, "application/pdf");
             }
             return this.Content(html, "text/html");
