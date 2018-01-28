@@ -207,4 +207,5 @@ a > img {
 input
 {
     border: 1px solid #999;
+    text-align: left;
 }
