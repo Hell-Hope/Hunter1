@@ -20,12 +20,19 @@ namespace Hunter.Entities
 
         public List<Dictionary<string, object>> Columns { get; set; }
 
+        public Dictionary<string, Node> Nodes { get; set; }
+
+        public Dictionary<string, Line> Lines { get; set; }
+
+        public Dictionary<string, Area> Areas { get; set; }
+
         public class Field
         {
             public string Name { get; set; }
 
             public string Type { get; set; }
         }
+
 
     }
 }

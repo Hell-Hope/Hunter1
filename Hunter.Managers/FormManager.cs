@@ -82,6 +82,33 @@ namespace Hunter.Managers
             this.Forms.UpdateOne(filter, set, UpdateOptions);
         }
 
+        public void SaveFlowChart(string id, Models.Form.FlowChart model)
+        {
+            var filter = this.BuildFilterEqualID<Entities.Form>(id);
+            var nodes = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Nodes), model.Nodes);
+            var lines = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Lines), model.Lines);
+            var areas = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Areas), model.Areas);
+            var set = Builders<Entities.Form>.Update.Combine(nodes, lines, areas);
+            this.Forms.UpdateOne(filter, set, UpdateOptions);
+        }
+
+        public Models.Form.FlowChart GetFlowChart(string id)
+        {
+            var entity = this.Find(id);
+            if (entity == null)
+                return null;
+            var model = new Models.Form.FlowChart()
+            {
+                Nodes = new Dictionary<string, Models.Form.Node>(),
+                Lines = new Dictionary<string, Models.Form.Line>(),
+                Areas = new Dictionary<string, Models.Form.Area>()
+            };
+            AutoMapper.Mapper.Map(entity.Nodes, model.Nodes);
+            AutoMapper.Mapper.Map(entity.Lines, model.Lines);
+            AutoMapper.Mapper.Map(entity.Areas, model.Areas);
+            return model;
+        }
+
         public void SaveColumns(string id, List<Dictionary<string, object>> list)
         {
             var filter = this.BuildFilterEqualID<Entities.Form>(id);

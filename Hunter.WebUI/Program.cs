@@ -12,6 +12,7 @@ namespace Hunter.WebUI
 {
     public class Program
     {
+
         public static void Main(string[] args)
         {
             AutoMapper.Mapper.Initialize(cfg =>

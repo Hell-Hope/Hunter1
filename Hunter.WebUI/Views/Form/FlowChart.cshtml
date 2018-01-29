@@ -1,0 +1,76 @@
+﻿@section Styles
+{
+    <link rel="stylesheet" href="~/Libraries/goo-flow/1.3.0/GooFlow.css" />
+}
+
+<div id="flowchart"></div>
+
+@section Scripts
+{
+    <script src="~/Libraries/goo-flow/1.3.0/GooFunc.js"></script>
+    <script src="~/Libraries/goo-flow/1.3.0/GooFlow.js"></script>
+    <script>
+        $(function () {
+            var property = {
+                toolBtns: ["start", "end", "task", "node", "chat", "state"],
+                haveHead: true,
+                headLabel: false,
+                // headBtns: ["new", "open", "save", "undo", "redo", "reload"],//如果haveHead=true，则定义HEAD区的按钮
+                headBtns: ["new", "open", "save", "reload"],
+                haveTool: true,
+                haveDashed: true,
+                haveGroup: true,
+                useOperStack: true
+            };
+
+            var $flowchart = $.createGooFlow($("#flowchart"), property);
+            $flowchart.onBtnNewClick = function () {
+                $flowchart.clearData()
+            }
+            $flowchart.onBtnSaveClick = function () {
+                var data = {
+                    nodes: $flowchart.$nodeData,
+                    lines: $flowchart.$lineData,
+                    areas: $flowchart.$areaData
+                }
+                $.ajax({
+                    url: '@this.Url.Action("SaveFlowChart", new { id = this.ViewData["ID"] })',
+                    type: 'post',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function () {
+                        window.top.layer.msg.success('保存成功')
+                    },
+                    error: function () {
+                        window.top.layer.msg.error('保存失败')
+                    }
+                })
+            }
+            $flowchart.onFreshClick = function () {
+                $flowchart.clearData()
+                $.ajax({
+                    url: '@this.Url.Action("FlowChart", new { id = this.ViewData["ID"] })',
+                    type: 'post',
+                    success: function (data) {
+                        $flowchart.loadData(data)
+                    },
+                    error: function () {
+                        window.top.layer.msg.error('加载失败')
+                    }
+                })
+            }
+            $flowchart.onItemDbClick = function (id, type) {
+                console.log(type)
+                if (type != "node")
+                    return true;
+                return false;
+            }
+
+            $(window).resize(function () {
+                $flowchart.reinitSize($(document).width(), $(document).height());
+            }).resize();
+
+            $flowchart.onFreshClick();
+        })
+    </script>
+}

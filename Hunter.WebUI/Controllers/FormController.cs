@@ -71,6 +71,24 @@ namespace Hunter.WebUI.Controllers
             return this.View(entity);
         }
 
+        public IActionResult FlowChart(string id)
+        {
+            if (String.Equals("post", this.Request.Method, StringComparison.OrdinalIgnoreCase))
+            {
+                var model = this.Manager.FormManager.GetFlowChart(id);
+                return this.Ok(model);
+            }
+            this.ViewData["ID"] = id;
+            return this.View();
+        }
+
+        [HttpPost]
+        public IActionResult SaveFlowChart(string id, [FromBody]Models.Form.FlowChart flowChart)
+        {
+            this.Manager.FormManager.SaveFlowChart(id, flowChart);
+            return this.Ok();
+        }
+
         [HttpGet]
         public IActionResult Columns(string id)
         {
