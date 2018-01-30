@@ -7,7 +7,7 @@ namespace Hunter.Models.Permit
     public class Condition
     {
 
-        public string Account { get; set; }
+        public string ID { get; set; }
 
         public string Name { get; set; }
 

@@ -72,8 +72,8 @@ namespace Hunter.Managers
                 return list;
             if (!String.IsNullOrWhiteSpace(condition.Name))
                 list.Add(Builders<Entities.Permit>.Filter.Regex(nameof(Entities.Permit.Name), Helper.FormatQueryString(condition.Name)));
-            if (!String.IsNullOrWhiteSpace(condition.Account))
-                list.Add(Builders<Entities.Permit>.Filter.Regex(nameof(Entities.Permit.Account), Helper.FormatQueryString(condition.Account)));
+            if (!String.IsNullOrWhiteSpace(condition.ID))
+                list.Add(Builders<Entities.Permit>.Filter.Regex(nameof(Entities.Permit.ID), Helper.FormatQueryString(condition.ID)));
             return list;
         }
 
