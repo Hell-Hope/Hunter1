@@ -185,12 +185,12 @@ namespace Hunter.Managers
         {
             var htmlDocument = new HtmlAgilityPack.HtmlDocument();
             htmlDocument.LoadHtml(html);
-            var result = new List<Entities.Form.Field>();
+            var result = new HashSet<Entities.Form.Field>();
             ParseHtml(htmlDocument.DocumentNode, result);
-            return result;
+            return result.ToList();
         }
 
-        protected void ParseHtml(HtmlAgilityPack.HtmlNode htmlNode, List<Entities.Form.Field> fields)
+        protected void ParseHtml(HtmlAgilityPack.HtmlNode htmlNode, ICollection<Entities.Form.Field> fields)
         {
             if (htmlNode == null)
                 return;
