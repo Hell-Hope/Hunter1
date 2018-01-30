@@ -9,7 +9,7 @@ namespace Hunter.Managers
 
         public static IFindFluent<TDocument, TProjection> Pagination<TDocument, TProjection, Condtion>(this IFindFluent<TDocument, TProjection> findFluent, Models.PageParam<Condtion> pageParam)
         {
-            var temp = findFluent; 
+            var temp = findFluent;
             if (pageParam.Index > 1)
                 temp = findFluent.Skip((pageParam.Index - 1) * pageParam.Size);
             temp = findFluent.Limit(pageParam.Size);
@@ -94,7 +94,7 @@ namespace Hunter.Managers
         }
 
 
-
+        #region FormManager
         private FormManager formManager;
 
         public FormManager FormManager
@@ -106,8 +106,9 @@ namespace Hunter.Managers
                 return this.formManager;
             }
         }
+        #endregion
 
-
+        #region DynamicFormManager
         private DynamicFormManager dynamicFormManager;
 
         public DynamicFormManager DynamicFormManager
@@ -119,8 +120,9 @@ namespace Hunter.Managers
                 return this.dynamicFormManager;
             }
         }
+        #endregion
 
-
+        #region UserManager
         private UserManager userManager;
 
         public UserManager UserManager
@@ -132,5 +134,20 @@ namespace Hunter.Managers
                 return this.userManager;
             }
         }
+        #endregion
+
+        #region PermitManager
+        private PermitManager permitManager;
+
+        public PermitManager PermitManager
+        {
+            get
+            {
+                if (this.permitManager == null)
+                    this.permitManager = new PermitManager(this.MongoClient);
+                return this.permitManager;
+            }
+        }
+        #endregion
     }
 }
