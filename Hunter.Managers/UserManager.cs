@@ -33,6 +33,15 @@ namespace Hunter.Managers
             return AutoMapper.Mapper.Map<Models.User.Edit>(entity);
         }
 
+        public bool ExistAccount(string account, string id)
+        {
+            var _account = Builders<Entities.User>.Filter.Eq(nameof(Entities.User.Account), account);
+            var _id = Builders<Entities.User>.Filter.Ne(nameof(Entities.User.ID), id);
+            var filter = Builders<Entities.User>.Filter.And(_account, _id);
+            var entity = this.Collection.Find(filter).FirstOrDefault();
+            return entity != null;
+        }
+
         public void Save(Models.User.Edit edit)
         {
             var entity = this.Find(edit.ID);
