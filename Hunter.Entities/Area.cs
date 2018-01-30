@@ -6,6 +6,8 @@ namespace Hunter.Entities
 {
     public class Area
     {
+        public string ID { get; set; }
+
         public bool Alt { get; set; }
 
         public int Top { get; set; }

@@ -84,12 +84,54 @@ namespace Hunter.Managers
 
         public void SaveFlowChart(string id, Models.Form.FlowChart model)
         {
+            var entity = new Entities.Form()
+            {
+                Nodes = new List<Entities.Node>(),
+                Lines = new List<Entities.Line>(),
+                Areas = new List<Entities.Area>()
+            };
+            Convert(model, entity);
             var filter = this.BuildFilterEqualID<Entities.Form>(id);
-            var nodes = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Nodes), model.Nodes);
-            var lines = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Lines), model.Lines);
-            var areas = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Areas), model.Areas);
+            var nodes = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Nodes), entity.Nodes);
+            var lines = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Lines), entity.Lines);
+            var areas = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Areas), entity.Areas);
             var set = Builders<Entities.Form>.Update.Combine(nodes, lines, areas);
             this.Forms.UpdateOne(filter, set, UpdateOptions);
+        }
+
+        private static void Convert(Models.Form.FlowChart model, Entities.Form entity)
+        {
+            if (model == null)
+                return;
+
+            if (model.Nodes != null)
+            {
+                foreach (var item in model.Nodes)
+                {
+                    var temp = AutoMapper.Mapper.Map<Entities.Node>(item.Value);
+                    temp.ID = item.Key;
+                    entity.Nodes.Add(temp);
+                }
+            }
+            if (model.Lines != null)
+            {
+                foreach (var item in model.Lines)
+                {
+                    var temp = AutoMapper.Mapper.Map<Entities.Line>(item.Value);
+                    temp.ID = item.Key;
+                    entity.Lines.Add(temp);
+                }
+            }
+            if (model.Areas != null)
+            {
+                foreach (var item in model.Areas)
+                {
+                    var temp = AutoMapper.Mapper.Map<Entities.Area>(item.Value);
+                    temp.ID = item.Key;
+                    entity.Areas.Add(temp);
+                }
+            }
+
         }
 
         public Models.Form.FlowChart GetFlowChart(string id)
@@ -97,7 +139,7 @@ namespace Hunter.Managers
             var entity = this.Find(id);
             return this.Convert(entity);
         }
-        
+
         public Models.Form.FlowChart Convert(Entities.Form entity)
         {
             if (entity == null)
@@ -108,9 +150,27 @@ namespace Hunter.Managers
                 Lines = new Dictionary<string, Models.Form.Line>(),
                 Areas = new Dictionary<string, Models.Form.Area>()
             };
-            AutoMapper.Mapper.Map(entity.Nodes, model.Nodes);
-            AutoMapper.Mapper.Map(entity.Lines, model.Lines);
-            AutoMapper.Mapper.Map(entity.Areas, model.Areas);
+            if (entity.Nodes != null)
+            {
+                foreach (var item in entity.Nodes)
+                {
+                    model.Nodes[item.ID] = AutoMapper.Mapper.Map<Models.Form.Node>(item);
+                }
+            }
+            if (entity.Lines != null)
+            {
+                foreach (var item in entity.Lines)
+                {
+                    model.Lines[item.ID] = AutoMapper.Mapper.Map<Models.Form.Line>(item);
+                }
+            }
+            if (entity.Areas != null)
+            {
+                foreach (var item in entity.Areas)
+                {
+                    model.Areas[item.ID] = AutoMapper.Mapper.Map<Models.Form.Area>(item);
+                }
+            }
             return model;
         }
 
@@ -121,16 +181,16 @@ namespace Hunter.Managers
             this.Forms.UpdateOne(filter, set, UpdateOptions);
         }
 
-        protected Dictionary<string, Entities.Form.Field> ParseHtml(string html)
+        protected List<Entities.Form.Field> ParseHtml(string html)
         {
             var htmlDocument = new HtmlAgilityPack.HtmlDocument();
             htmlDocument.LoadHtml(html);
-            var result = new Dictionary<string, Entities.Form.Field>();
+            var result = new List<Entities.Form.Field>();
             ParseHtml(htmlDocument.DocumentNode, result);
             return result;
         }
 
-        protected void ParseHtml(HtmlAgilityPack.HtmlNode htmlNode, Dictionary<string, Entities.Form.Field> fields)
+        protected void ParseHtml(HtmlAgilityPack.HtmlNode htmlNode, List<Entities.Form.Field> fields)
         {
             if (htmlNode == null)
                 return;
@@ -141,33 +201,36 @@ namespace Hunter.Managers
                     var name = childNode.Attributes["name"]?.Value;
                     if (String.IsNullOrWhiteSpace(name))
                         continue;
-                    fields[name] = new Entities.Form.Field()
+                    var temp = new Entities.Form.Field()
                     {
                         Name = name,
                         Type = childNode.Attributes["type"]?.Value
                     };
-                } 
+                    fields.Add(temp);
+                }
                 else if (childNode.Name == "select")
                 {
                     var name = childNode.Attributes["name"]?.Value;
                     if (String.IsNullOrWhiteSpace(name))
                         continue;
-                    fields[name] = new Entities.Form.Field()
+                    var temp = new Entities.Form.Field()
                     {
                         Name = name,
                         Type = "select"
                     };
+                    fields.Add(temp);
                 }
                 else if (childNode.Name == "textarea")
                 {
                     var name = childNode.Attributes["name"]?.Value;
                     if (String.IsNullOrWhiteSpace(name))
                         continue;
-                    fields[name] = new Entities.Form.Field()
+                    var temp = new Entities.Form.Field()
                     {
                         Name = name,
                         Type = "textarea"
                     };
+                    fields.Add(temp);
                 }
                 else
                 {
@@ -181,7 +244,7 @@ namespace Hunter.Managers
         {
             var filter = this.BuildFilter(pageParam.Condition);
             var collection = this.Forms.Find(filter);
-            
+
             var result = new Models.PageResult<Entities.Form>();
             result.Total = collection.Count();
             result.Data = collection.Sort(pageParam).Pagination(pageParam).ToList();

@@ -1,6 +1,6 @@
 ﻿@model Hunter.Entities.Form
 @{
-    this.Model.Fields = this.Model.Fields ?? new Dictionary<string, Hunter.Entities.Form.Field>();
+    this.Model.Fields = this.Model.Fields ?? new List<Hunter.Entities.Form.Field>();
 }
 @section Styles
 {
@@ -31,7 +31,7 @@
                     <select class="form-control" name="field">
                     @foreach(var item in this.Model.Fields)
                     {
-                        <option value="@item.Key">@item.Key</option>
+                        <option value="@item.Name">@item.Name</option>
                     }
                     </select>
                 </td>

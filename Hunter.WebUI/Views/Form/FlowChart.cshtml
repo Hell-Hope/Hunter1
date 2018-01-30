@@ -22,8 +22,8 @@
                     @foreach (var item in this.Model.Fields)
                     {
                         <label class="col-md-4 col-xs-6" style="margin-bottom: 10px;">
-                            <input type="checkbox" name="fields" value="@item.Key" /> 
-                            <span>@item.Key</span>
+                            <input type="checkbox" name="fields" value="@item.Name" /> 
+                            <span>@item.Name</span>
                         </label>
                     }   
                     </div>
@@ -98,7 +98,6 @@
                         content: $('#node-setting').html(),
                         btn: ['确定'],
                         success: function (layero, index) {
-                            console.log(obj)
                             layero.fillData(obj)
                         },
                         yes: function (index, layero) {

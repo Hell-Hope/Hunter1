@@ -16,15 +16,15 @@ namespace Hunter.Entities
 
         public string Remark { get; set; }
 
-        public Dictionary<string, Field> Fields { get; set; }
+        public List<Field> Fields { get; set; }
 
         public List<Dictionary<string, object>> Columns { get; set; }
 
-        public Dictionary<string, Node> Nodes { get; set; }
+        public List<Node> Nodes { get; set; }
 
-        public Dictionary<string, Line> Lines { get; set; }
+        public List<Line> Lines { get; set; }
 
-        public Dictionary<string, Area> Areas { get; set; }
+        public List<Area> Areas { get; set; }
 
         public class Field
         {

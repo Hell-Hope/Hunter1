@@ -41,6 +41,9 @@ namespace Hunter.Models.Form
 
         [JsonProperty("type")]
         public string Type { get; set; }
+
+        [JsonProperty("fields")]
+        public List<string> Fields { get; set; }
     }
 
     public class Line

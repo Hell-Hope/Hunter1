@@ -6,6 +6,7 @@ namespace Hunter.Entities
 {
     public class Line
     {
+        public string ID { get; set; }
 
         public double M { get; set; }
 
