@@ -4,6 +4,18 @@
 }
 
 <div id="flowchart"></div>
+<div style="display: none;" id="node-setting">
+    <table class="table">
+        <tr>
+            <td style="width: 100px">
+                <label for="name">名称</label>
+            </td>
+            <td>
+                <input type="text" class="form-control" name="name" />
+            </td>
+        </tr>
+    </table>
+</div>
 
 @section Scripts
 {
@@ -60,10 +72,29 @@
                 })
             }
             $flowchart.onItemDbClick = function (id, type) {
-                console.log(type)
-                if (type != "node")
+                if (type == "node") {
+                    var obj = $flowchart.$nodeData[id]
+                    window.top.layer.open({
+                        type: 1,
+                        title: '编辑',
+                        maxmin: false, //开启最大化最小化按钮
+                        area: ['80%', '80%'],
+                        content: $('#node-setting').html(),
+                        btn: ['确定'],
+                        success: function (layero, index) {
+                            layero.fillData(obj)
+                        },
+                        yes: function (index, layero) {
+                            var data = layero.serializeData()
+                            $flowchart.setName(id, data.name, type)
+                            window.top.layer.close(index)
+                        }
+                    })
+                    return false;
+                } else if (type == "line") {
                     return true;
-                return false;
+                }
+                return true;
             }
 
             $(window).resize(function () {

@@ -1,17 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2009
+VisualStudioVersion = 15.0.27130.2020
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hunter.WebUI", "Hunter.WebUI\Hunter.WebUI.csproj", "{C9ACA966-4529-4B97-88EF-1C2C3A132AB6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hunter.Entities", "Hunter.Entities\Hunter.Entities.csproj", "{F9AA4181-58F6-4F2D-B1FE-544E4CA71FB7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hunter.Entities", "Hunter.Entities\Hunter.Entities.csproj", "{F9AA4181-58F6-4F2D-B1FE-544E4CA71FB7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hunter.Agent", "Hunter.Agent\Hunter.Agent.csproj", "{43A50A3C-7D3D-4933-AD15-3020B9D2DC5A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hunter.Agent", "Hunter.Agent\Hunter.Agent.csproj", "{43A50A3C-7D3D-4933-AD15-3020B9D2DC5A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hunter.Models", "Hunter.Models\Hunter.Models.csproj", "{E6E9581C-46A7-42C4-9400-D88C29817F71}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hunter.Models", "Hunter.Models\Hunter.Models.csproj", "{E6E9581C-46A7-42C4-9400-D88C29817F71}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hunter.Managers", "Hunter.Managers\Hunter.Managers.csproj", "{478D2370-4236-4942-9B85-1A21A4CFD049}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hunter.Managers", "Hunter.Managers\Hunter.Managers.csproj", "{478D2370-4236-4942-9B85-1A21A4CFD049}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
