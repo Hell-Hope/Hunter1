@@ -73,13 +73,18 @@ namespace Hunter.WebUI.Controllers
 
         public IActionResult FlowChart(string id)
         {
+            var entity = this.Manager.FormManager.Find(id);
+            if (entity == null)
+            {
+                return this.NotFound();
+            }
             if (String.Equals("post", this.Request.Method, StringComparison.OrdinalIgnoreCase))
             {
-                var model = this.Manager.FormManager.GetFlowChart(id);
+                var model = this.Manager.FormManager.Convert(entity);
                 return this.Ok(model);
             }
             this.ViewData["ID"] = id;
-            return this.View();
+            return this.View(entity);
         }
 
         [HttpPost]

@@ -57,14 +57,34 @@
         for (var name in data) {
             var value = data[name];
             var $element = this.find("[name=" + name + "]");
+            var element = $element.get(0)
             if ($element.length == 0) {
 
             } else if ($element.is("input")) {
                 var type = $element.attr("type")
                 if (type == "checkbox") {
-
+                    $element.each(function (index, element) {
+                        element.checked = false
+                        if ($.isArray(value) || $.isPlainObject(value)) {
+                            for (var key in value) {
+                                if (value[key] == element.value) {
+                                    element.checked = true
+                                    break;
+                                }
+                            }
+                        } else {
+                            if (value == element.value) {
+                                element.checked = true
+                            }
+                        }
+                    })
                 } else if (type == "radio") {
-
+                    $element.each(function (index, element) {
+                        element.checked = false
+                        if (value == element.value) {
+                            element.checked = true
+                        }
+                    })
                 } else {
                     $element.val(value)
                 }

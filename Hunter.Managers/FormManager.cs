@@ -95,6 +95,11 @@ namespace Hunter.Managers
         public Models.Form.FlowChart GetFlowChart(string id)
         {
             var entity = this.Find(id);
+            return this.Convert(entity);
+        }
+        
+        public Models.Form.FlowChart Convert(Entities.Form entity)
+        {
             if (entity == null)
                 return null;
             var model = new Models.Form.FlowChart()
