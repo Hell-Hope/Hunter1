@@ -46,8 +46,8 @@ namespace Hunter.WebUI.Controllers
         {
             var result = this.Manager.PermitManager.Save(edit);
             if (result.Success)
-                return this.Ok();
-            return this.BadRequest();
+                return this.Ok(result);
+            return this.BadRequest(result);
         }
 
         [HttpPost]
@@ -55,8 +55,8 @@ namespace Hunter.WebUI.Controllers
         {
             var result = this.Manager.PermitManager.Remove(id);
             if (result.Success)
-                return this.Ok();
-            return this.BadRequest();
+                return this.Ok(result);
+            return this.BadRequest(result);
         }
 
     }

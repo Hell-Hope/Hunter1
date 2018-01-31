@@ -96,6 +96,12 @@
         }
     }
 
+    $(document).ajaxError(function (event, xhr, options, exc) {
+        if (xhr.responseJSON && xhr.responseJSON.Message) {
+            window.top.layer.msg.error(xhr.responseJSON.Message)
+        }
+    })
+
     // bootstrap table
     $.BootstrapTable = {}
     $.BootstrapTable.DEFAULT = {
