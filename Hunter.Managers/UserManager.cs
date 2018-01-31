@@ -42,8 +42,10 @@ namespace Hunter.Managers
             return entity != null;
         }
 
-        public void Save(Models.User.Edit edit)
+        public Models.Result Save(Models.User.Edit edit)
         {
+            if (this.ExistAccount(edit.Account, edit.ID))
+                return new Models.Result(Models.Code.Exist, "帐号已经存在");
             var entity = this.Find(edit.ID);
             if (entity == null)
                 entity = AutoMapper.Mapper.Map<Entities.User>(edit);
@@ -51,11 +53,13 @@ namespace Hunter.Managers
                 AutoMapper.Mapper.Map(edit, entity);
             var filter = this.BuildFilterEqualID<Entities.User>(edit.ID);
             this.Collection.ReplaceOne(filter, entity, UpdateOptions);
+            return new Models.Result();
         }
 
-        public void Remove(string id)
+        public Models.Result Remove(string id)
         {
             var r = this.Collection.DeleteOne(m => m.ID == id);
+            return new Models.Result();
         }
 
         public Models.PageResult<Entities.User> Query(Models.PageParam<Models.User.Condition> pageParam)

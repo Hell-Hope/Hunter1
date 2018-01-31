@@ -1,22 +1,14 @@
-﻿@model Hunter.Models.User.Edit
+﻿@model Hunter.Models.Permit.Edit
 
 <div class="position-absolute layout" style="left: 1em; right: 1em; bottom: 4.5em;">
     <input type="hidden" asp-for="ID" />
     <table class="table">
         <tr>
             <td style="width: 80px">
-                <label asp-for="Account"></label>
+                <label asp-for="Code"></label>
             </td>
             <td>
-                <input class="form-control" asp-for="Account" />
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <label asp-for="Password"></label>
-            </td>
-            <td>
-                <input class="form-control" asp-for="Password" />
+                <input class="form-control" asp-for="Code" />
             </td>
         </tr>
         <tr>
@@ -67,9 +59,15 @@
                     type: 'post',
                     contentType: 'application/json',
                     data: JSON.stringify(obj),
-					success: function () {
-						window.top.layer.msg('保存成功', { icon: 1 })
+                    success: function () {
+                        window.top.layer.msg.success('保存成功')
 						window.top.RefreshList && window.top.RefreshList()
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.log(jqXHR);
+                        console.log(textStatus);
+                        console.log(errorThrown);
+                        window.top.layer.msg.error('保存失败')
                     }
                 })
             })

@@ -15,14 +15,19 @@ namespace Hunter.Managers
         public void Configure()
         {
             this.ConfigureForm();
-       
+            this.ConfigureUser();
+            this.ConfigurePermit();
+        }
+
+        private void ConfigurePermit()
+        {
+            this.CreateMap<Models.Permit.Edit, Entities.Permit>();
+            this.CreateMap<Entities.Permit, Models.Permit.Edit>();
         }
 
         private void ConfigureUser()
         {
-            this.CreateMap<Models.User.Edit, Entities.User>().BeforeMap((m, e) =>
-            {
-                var password = e?.Password;
+            this.CreateMap<Models.User.Edit, Entities.User>().BeforeMap((m, e) => {
                 if (String.IsNullOrWhiteSpace(m.Password))
                 {
                     if (String.IsNullOrWhiteSpace(e?.Password))

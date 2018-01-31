@@ -44,15 +44,19 @@ namespace Hunter.WebUI.Controllers
 
         public IActionResult Save([FromBody]Models.Permit.Edit edit)
         {
-            this.Manager.PermitManager.Save(edit);
-            return this.Ok();
+            var result = this.Manager.PermitManager.Save(edit);
+            if (result.Success)
+                return this.Ok();
+            return this.BadRequest();
         }
 
         [HttpPost]
         public IActionResult Remove(string id)
         {
-            this.Manager.PermitManager.Remove(id);
-            return this.Ok();
+            var result = this.Manager.PermitManager.Remove(id);
+            if (result.Success)
+                return this.Ok();
+            return this.BadRequest();
         }
 
     }

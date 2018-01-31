@@ -42,17 +42,22 @@ namespace Hunter.WebUI.Controllers
             }
         }
 
+        [HttpPost]
         public IActionResult Save([FromBody]Models.User.Edit edit)
         {
-            this.Manager.UserManager.Save(edit);
-            return this.Ok();
+            var result = this.Manager.UserManager.Save(edit);
+            if (result.Success)
+                return this.Ok(result);
+            return this.BadRequest(result);
         }
 
         [HttpPost]
         public IActionResult Remove(string id)
         {
-            this.Manager.UserManager.Remove(id);
-            return this.Ok();
+            var result = this.Manager.UserManager.Remove(id);
+            if (result.Success)
+                return this.Ok(result);
+            return this.BadRequest(result);
         }
 
     }

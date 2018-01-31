@@ -34,8 +34,19 @@ namespace Hunter.Managers
             return AutoMapper.Mapper.Map<Models.Permit.Edit>(entity);
         }
 
-        public void Save(Models.Permit.Edit edit)
+        public bool ExistCode(string code, string id)
         {
+            var _code = Builders<Entities.Permit>.Filter.Eq(nameof(Entities.Permit.Code), code);
+            var _id = Builders<Entities.Permit>.Filter.Ne(nameof(Entities.Permit.ID), id);
+            var filter = Builders<Entities.Permit>.Filter.And(_code, _id);
+            var entity = this.Collection.Find(filter).FirstOrDefault();
+            return entity != null;
+        }
+
+        public Models.Result Save(Models.Permit.Edit edit)
+        {
+            if (this.ExistCode(edit.Code, edit.ID))
+                return new Models.Result(Models.Code.Exist, "权限码已经存在");
             var entity = this.Find(edit.ID);
             if (entity == null)
                 entity = AutoMapper.Mapper.Map<Entities.Permit>(edit);
@@ -43,11 +54,13 @@ namespace Hunter.Managers
                 AutoMapper.Mapper.Map(edit, entity);
             var filter = this.BuildFilterEqualID<Entities.Permit>(edit.ID);
             this.Collection.ReplaceOne(filter, entity, UpdateOptions);
+            return new Models.Result();
         }
 
-        public void Remove(string id)
+        public Models.Result Remove(string id)
         {
             var r = this.Collection.DeleteOne(m => m.ID == id);
+            return new Models.Result();
         }
 
         public Models.PageResult<Entities.Permit> Query(Models.PageParam<Models.Permit.Condition> pageParam)
