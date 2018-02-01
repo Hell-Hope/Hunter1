@@ -101,6 +101,12 @@
             window.top.layer.msg.error(xhr.responseJSON.Message)
         }
     })
+    $(document).ajaxSend(function (event, jqxhr, settings) {
+        jqxhr.index = window.top.layer.load(0, { shade: [0.3, '#000'] })
+    });
+    $(document).ajaxComplete(function (event, xhr, settings) {
+        window.top.layer.close(xhr.index)
+    });
 
     // bootstrap table
     $.BootstrapTable = {}
