@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using MongoDB.Driver;
 using MongoDB.Bson;
@@ -23,32 +24,43 @@ namespace Hunter.Managers
             return this.DynamicForms(formID).Find(filter).FirstOrDefault();
         }
 
-        public void SaveData(string formID, string dataID, Dictionary<string, object> dictionary)
+        public Models.Result SaveData(string formID, string dataID, Dictionary<string, object> dictionary)
         {
             var entity = this.Find(formID, dataID);
             if (entity == null)
             {
                 var form = this.FormManager.Find(formID);
-                entity = new Entities.DynamicForm()
+                entity = new Entities.DynamicForm() { ID = dataID, Data = new Dictionary<string, object>() };
+                form.CopyTo(entity);
+                entity.CurrentNode = entity.Nodes.GetStartNode();
+                this.DynamicForms(formID).ReplaceOne(m => m.ID == dataID, entity, UpdateOptions);
+            }
+            var data = entity.Data;
+            if (data == null)
+            {
+                data = new Dictionary<string, object>();
+            }
+            var fields = entity.CurrentNode.Fields;
+            if (fields != null)
+            {
+                foreach (var field in fields)
                 {
-                    ID = dataID,
-                    Data = dictionary,
-                    Html = form?.Html
-                };
+                    if (dictionary.TryGetValue(field, out object value))
+                        data[field] = value;
+                }
             }
             else
             {
-                if (entity.Data == null)
+                foreach (var item in dictionary)
                 {
-                    entity.Data = dictionary;
-                }
-                else
-                {
-                    foreach (var item in dictionary)
-                        entity.Data[item.Key] = item.Value;
+                    data[item.Key] = item.Value;
                 }
             }
-            this.DynamicForms(formID).ReplaceOne(m => m.ID == dataID, entity, UpdateOptions);
+            var filter = this.BuildFilterEqualID<Entities.DynamicForm>(dataID);
+            var set = Builders<Entities.DynamicForm>.Update.Set(nameof(Entities.DynamicForm.Data), data);
+            this.DynamicForms(formID).UpdateOne(filter, set, UpdateOptions);
+
+            return new Models.Result();
         }
 
         public void Remove(string formID, string dataID)
@@ -79,6 +91,40 @@ namespace Hunter.Managers
             if (condition == null)
                 return list;
             return list;
+        }
+
+        public Models.Result Next(string formID, string dataID, string lineID)
+        {
+            var entity = this.Find(formID, dataID);
+            if (entity == null)
+                return new Models.Result(Models.Code.NotFound, "没找到数据");
+            if (entity.Finish)
+                return new Models.Result(Models.Code.Fail, "已结束");
+            var line = entity.Lines.Where(l => l.ID == lineID && l.From == entity.CurrentNode.ID).FirstOrDefault();
+            if (line == null)
+                return new Models.Result(Models.Code.NotFound, "没找到线数据");
+            var node = entity.Nodes.Where(n => n.ID == line.To).FirstOrDefault();
+            if (node == null)
+                return new Models.Result(Models.Code.NotFound, "没找到下一个节点数据");
+            var filter = this.BuildFilterEqualID<Entities.DynamicForm>(dataID);
+            var set = Builders<Entities.DynamicForm>.Update.Set(nameof(Entities.DynamicForm.CurrentNode), node);
+            this.DynamicForms(formID).UpdateOne(filter, set, UpdateOptions);
+            return new Models.Result();
+        }
+
+        public Models.Result Finish(string formID, string dataID)
+        {
+            var entity = this.Find(formID, dataID);
+            if (entity == null)
+                return new Models.Result(Models.Code.NotFound, "没找到数据");
+            if (entity.Finish)
+                return new Models.Result(Models.Code.Fail, "已结束");
+            if (entity.CurrentNode.IsEndType)
+                return new Models.Result(Models.Code.Fail, "改节点不是结束节点");
+            var filter = this.BuildFilterEqualID<Entities.DynamicForm>(dataID);
+            var set = Builders<Entities.DynamicForm>.Update.Set(nameof(Entities.DynamicForm.Finish), true);
+            this.DynamicForms(formID).UpdateOne(filter, set, UpdateOptions);
+            return new Models.Result();
         }
 
         /*

@@ -34,12 +34,16 @@ namespace Hunter.WebUI.Controllers
         [HttpGet]
         public IActionResult Edit(string id, string dataID)
         {
-            var entity = this.Manager.FormManager.Find(id);
-            var data = this.Manager.DynamicFormManager.Find(id, dataID);
-            if (data == null)
-                dataID = this.Manager.DynamicFormManager.GenerateMongoID;
+            var entity = this.Manager.DynamicFormManager.Find(id, dataID);
+            if (entity == null)
+            {
+                entity = new Entities.DynamicForm() { ID = this.Manager.GenerateMongoID };
+                var form = this.Manager.FormManager.Find(id);
+                form.CopyTo(entity);
+                entity.CurrentNode = entity.Nodes.GetStartNode();
+            }
             this.ViewData["id"] = id;
-            this.ViewData["DataID"] = dataID;
+            this.ViewData["DataID"] = entity.ID;
             return this.View(entity);
         }
 
@@ -48,6 +52,22 @@ namespace Hunter.WebUI.Controllers
         {
             this.Manager.DynamicFormManager.SaveData(id, dataID, dictionary);
             return this.Ok();
+        }
+
+        public IActionResult Next(string id, string dataID, string lineID)
+        {
+            var result = this.Manager.DynamicFormManager.Next(id, dataID, lineID);
+            if (result.Success)
+                return this.Ok(result);
+            return this.BadRequest(result);
+        }
+
+        public IActionResult Finish(string formID, string dataID)
+        {
+            var result = this.Manager.DynamicFormManager.Finish(formID, dataID);
+            if (result.Success)
+                return this.Ok(result);
+            return this.BadRequest(result);
         }
 
         public IActionResult Find(string id, string dataID)

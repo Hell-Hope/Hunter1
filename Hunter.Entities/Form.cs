@@ -26,6 +26,14 @@ namespace Hunter.Entities
 
         public List<Area> Areas { get; set; }
 
+        public void  CopyTo(Entities.DynamicForm destination)
+        {
+            destination.Html = (this?.Html) ?? String.Empty;
+            destination.Nodes = (this?.Nodes) ?? new List<Entities.Node>();
+            destination.Lines = (this?.Lines) ?? new List<Entities.Line>();
+            destination.Areas = (this?.Areas) ?? new List<Entities.Area>();
+        }
+
         public class Field
         {
             public string Name { get; set; }

@@ -13,5 +13,15 @@ namespace Hunter.Entities
 
         public string Html { get; set; }
 
+        public List<Node> Nodes { get; set; }
+
+        public List<Line> Lines { get; set; }
+
+        public List<Area> Areas { get; set; }
+
+        public Node CurrentNode { get; set; }
+
+        public bool Finish { get; set; } = false;
+
     }
 }

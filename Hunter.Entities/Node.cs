@@ -23,5 +23,24 @@ namespace Hunter.Entities
         public string Type { get; set; }
 
         public List<string> Fields { get; set; }
+
+        [MongoDB.Bson.Serialization.Attributes.BsonIgnore]
+        public bool IsEndType
+        {
+            get
+            {
+                return "end".Equals(this.Type, StringComparison.OrdinalIgnoreCase);
+            }
+        }
+
+        [MongoDB.Bson.Serialization.Attributes.BsonIgnore]
+        public bool IsStartType
+        {
+            get
+            {
+                return "start".Equals(this.Type, StringComparison.OrdinalIgnoreCase);
+            }
+        }
+
     }
 }
