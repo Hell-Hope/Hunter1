@@ -28,7 +28,7 @@ namespace Hunter.WebUI.Controllers
         public IActionResult Query(string id, [FromBody]Models.PageParam<Models.DynamicForm.Condition> pageParam)
         {
             var result = this.Manager.DynamicFormManager.Query(id, pageParam);
-            return this.Json(result);
+            return result.ToActionResult();
         }
 
         [HttpGet]
@@ -50,30 +50,26 @@ namespace Hunter.WebUI.Controllers
         [HttpPost]
         public IActionResult SaveData(string id, string dataID, [FromBody]Dictionary<string, object> dictionary)
         {
-            this.Manager.DynamicFormManager.SaveData(id, dataID, dictionary);
-            return this.Ok();
+            var result = this.Manager.DynamicFormManager.SaveData(id, dataID, dictionary);
+            return result.ToActionResult();
         }
 
         public IActionResult Next(string id, string dataID, string lineID)
         {
             var result = this.Manager.DynamicFormManager.Next(id, dataID, lineID);
-            if (result.Success)
-                return this.Ok(result);
-            return this.BadRequest(result);
+            return result.ToActionResult();
         }
 
         public IActionResult Finish(string formID, string dataID)
         {
             var result = this.Manager.DynamicFormManager.Finish(formID, dataID);
-            if (result.Success)
-                return this.Ok(result);
-            return this.BadRequest(result);
+            return result.ToActionResult();
         }
 
         public IActionResult Find(string id, string dataID)
         {
             var data = this.Manager.DynamicFormManager.Find(id, dataID);
-            return this.Json(data);
+            return this.Ok(data);
         }
 
         public IActionResult Remove(string id, string dataID)
