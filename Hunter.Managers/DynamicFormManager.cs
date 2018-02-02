@@ -60,7 +60,7 @@ namespace Hunter.Managers
             var set = Builders<Entities.DynamicForm>.Update.Set(nameof(Entities.DynamicForm.Data), data);
             this.DynamicForms(formID).UpdateOne(filter, set, UpdateOptions);
 
-            return new Models.Result();
+            return Models.Result.Create();
         }
 
         public void Remove(string formID, string dataID)
@@ -97,34 +97,34 @@ namespace Hunter.Managers
         {
             var entity = this.Find(formID, dataID);
             if (entity == null)
-                return new Models.Result(Models.Code.NotFound, "没找到数据");
+                return Models.Result.Create(Models.Code.NotFound, "没找到数据");
             if (entity.Finish)
-                return new Models.Result(Models.Code.Fail, "已结束");
+                return Models.Result.Create(Models.Code.Fail, "已结束");
             var line = entity.Lines.Where(l => l.ID == lineID && l.From == entity.CurrentNode.ID).FirstOrDefault();
             if (line == null)
-                return new Models.Result(Models.Code.NotFound, "没找到线数据");
+                return Models.Result.Create(Models.Code.NotFound, "没找到线数据");
             var node = entity.Nodes.Where(n => n.ID == line.To).FirstOrDefault();
             if (node == null)
-                return new Models.Result(Models.Code.NotFound, "没找到下一个节点数据");
+                return Models.Result.Create(Models.Code.NotFound, "没找到下一个节点数据");
             var filter = this.BuildFilterEqualID<Entities.DynamicForm>(dataID);
             var set = Builders<Entities.DynamicForm>.Update.Set(nameof(Entities.DynamicForm.CurrentNode), node);
             this.DynamicForms(formID).UpdateOne(filter, set, UpdateOptions);
-            return new Models.Result();
+            return Models.Result.Create();
         }
 
         public Models.Result Finish(string formID, string dataID)
         {
             var entity = this.Find(formID, dataID);
             if (entity == null)
-                return new Models.Result(Models.Code.NotFound, "没找到数据");
+                return Models.Result.Create(Models.Code.NotFound, "没找到数据");
             if (entity.Finish)
-                return new Models.Result(Models.Code.Fail, "已结束");
+                return Models.Result.Create(Models.Code.Fail, "已结束");
             if (entity.CurrentNode.IsEndType)
-                return new Models.Result(Models.Code.Fail, "改节点不是结束节点");
+                return Models.Result.Create(Models.Code.Fail, "改节点不是结束节点");
             var filter = this.BuildFilterEqualID<Entities.DynamicForm>(dataID);
             var set = Builders<Entities.DynamicForm>.Update.Set(nameof(Entities.DynamicForm.Finish), true);
             this.DynamicForms(formID).UpdateOne(filter, set, UpdateOptions);
-            return new Models.Result();
+            return Models.Result.Create();
         }
 
         /*

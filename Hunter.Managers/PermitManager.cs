@@ -46,7 +46,7 @@ namespace Hunter.Managers
         public Models.Result Save(Models.Permit.Edit edit)
         {
             if (this.ExistCode(edit.Code, edit.ID))
-                return new Models.Result(Models.Code.Exist, "权限码已经存在");
+                return Models.Result.Create(Models.Code.Exist, "权限码已经存在");
             var entity = this.Find(edit.ID);
             if (entity == null)
                 entity = AutoMapper.Mapper.Map<Entities.Permit>(edit);
@@ -54,13 +54,13 @@ namespace Hunter.Managers
                 AutoMapper.Mapper.Map(edit, entity);
             var filter = this.BuildFilterEqualID<Entities.Permit>(edit.ID);
             this.Collection.ReplaceOne(filter, entity, UpdateOptions);
-            return new Models.Result();
+            return Models.Result.Create();
         }
 
         public Models.Result Remove(string id)
         {
             var r = this.Collection.DeleteOne(m => m.ID == id);
-            return new Models.Result();
+            return Models.Result.Create();
         }
 
         public Models.PageResult<Entities.Permit> Query(Models.PageParam<Models.Permit.Condition> pageParam)

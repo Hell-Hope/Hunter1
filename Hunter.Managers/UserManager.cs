@@ -45,7 +45,7 @@ namespace Hunter.Managers
         public Models.Result Save(Models.User.Edit edit)
         {
             if (this.ExistAccount(edit.Account, edit.ID))
-                return new Models.Result(Models.Code.Exist, "帐号已经存在");
+                return Models.Result.Create(Models.Code.Exist, "帐号已经存在");
             var entity = this.Find(edit.ID);
             if (entity == null)
                 entity = AutoMapper.Mapper.Map<Entities.User>(edit);
@@ -53,13 +53,30 @@ namespace Hunter.Managers
                 AutoMapper.Mapper.Map(edit, entity);
             var filter = this.BuildFilterEqualID<Entities.User>(edit.ID);
             this.Collection.ReplaceOne(filter, entity, UpdateOptions);
-            return new Models.Result();
+            return Models.Result.Create();
         }
 
         public Models.Result Remove(string id)
         {
             var r = this.Collection.DeleteOne(m => m.ID == id);
-            return new Models.Result();
+            return Models.Result.Create();
+        }
+
+        public Models.Result Login(Models.User.Login login)
+        {
+            var account = Builders<Entities.User>.Filter.Eq(nameof(Entities.User.Account), login.Account);
+            var password = Builders<Entities.User>.Filter.Eq(nameof(Entities.User.Password), login.Password);
+            var filter = Builders<Entities.User>.Filter.And(account, password);
+            var entity = this.Collection.Find(filter).FirstOrDefault();
+            if (entity == null)
+                return Models.Result.Create(Models.Code.Fail, "帐号或密码错误");
+            var applicationUser = new Models.ApplicationUser()
+            {
+                ID = entity.ID,
+                Account = entity.Account,
+                Name = entity.Name
+            };
+            return Models.Result.CreateDataResult(applicationUser);   
         }
 
         public Models.PageResult<Entities.User> Query(Models.PageParam<Models.User.Condition> pageParam)

@@ -15,6 +15,39 @@ namespace Hunter.WebUI.Controllers
 
         public Managers.Manager Manager { get;set;}
 
+        public IActionResult Login(Models.User.Login login)
+        {
+            var result = this.Manager.UserManager.Login(login);
+            if (result is Models.DataResult<Models.ApplicationUser> applicationUser)
+            {
+                return this.Login(applicationUser.Data);
+                return this.Ok(result);
+            }
+            return this.BadRequest(result);
+        }
+
+        [NonAction]
+        public ActionResult Login(Models.ApplicationUser applicationUser)
+        {
+            var claims = new System.Security.Claims.Claim[]
+            {
+                new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Name, applicationUser.ID),
+                new System.Security.Claims.Claim(nameof(applicationUser.ID), applicationUser.ID),
+                new System.Security.Claims.Claim(nameof(applicationUser.Account), applicationUser.Account),
+                new System.Security.Claims.Claim(nameof(applicationUser.Name), applicationUser.Name)
+            };
+            var claimsIdentity = new System.Security.Claims.ClaimsIdentity(claims, "Basic");
+            var claimsPrincipal = new System.Security.Claims.ClaimsPrincipal(claimsIdentity);
+            var result = this.SignIn(claimsPrincipal, Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme);
+            
+            return result;
+        }
+
+        public IActionResult GetClaims()
+        {
+            return this.Json(this.User?.Claims);
+        }
+
         public IActionResult List()
         {
             return this.View();
