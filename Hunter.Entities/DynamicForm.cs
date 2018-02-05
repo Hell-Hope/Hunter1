@@ -23,5 +23,75 @@ namespace Hunter.Entities
 
         public bool Finish { get; set; } = false;
 
+
+        public class Node
+        {
+            public string ID { get; set; }
+
+            public bool Alt { get; set; }
+
+            public int Top { get; set; }
+
+            public int Left { get; set; }
+
+            public int Width { get; set; }
+
+            public int Height { get; set; }
+
+            public string Name { get; set; }
+
+            public string Type { get; set; }
+
+            public List<string> Fields { get; set; }
+
+            [MongoDB.Bson.Serialization.Attributes.BsonIgnore]
+            public bool IsEndType { get => Helper.IsEndTypeNode(this.Type); }
+
+            [MongoDB.Bson.Serialization.Attributes.BsonIgnore]
+            public bool IsStartType { get => Helper.IsStartTypeNode(this.Type); }
+
+        }
+
+        public class Line
+        {
+            public string ID { get; set; }
+
+            public double M { get; set; }
+
+            public bool Alt { get; set; }
+
+            public bool Marked { get; set; }
+
+            public bool Dash { get; set; }
+
+            public string Name { get; set; }
+
+            public string From { get; set; }
+
+            public string To { get; set; }
+
+            public string Type { get; set; }
+
+        }
+
+        public class Area
+        {
+            public string ID { get; set; }
+
+            public bool Alt { get; set; }
+
+            public int Top { get; set; }
+
+            public int Left { get; set; }
+
+            public int Width { get; set; }
+
+            public int Height { get; set; }
+
+            public string Name { get; set; }
+
+            public string Color { get; set; }
+        }
+
     }
 }

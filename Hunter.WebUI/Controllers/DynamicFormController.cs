@@ -36,7 +36,7 @@ namespace Hunter.WebUI.Controllers
             {
                 entity = new Entities.DynamicForm() { ID = this.Manager.GenerateMongoID };
                 var form = this.Manager.FormManager.Find(id);
-                form.CopyTo(entity);
+                this.Manager.DynamicFormManager.Copy(form, entity);
                 entity.CurrentNode = entity.Nodes.GetStartNode();
             }
             this.ViewData["id"] = id;

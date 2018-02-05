@@ -31,7 +31,7 @@ namespace Hunter.Managers
             {
                 var form = this.FormManager.Find(formID);
                 entity = new Entities.DynamicForm() { ID = dataID, Data = new Dictionary<string, object>() };
-                form.CopyTo(entity);
+                this.Copy(form, entity);
                 entity.CurrentNode = entity.Nodes.GetStartNode();
                 this.DynamicForms(formID).ReplaceOne(m => m.ID == dataID, entity, UpdateOptions);
             }
@@ -61,6 +61,14 @@ namespace Hunter.Managers
             this.DynamicForms(formID).UpdateOne(filter, set, UpdateOptions);
 
             return Models.Result.Create();
+        }
+
+        public void Copy(Entities.Form source, Entities.DynamicForm destination)
+        {
+            destination.Html = (source?.Html) ?? String.Empty;
+            AutoMapper.Mapper.Map(source.Nodes, destination.Nodes);
+            AutoMapper.Mapper.Map(source.Lines, destination.Lines);
+            AutoMapper.Mapper.Map(source.Areas, destination.Areas);
         }
 
         public void Remove(string formID, string dataID)
