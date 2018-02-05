@@ -9,14 +9,12 @@ using Hunter.Managers;
 
 namespace Hunter.WebUI.Controllers
 {
-    public class FormController : Controller
+    public class FormController : SharedController
     {
-        public FormController(Manager manager)
-        {
-            this.Manager = manager;       
+        public FormController(Manager manager) : base(manager)
+        { 
         }
         
-        protected Manager Manager { get; set; }
        
 
         public IActionResult List()

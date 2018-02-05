@@ -84,54 +84,13 @@ namespace Hunter.Managers
 
         public void SaveFlowChart(string id, Models.Form.FlowChart model)
         {
-            var entity = new Entities.Form()
-            {
-                Nodes = new List<Entities.Node>(),
-                Lines = new List<Entities.Line>(),
-                Areas = new List<Entities.Area>()
-            };
-            Convert(model, entity);
+            var entity = AutoMapper.Mapper.Map<Entities.Form>(model);
             var filter = this.BuildFilterEqualID<Entities.Form>(id);
             var nodes = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Nodes), entity.Nodes);
             var lines = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Lines), entity.Lines);
             var areas = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Areas), entity.Areas);
             var set = Builders<Entities.Form>.Update.Combine(nodes, lines, areas);
             this.Forms.UpdateOne(filter, set, UpdateOptions);
-        }
-
-        private static void Convert(Models.Form.FlowChart model, Entities.Form entity)
-        {
-            if (model == null)
-                return;
-
-            if (model.Nodes != null)
-            {
-                foreach (var item in model.Nodes)
-                {
-                    var temp = AutoMapper.Mapper.Map<Entities.Node>(item.Value);
-                    temp.ID = item.Key;
-                    entity.Nodes.Add(temp);
-                }
-            }
-            if (model.Lines != null)
-            {
-                foreach (var item in model.Lines)
-                {
-                    var temp = AutoMapper.Mapper.Map<Entities.Line>(item.Value);
-                    temp.ID = item.Key;
-                    entity.Lines.Add(temp);
-                }
-            }
-            if (model.Areas != null)
-            {
-                foreach (var item in model.Areas)
-                {
-                    var temp = AutoMapper.Mapper.Map<Entities.Area>(item.Value);
-                    temp.ID = item.Key;
-                    entity.Areas.Add(temp);
-                }
-            }
-
         }
 
         public Models.Form.FlowChart GetFlowChart(string id)
@@ -142,36 +101,7 @@ namespace Hunter.Managers
 
         public Models.Form.FlowChart Convert(Entities.Form entity)
         {
-            if (entity == null)
-                return null;
-            var model = new Models.Form.FlowChart()
-            {
-                Nodes = new Dictionary<string, Models.Form.Node>(),
-                Lines = new Dictionary<string, Models.Form.Line>(),
-                Areas = new Dictionary<string, Models.Form.Area>()
-            };
-            if (entity.Nodes != null)
-            {
-                foreach (var item in entity.Nodes)
-                {
-                    model.Nodes[item.ID] = AutoMapper.Mapper.Map<Models.Form.Node>(item);
-                }
-            }
-            if (entity.Lines != null)
-            {
-                foreach (var item in entity.Lines)
-                {
-                    model.Lines[item.ID] = AutoMapper.Mapper.Map<Models.Form.Line>(item);
-                }
-            }
-            if (entity.Areas != null)
-            {
-                foreach (var item in entity.Areas)
-                {
-                    model.Areas[item.ID] = AutoMapper.Mapper.Map<Models.Form.Area>(item);
-                }
-            }
-            return model;
+            return AutoMapper.Mapper.Map<Models.Form.FlowChart>(entity);
         }
 
         public void SaveColumns(string id, List<Dictionary<string, object>> list)

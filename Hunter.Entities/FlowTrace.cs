@@ -15,6 +15,12 @@ namespace Hunter.Entities
 
         public string LineID { get; set; }
 
+        public DateTime DateTime { get; set; }
+
+        public string UserID { get; set; }
+
+        public string UserName { get; set; }
+
         public Dictionary<string, object> Data { get; set; }
 
     }

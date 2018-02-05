@@ -6,14 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hunter.WebUI.Controllers
 {
-    public class PermitController : Controller
+    public class PermitController : SharedController
     {
-        public PermitController(Managers.Manager manager)
+        public PermitController(Managers.Manager manager) : base(manager)
         {
-            this.Manager = manager;
         }
-
-        public Managers.Manager Manager { get; set; }
 
         public IActionResult List()
         {

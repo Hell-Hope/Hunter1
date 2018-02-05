@@ -18,9 +18,9 @@ namespace Hunter.Managers
             return this.DefaultDatabase.GetCollection<Entities.DynamicForm>("Dynamic" + formID);
         }
 
-        public Entities.DynamicForm Find(string formID, string id)
+        public Entities.DynamicForm Find(string formID, string dataID)
         {
-            var filter = this.BuildFilterEqualID<Entities.DynamicForm>(id);
+            var filter = this.BuildFilterEqualID<Entities.DynamicForm>(dataID);
             return this.DynamicForms(formID).Find(filter).FirstOrDefault();
         }
 
@@ -109,6 +109,7 @@ namespace Hunter.Managers
             var filter = this.BuildFilterEqualID<Entities.DynamicForm>(dataID);
             var set = Builders<Entities.DynamicForm>.Update.Set(nameof(Entities.DynamicForm.CurrentNode), node);
             this.DynamicForms(formID).UpdateOne(filter, set, UpdateOptions);
+            this.FlowTraceManager.InsertFlowTrace(entity, lineID);
             return Models.Result.Create();
         }
 
@@ -120,53 +121,22 @@ namespace Hunter.Managers
             if (entity.Finish)
                 return Models.Result.Create(Models.Code.Fail, "已结束");
             if (entity.CurrentNode.IsEndType)
-                return Models.Result.Create(Models.Code.Fail, "改节点不是结束节点");
+                return Models.Result.Create(Models.Code.Fail, "此节点不是结束节点");
             var filter = this.BuildFilterEqualID<Entities.DynamicForm>(dataID);
             var set = Builders<Entities.DynamicForm>.Update.Set(nameof(Entities.DynamicForm.Finish), true);
             this.DynamicForms(formID).UpdateOne(filter, set, UpdateOptions);
+            this.FlowTraceManager.InsertFlowTrace(entity, null);
             return Models.Result.Create();
         }
 
-        /*
-        public void ParseHTML(iTextSharp.text.Document doc, System.IO.Stream stream, string html)
+        public Models.DynamicForm.Progress GetProgress(string formID, string dataID)
         {
-            var writer = iTextSharp.text.pdf.PdfWriter.GetInstance(doc, stream);
-            var xmlWorkerHelper = iTextSharp.tool.xml.XMLWorkerHelper.GetInstance();
-            var cssResolver = new iTextSharp.tool.xml.css.StyleAttrCSSResolver();
-            var xmlWorkerFontProvider = new iTextSharp.tool.xml.XMLWorkerFontProvider();
-            xmlWorkerFontProvider.RegisterFamily("宋体", "simsun", "C:/Windows/Fonts/simsun.ttc,0");
-            var cssAppliers = new iTextSharp.tool.xml.html.CssAppliersImpl(xmlWorkerFontProvider);
-            var htmlContext = new iTextSharp.tool.xml.pipeline.html.HtmlPipelineContext(cssAppliers);
-            htmlContext.SetTagFactory(iTextSharp.tool.xml.html.Tags.GetHtmlTagProcessorFactory());
-            var pdfWriterPipeline = new iTextSharp.tool.xml.pipeline.end.PdfWriterPipeline(doc, writer);
-            var htmlPipeline = new iTextSharp.tool.xml.pipeline.html.HtmlPipeline(htmlContext, pdfWriterPipeline);
-            var cssResolverPipeline = new iTextSharp.tool.xml.pipeline.css.CssResolverPipeline(cssResolver, htmlPipeline);
-            var xmlWorker = new iTextSharp.tool.xml.XMLWorker(cssResolverPipeline, true);
-            var xmlParser = new iTextSharp.tool.xml.parser.XMLParser(xmlWorker);
-            using (var htmlReader = new System.IO.StringReader(html))
-            {
-                xmlParser.Parse(htmlReader);
-            }
+            var entity = this.Find(formID, dataID);
+            var progress = AutoMapper.Mapper.Map<Models.DynamicForm.Progress>(entity);
+            return progress;
         }
 
-        public void ParseHTML(System.IO.Stream stream, string html)
-        {
-            var doc = new iTextSharp.text.Document(new iTextSharp.text.Rectangle(0, 0, 1000, 800));
-            doc.Open();
-            this.ParseHTML(doc, stream, html);
-            doc.Close();
-        }
 
-        public System.IO.MemoryStream ParseHTML(string html)
-        {
-            var stream = new System.IO.MemoryStream();
-            var doc = new iTextSharp.text.Document(new iTextSharp.text.Rectangle(0, 0, 1000, 800));
-            doc.Open();
-            this.ParseHTML(doc, stream, html);
-            doc.Close();
-            return stream;
-        }
-        */
 
         public string GetCompleteHtml(string body, Dictionary<string, object> data, string basePath)
         {

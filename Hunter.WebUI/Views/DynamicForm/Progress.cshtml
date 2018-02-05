@@ -1,0 +1,38 @@
+﻿@section Styles
+{
+    <link rel="stylesheet" href="~/Libraries/goo-flow/1.3.0/GooFlow.css" />
+}
+
+<div style="display:none;" id="initialize-data">@this.Json.Serialize(this.Model)</div>
+<div id="flowchart"></div>
+
+@section Scripts
+{
+    <script src="~/Libraries/goo-flow/1.3.0/GooFunc.js"></script>
+    <script src="~/Libraries/goo-flow/1.3.0/GooFlow.js"></script>
+    <script>
+        var initializeData = function ($flowchart) {
+            var data = JSON.parse($('#initialize-data').text())
+            $flowchart.loadData(data)
+            console.log(data.CurrentNode)
+            $('#' + data.CurrentNode.ID).css({ 'background-color': 'green' })
+        }
+
+        $(function () {
+            var $flowchart = $.createGooFlow($("#flowchart"), {
+                toolBtns: ["start", "end", "task", "node", "chat", "state"],
+                haveHead: false,
+                headLabel: false,
+                headBtns: ["new", "open", "save", "reload"],
+                haveTool: false,
+                haveDashed: true,
+                haveGroup: true,
+                useOperStack: false
+            });
+            initializeData($flowchart)
+            $(window).resize(function () {
+                $flowchart.reinitSize($(document).width(), $(document).height());
+            }).resize();
+        })
+    </script>
+}

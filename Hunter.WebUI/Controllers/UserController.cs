@@ -7,15 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hunter.WebUI.Controllers
 {
-    public class UserController : Controller
+
+    public class UserController : SharedController
     {
-        public UserController(Managers.Manager manager)
+        public UserController(Managers.Manager manager) : base(manager)
         {
             this.Manager = manager;
         }
-
-        public Managers.Manager Manager { get;set;}
-
 
         public IActionResult List()
         {
@@ -25,7 +23,7 @@ namespace Hunter.WebUI.Controllers
         public IActionResult Query([FromBody]Models.PageParam<Models.User.Condition> pageParam)
         {
             var result = this.Manager.UserManager.Query(pageParam);
-            return result.ToActionResult();
+            return this.ActionResult(result);
         }
 
         public IActionResult Edit(string id)
@@ -48,14 +46,14 @@ namespace Hunter.WebUI.Controllers
         public IActionResult Save([FromBody]Models.User.Edit edit)
         {
             var result = this.Manager.UserManager.Save(edit);
-            return result.ToActionResult();
+            return this.ActionResult(result);
         }
 
         [HttpPost]
         public IActionResult Remove(string id)
         {
             var result = this.Manager.UserManager.Remove(id);
-            return result.ToActionResult();
+            return this.ActionResult(result);
         }
 
 
@@ -88,11 +86,10 @@ namespace Hunter.WebUI.Controllers
             return result;
         }
 
-        public IActionResult GetClaims()
+        public IActionResult GetApplicationUser()
         {
-            return this.Json(this.User?.Claims);
+            return this.Ok(this.Manager.ApplicationUser);
         }
-
 
     }
 }

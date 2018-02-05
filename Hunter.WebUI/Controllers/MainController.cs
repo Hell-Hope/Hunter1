@@ -6,14 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hunter.WebUI.Controllers
 {
-    public class MainController : Controller
+    public class MainController : SharedController
     {
-        public MainController(Managers.Manager manager)
+        public MainController(Managers.Manager manager) : base(manager)
         {
-            this.Manager = manager;
         }
-
-        public Managers.Manager Manager { get; set; }
 
         public IActionResult Index()
         {

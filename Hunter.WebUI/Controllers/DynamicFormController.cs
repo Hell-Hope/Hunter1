@@ -7,17 +7,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hunter.WebUI.Controllers
 {
-    public class DynamicFormController : Controller
+    public class DynamicFormController : SharedController
     {
-        public DynamicFormController(IHostingEnvironment hostingEnvironment, Managers.Manager manager)
+        public DynamicFormController(IHostingEnvironment hostingEnvironment, Managers.Manager manager) : base (manager)
         {
             this.HostingEnvironment = hostingEnvironment;
-            this.Manager = manager;
         }
 
         protected IHostingEnvironment HostingEnvironment { get; set; }
-
-        protected Managers.Manager Manager { get; set; }
 
         public IActionResult List(string id)
         {
@@ -28,7 +25,7 @@ namespace Hunter.WebUI.Controllers
         public IActionResult Query(string id, [FromBody]Models.PageParam<Models.DynamicForm.Condition> pageParam)
         {
             var result = this.Manager.DynamicFormManager.Query(id, pageParam);
-            return result.ToActionResult();
+            return this.ActionResult(result);
         }
 
         [HttpGet]
@@ -51,19 +48,25 @@ namespace Hunter.WebUI.Controllers
         public IActionResult SaveData(string id, string dataID, [FromBody]Dictionary<string, object> dictionary)
         {
             var result = this.Manager.DynamicFormManager.SaveData(id, dataID, dictionary);
-            return result.ToActionResult();
+            return this.ActionResult(result);
         }
 
         public IActionResult Next(string id, string dataID, string lineID)
         {
             var result = this.Manager.DynamicFormManager.Next(id, dataID, lineID);
-            return result.ToActionResult();
+            return this.ActionResult(result);
         }
 
-        public IActionResult Finish(string formID, string dataID)
+        public IActionResult Finish(string id, string dataID)
         {
-            var result = this.Manager.DynamicFormManager.Finish(formID, dataID);
-            return result.ToActionResult();
+            var result = this.Manager.DynamicFormManager.Finish(id, dataID);
+            return this.ActionResult(result);
+        }
+
+        public IActionResult Progress(string id, string dataID)
+        {
+            var progress = this.Manager.DynamicFormManager.GetProgress(id, dataID);
+            return this.View(progress);
         }
 
         public IActionResult Find(string id, string dataID)
@@ -96,5 +99,7 @@ namespace Hunter.WebUI.Controllers
             return this.Content(html, "text/html");
         }
 
+
+        
     }
 }

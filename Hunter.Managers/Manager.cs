@@ -57,6 +57,9 @@ namespace Hunter.Managers
             return Builders<T>.Filter.And(filters);
         }
 
+        public Func<Models.ApplicationUser> GetApplicationUser { get; set; }
+
+        public Models.ApplicationUser ApplicationUser { get => this.GetApplicationUser.Invoke(); }
 
         #region FormManager
         private FormManager formManager;
@@ -66,7 +69,10 @@ namespace Hunter.Managers
             get
             {
                 if (this.formManager == null)
+                {
                     this.formManager = new FormManager(this.MongoClient);
+                    this.formManager.GetApplicationUser = this.GetApplicationUser;
+                }
                 return this.formManager;
             }
         }
@@ -80,8 +86,28 @@ namespace Hunter.Managers
             get
             {
                 if (this.dynamicFormManager == null)
+                {
                     this.dynamicFormManager = new DynamicFormManager(this.MongoClient);
+                    this.dynamicFormManager.GetApplicationUser = this.GetApplicationUser;
+                }
                 return this.dynamicFormManager;
+            }
+        }
+        #endregion
+
+        #region FlowTraceManager
+        private FlowTraceManager flowTraceManager;
+
+        public FlowTraceManager FlowTraceManager
+        {
+            get
+            {
+                if (this.flowTraceManager == null)
+                {
+                    this.flowTraceManager = new FlowTraceManager(this.MongoClient);
+                    this.flowTraceManager.GetApplicationUser = this.GetApplicationUser;
+                }
+                return this.flowTraceManager;
             }
         }
         #endregion
@@ -94,7 +120,10 @@ namespace Hunter.Managers
             get
             {
                 if (this.userManager == null)
+                {
                     this.userManager = new UserManager(this.MongoClient);
+                    this.userManager.GetApplicationUser = this.GetApplicationUser;
+                }
                 return this.userManager;
             }
         }
@@ -108,7 +137,10 @@ namespace Hunter.Managers
             get
             {
                 if (this.permitManager == null)
+                {
                     this.permitManager = new PermitManager(this.MongoClient);
+                    this.permitManager.GetApplicationUser = this.GetApplicationUser;
+                }
                 return this.permitManager;
             }
         }
