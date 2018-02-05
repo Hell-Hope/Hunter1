@@ -4,7 +4,12 @@ using System.Text;
 
 namespace Hunter.Models.Form
 {
-    class Design
+    public class MenuItem
     {
+
+        public string ID { get; set; }
+
+        public string Name { get; set; }
+
     }
 }

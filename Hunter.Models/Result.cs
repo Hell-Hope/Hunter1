@@ -4,6 +4,16 @@ namespace Hunter.Models
 {
     public class Result
     {
+        public static DataResult<T> CreateDataResult<T>(T t)
+        {
+            return new DataResult<T>() { Data = t };
+        }
+
+        public static Result Create(Code code = Code.Success, string message = null)
+        {
+            return new Result(code, message);
+        }
+
         public static string TranslateCode(Code code)
         {
             return code.ToString();

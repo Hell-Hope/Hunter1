@@ -1,4 +1,17 @@
-﻿(function ($, undefined) {
+﻿
+
+(function ($, undefined) {
+    window.tryParseFloat = function (num, _default) {
+        try {
+            var result = window.parseFloat(num)
+            if (window.isNaN(result))
+                return _default;
+            return num;
+        } catch (e) {
+            return _default;
+        }
+    }
+
     $.fn.serializeData = function () {
         var obj = {}
         this.find('input').each(function (index, element) {
@@ -44,14 +57,34 @@
         for (var name in data) {
             var value = data[name];
             var $element = this.find("[name=" + name + "]");
+            var element = $element.get(0)
             if ($element.length == 0) {
 
             } else if ($element.is("input")) {
                 var type = $element.attr("type")
                 if (type == "checkbox") {
-
+                    $element.each(function (index, element) {
+                        element.checked = false
+                        if ($.isArray(value) || $.isPlainObject(value)) {
+                            for (var key in value) {
+                                if (value[key] == element.value) {
+                                    element.checked = true
+                                    break;
+                                }
+                            }
+                        } else {
+                            if (value == element.value) {
+                                element.checked = true
+                            }
+                        }
+                    })
                 } else if (type == "radio") {
-
+                    $element.each(function (index, element) {
+                        element.checked = false
+                        if (value == element.value) {
+                            element.checked = true
+                        }
+                    })
                 } else {
                     $element.val(value)
                 }
@@ -62,6 +95,18 @@
             }
         }
     }
+
+    $(document).ajaxError(function (event, xhr, options, exc) {
+        if (xhr.responseJSON && xhr.responseJSON.Message) {
+            window.top.layer.msg.error(xhr.responseJSON.Message)
+        }
+    })
+    $(document).ajaxSend(function (event, jqxhr, settings) {
+        jqxhr.index = window.top.layer.load(0, { shade: [0.3, '#000'] })
+    });
+    $(document).ajaxComplete(function (event, xhr, settings) {
+        window.top.layer.close(xhr.index)
+    });
 
     // bootstrap table
     $.BootstrapTable = {}
@@ -87,12 +132,14 @@
         showRefresh: true,                  //是否显示刷新按钮
         minimumCountColumns: 2,             //最少允许的列数
         clickToSelect: true,                //是否启用点击选中行
+        singleSelect: true,                 //设为true则允许复选框仅选择一行
         height: 500,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
         uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
         showToggle: false,                  //是否显示详细视图和列表视图的切换按钮
         cardView: false,                    //是否显示详细视图
         detailView: false,                  //是否显示父子表
         searchText: 'GetSearchCondition',
+        locale: 'zh-CN',
         queryParams: function (params) { //传递参数（*）
             var condition = window[this.searchText];
             if (condition && $.isFunction(condition))
@@ -112,4 +159,20 @@
 
         }
     }
-})(jQuery)
+
+
+    $(function () {
+        if (!window.layer)
+            return
+        layer.msg.warning = function (msg) {
+            return layer.msg(msg, { icon: 0 })
+        }
+        layer.msg.success = function (msg) {
+            return layer.msg(msg, { icon: 1 })
+        }
+        layer.msg.error = function (msg) {
+            return layer.msg(msg, { icon: 2 })
+        }
+    })
+})(jQuery);
+

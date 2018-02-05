@@ -1,0 +1,70 @@
+﻿@model Hunter.Models.Permit.Edit
+
+<div class="position-absolute layout" style="left: 1em; right: 1em; bottom: 4.5em;">
+    <input type="hidden" asp-for="ID" />
+    <table class="table">
+        <tr>
+            <td style="width: 80px">
+                <label asp-for="Code"></label>
+            </td>
+            <td>
+                <input class="form-control" asp-for="Code" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label asp-for="Name"></label>
+            </td>
+            <td>
+                <input class="form-control" asp-for="Name" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label asp-for="Remark"></label>
+            </td>
+            <td>
+                <textarea class="form-control" asp-for="Remark"></textarea>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="position-absolute layout border-top" style="top: auto; height: 4.5em;">
+    <table class="table border-0" style="height: 100%; margin: 0px;">
+        <tr>
+            <td>
+                <input type="button" class="btn btn-default" id="btn-save" value="保存" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+@section Scripts
+{
+    <script>
+        var initializeData = function () {
+            $.ajax({
+                type: 'post',
+                success: function (data) {
+
+                }
+            })
+        }
+
+        $(function () {
+            $('#btn-save').click(function (event) {
+                var obj = $('body').serializeData();
+                $.ajax({
+                    url: '@this.Url.Action("Save")',
+                    type: 'post',
+                    contentType: 'application/json',
+                    data: JSON.stringify(obj),
+                    success: function () {
+                        window.top.layer.msg.success('保存成功')
+						window.top.RefreshList && window.top.RefreshList()
+                    }
+                })
+            })
+        })
+    </script>
+}

@@ -4,36 +4,7 @@ using System.Collections.Generic;
 
 namespace Hunter.Managers
 {
-    public static class Helper
-    {
-
-        public static IFindFluent<TDocument, TProjection> Pagination<TDocument, TProjection, Condtion>(this IFindFluent<TDocument, TProjection> findFluent, Models.PageParam<Condtion> pageParam)
-        {
-            var temp = findFluent; 
-            if (pageParam.Index > 1)
-                temp = findFluent.Skip((pageParam.Index - 1) * pageParam.Size);
-            temp = findFluent.Limit(pageParam.Size);
-            return temp;
-        }
-
-        public static IFindFluent<TDocument, TProjection> Sort<TDocument, TProjection, Condtion>(this IFindFluent<TDocument, TProjection> findFluent, Models.PageParam<Condtion> pageParam)
-        {
-            var temp = findFluent;
-            if (pageParam.Sort != null)
-            {
-                var sort = new SortDefinitionBuilder<TDocument>();
-                if (pageParam.Sort.Order == Models.Order.Ascending)
-                {
-                    temp = temp.Sort(sort.Ascending(pageParam.Sort.Field));
-                }
-                else if (pageParam.Sort.Order == Models.Order.Descending)
-                {
-                    temp = temp.Sort(sort.Descending(pageParam.Sort.Field));
-                }
-            }
-            return temp;
-        }
-    }
+    
 
     public class Manager
     {
@@ -72,13 +43,12 @@ namespace Hunter.Managers
             }
         }
 
-        public FilterDefinition<T> BuildFilterEqualID<T>(string id)
+        protected FilterDefinition<T> BuildFilterEqualID<T>(string id)
         {
             return Builders<T>.Filter.Eq(nameof(Entities.Entity.ID), id);
         }
 
-
-        public FilterDefinition<T> BuildFilter<T>(List<FilterDefinition<T>> filters)
+        protected FilterDefinition<T> BuildFilter<T>(List<FilterDefinition<T>> filters)
         {
             if (filters.Count == 0)
             {
@@ -87,5 +57,93 @@ namespace Hunter.Managers
             return Builders<T>.Filter.And(filters);
         }
 
+        public Func<Models.ApplicationUser> GetApplicationUser { get; set; }
+
+        public Models.ApplicationUser ApplicationUser { get => this.GetApplicationUser.Invoke(); }
+
+        #region FormManager
+        private FormManager formManager;
+
+        public FormManager FormManager
+        {
+            get
+            {
+                if (this.formManager == null)
+                {
+                    this.formManager = new FormManager(this.MongoClient);
+                    this.formManager.GetApplicationUser = this.GetApplicationUser;
+                }
+                return this.formManager;
+            }
+        }
+        #endregion
+
+        #region DynamicFormManager
+        private DynamicFormManager dynamicFormManager;
+
+        public DynamicFormManager DynamicFormManager
+        {
+            get
+            {
+                if (this.dynamicFormManager == null)
+                {
+                    this.dynamicFormManager = new DynamicFormManager(this.MongoClient);
+                    this.dynamicFormManager.GetApplicationUser = this.GetApplicationUser;
+                }
+                return this.dynamicFormManager;
+            }
+        }
+        #endregion
+
+        #region FlowTraceManager
+        private FlowTraceManager flowTraceManager;
+
+        public FlowTraceManager FlowTraceManager
+        {
+            get
+            {
+                if (this.flowTraceManager == null)
+                {
+                    this.flowTraceManager = new FlowTraceManager(this.MongoClient);
+                    this.flowTraceManager.GetApplicationUser = this.GetApplicationUser;
+                }
+                return this.flowTraceManager;
+            }
+        }
+        #endregion
+
+        #region UserManager
+        private UserManager userManager;
+
+        public UserManager UserManager
+        {
+            get
+            {
+                if (this.userManager == null)
+                {
+                    this.userManager = new UserManager(this.MongoClient);
+                    this.userManager.GetApplicationUser = this.GetApplicationUser;
+                }
+                return this.userManager;
+            }
+        }
+        #endregion
+
+        #region PermitManager
+        private PermitManager permitManager;
+
+        public PermitManager PermitManager
+        {
+            get
+            {
+                if (this.permitManager == null)
+                {
+                    this.permitManager = new PermitManager(this.MongoClient);
+                    this.permitManager.GetApplicationUser = this.GetApplicationUser;
+                }
+                return this.permitManager;
+            }
+        }
+        #endregion
     }
 }

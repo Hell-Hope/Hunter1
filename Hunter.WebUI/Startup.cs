@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -22,8 +23,12 @@ namespace Hunter.WebUI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient(provider => new MongoDB.Driver.MongoClient("mongodb://127.0.0.1:27017"));
-            services.AddTransient<Managers.FormManager>();
-            services.AddTransient<Managers.DynamicFormManager>();
+            services.AddTransient<Managers.Manager>();
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            }).AddCookie();
             services.AddMvc().AddJsonOptions(op => 
             {
                 // json大小写
@@ -45,7 +50,7 @@ namespace Hunter.WebUI
             }
 
             app.UseStaticFiles();
-
+            app.UseAuthentication();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

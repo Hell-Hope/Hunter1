@@ -2,21 +2,17 @@
 Copyright (c) 2003-2017, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.md or https://ckeditor.com/legal/terms-of-use/#open-source-licences
 */
-@import url(../../bootstrap/3.3.7/css/bootstrap.css);
 
-body
-{
-	/* Font */
-	font-family: sans-serif, Arial, Verdana, "Trebuchet MS";
-	font-size: 12px;
-
-	/* Text color */
-	color: #333;
-
-	/* Remove the background color to make it transparent */
-	background-color: #fff;
-
-	margin: 20px;
+body {
+    /* Font */
+    /*font-family: sans-serif, Arial, Verdana, "Trebuchet MS";*/
+    font-family: sans ;
+    font-size: 12px;
+    /* Text color */
+    color: #333;
+    /* Remove the background color to make it transparent */
+    background-color: #fff;
+    margin: 20px;
 }
 
 .cke_editable
@@ -206,4 +202,10 @@ a > img {
 	max-width: 1920px;
 	max-height: 1080px;
 	margin:0 auto;
+}
+
+input
+{
+    border: 1px solid #999;
+    text-align: left;
 }

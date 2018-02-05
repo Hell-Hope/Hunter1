@@ -1,0 +1,147 @@
+﻿@model Hunter.Entities.DynamicForm
+@{
+    this.Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hunter</title>
+    <environment include="Development">
+        <link rel="stylesheet" href="~/Libraries/ckeditor/4.8.0/contents.css" />
+        <link rel="stylesheet" href="~/Libraries/ckeditor/4.8.0/plugins/copyformatting/styles/copyformatting.css" />
+        <link rel="stylesheet" href="~/Libraries/ckeditor/4.8.0/plugins/tableselection/styles/tableselection.css" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/Libraries/ckeditor/4.8.0/contents.css" />
+        <link rel="stylesheet" href="~/Libraries/ckeditor/4.8.0/plugins/copyformatting/styles/copyformatting.css" />
+        <link rel="stylesheet" href="~/Libraries/ckeditor/4.8.0/plugins/tableselection/styles/tableselection.css" />
+    </environment>
+</head>
+<body class="cke_editable cke_editable_themed cke_contents_ltr cke_show_borders">
+    @this.Html.Raw(this.Model.Html)
+    @if (!this.Model.Finish)
+    {
+        <div style="position: fixed; top: 10px; right: 10px;">
+            <span style="display: none;"></span>
+            <button id="btn-save-@this.Model.ID">保存</button>
+            @foreach (var line in this.Model.Lines.ByFrom(this.Model.CurrentNode.ID))
+            {
+                <br />
+                <button data-id="@line.ID" class="btn-@this.Model.ID">@line.Name</button>
+            }
+            @if (this.Model.CurrentNode.IsEndType)
+            {
+                <br />
+                <button id="btn-finish-@this.Model.ID">结束</button>
+            }
+        </div>
+    }
+    <environment include="Development">
+        <script src="~/Libraries/jquery/jquery-3.2.1.js"></script>
+        <script src="~/Scripts/jQuery.extension.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/Libraries/jQuery/jquery-3.2.1.min.js"></script>
+        <script src="~/Scripts/jQuery.extension.js"></script>
+    </environment>
+    <script>
+        var _id = "@this.ViewData["id"]"
+        var _dataID = "@this.ViewData["dataID"]"
+        var initData = function () {
+            $.ajax({
+                url: '@this.Url.Action("Find", new { id = this.ViewData["id"] })' + '?dataID=' + _dataID,
+                type: 'post',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data)
+                        $("body").fillData(data.Data)
+                }
+            })
+        }
+        $(function () {
+            initData();
+            $('body').find('input, select, textarea').attr('readonly', 'readonly')
+        })
+    </script>
+@if (!this.Model.Finish)
+{
+    <script>
+        var executeSaveData = function (obj, success) {
+            $.ajax({
+                url: '@this.Url.Action("SaveData", new { id = this.ViewData["id"] })' + '?dataID=' + _dataID,
+                type: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify(obj),
+                success: function () {
+                    success()
+                }
+            })
+        }
+        var executeNext = function (lineID, success) {
+            $.ajax({
+                url: '@this.Url.Action("Next", new { id = this.ViewData["id"] })' + '?dataID=' + _dataID + "&lineID=" + lineID,
+                type: 'post',
+                contentType: 'application/json',
+                success: function () {
+                    success()
+                }
+            })
+        }
+        var executeFinish = function (success) {
+            $.ajax({
+                url: '@this.Url.Action("Finish", new { id = this.ViewData["id"] })' + '?dataID=' + _dataID,
+                type: 'post',
+                contentType: 'application/json',
+                success: function () {
+                    success()
+                }
+            })
+        }
+        $(function () {
+            $('#btn-save-@this.Model.ID').click(function () {
+                var obj = $('body').serializeData();
+                executeSaveData(obj, function () {
+                    window.top.layer.msg.success('保存成功')
+                    $.isFunction(window.top.RefreshList) && window.top.RefreshList()
+                })
+            })
+            $('#btn-finish-@this.Model.ID').click(function () {
+                var obj = $('body').serializeData();
+                executeSaveData(obj, function () {
+                    executeFinish(function () {
+                        window.top.layer.msg.success('结束成功')
+                        $.isFunction(window.top.RefreshList) && window.top.RefreshList()
+                        var index = window.top.layer.getFrameIndex(window.name); //获取窗口索引
+                        window.top.layer.close(index);
+                    })
+                })
+            });
+            $('.btn-@this.Model.ID').click(function () {
+                var $that = $(this)
+                var obj = $('body').serializeData();
+                executeSaveData(obj, function () {
+                    executeNext($that.attr("data-id"), function () {
+                        window.top.layer.msg.success($that.text() + '成功')
+                        $.isFunction(window.top.RefreshList) && window.top.RefreshList()
+                        var index = window.top.layer.getFrameIndex(window.name); //获取窗口索引
+                        window.top.layer.close(index);
+                    })
+                })
+
+            })
+        })
+
+        $(function () {
+            @foreach(var field in this.Model.CurrentNode.Fields)
+            {
+                @:$('input[name=@this.Html.Raw(field)]').removeAttr('readonly')
+            }
+        })
+    </script>
+}
+    </body>
+</html>
+

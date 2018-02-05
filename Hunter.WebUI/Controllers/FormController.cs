@@ -9,17 +9,13 @@ using Hunter.Managers;
 
 namespace Hunter.WebUI.Controllers
 {
-    public class FormController : Controller
+    public class FormController : SharedController
     {
-        public FormController(FormManager formManager, DynamicFormManager dynamicFormManager)
-        {
-            this.FormManager = formManager;
-            this.DynamicFormManager = dynamicFormManager;
+        public FormController(Manager manager) : base(manager)
+        { 
         }
         
-        protected FormManager FormManager { get; set; }
-
-        protected DynamicFormManager DynamicFormManager { get; set; }
+       
 
         public IActionResult List()
         {
@@ -28,31 +24,39 @@ namespace Hunter.WebUI.Controllers
 
         public IActionResult Edit(string id)
         {
-            Models.Form.Edit edit = this.FormManager.GetEdit(id) ?? new Models.Form.Edit();
+            var edit = this.Manager.FormManager.GetEdit(id) ?? new Models.Form.Edit();
             if (String.IsNullOrWhiteSpace(edit.ID))
-                edit.ID = this.FormManager.GenerateMongoID;
-            return this.View(edit);
+                edit.ID = this.Manager.FormManager.GenerateMongoID;
+            if (String.Equals(this.Request.Method, "post", StringComparison.OrdinalIgnoreCase))
+            {
+                return this.Ok(edit);
+            }
+            else
+            {
+                this.ModelState.Clear();
+                return this.View(edit);
+            }
         }
 
         public IActionResult Save([FromBody]Models.Form.Edit edit)
         {
-            this.FormManager.Save(edit);
+            this.Manager.FormManager.Save(edit);
             return this.Ok();
         }
 
         public IActionResult Query([FromBody]Models.PageParam<Models.Form.Condition> pageParam)
         {
-            var result = this.FormManager.Query(pageParam);
+            var result = this.Manager.FormManager.Query(pageParam);
             return this.Json(result);
         }
 
         [HttpGet]
         public IActionResult Design(string id)
         {
-            var entity = this.FormManager.Find(id);
+            var entity = this.Manager.FormManager.Find(id);
             if (entity == null)
             {
-                entity = new Entities.Form() { ID = this.FormManager.GenerateMongoID };
+                entity = new Entities.Form() { ID = this.Manager.FormManager.GenerateMongoID };
             }
             return this.View(entity);
         }
@@ -60,35 +64,52 @@ namespace Hunter.WebUI.Controllers
         [HttpPost]
         public IActionResult Design(string id, string html)
         {
-            this.FormManager.SaveHtml(id, html);
-            var entity = this.FormManager.Find(id);
+            this.Manager.FormManager.SaveHtml(id, html);
+            var entity = this.Manager.FormManager.Find(id);
             return this.View(entity);
         }
 
-
-        [HttpGet]
-        public IActionResult Fill(string id, string dataID)
+        public IActionResult FlowChart(string id)
         {
-            var entity = this.FormManager.Find(id);
-            var data = this.DynamicFormManager.Find(id, dataID);
-            if (data == null)
-                dataID = this.DynamicFormManager.GenerateMongoID;
-            this.ViewData["id"] = id;
-            this.ViewData["DataID"] = dataID;
+            var entity = this.Manager.FormManager.Find(id);
+            if (entity == null)
+            {
+                return this.NotFound();
+            }
+            if (String.Equals("post", this.Request.Method, StringComparison.OrdinalIgnoreCase))
+            {
+                var model = this.Manager.FormManager.Convert(entity);
+                return this.Ok(model);
+            }
+            this.ViewData["ID"] = id;
             return this.View(entity);
         }
 
         [HttpPost]
-        public IActionResult Fill(string id, string dataID, [FromBody]Dictionary<string, object> dictionary)
+        public IActionResult SaveFlowChart(string id, [FromBody]Models.Form.FlowChart flowChart)
         {
-            this.DynamicFormManager.Save(id, dataID, dictionary);
+            this.Manager.FormManager.SaveFlowChart(id, flowChart);
             return this.Ok();
         }
 
-        public IActionResult GetDynamicData(string id, string dataID)
+        [HttpGet]
+        public IActionResult Columns(string id)
         {
-            var data = this.DynamicFormManager.Find(id, dataID);
-            return this.Json(data?.ToDictionary());
+            var entity = this.Manager.FormManager.Find(id);
+            return this.View(entity);
+        }
+
+        public IActionResult SaveColumns(string id, [FromBody]List<Dictionary<string, object>> list)
+        {
+            this.Manager.FormManager.SaveColumns(id, list);
+            return this.Ok();
+        }
+
+        [HttpPost]
+        public IActionResult Remove(string id)
+        {
+            this.Manager.FormManager.Remove(id);
+            return this.Ok();
         }
 
     }

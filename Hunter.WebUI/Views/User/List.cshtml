@@ -1,0 +1,98 @@
+﻿@section Styles
+    {
+    <environment include="Development">
+        <link rel="stylesheet" href="~/Libraries/bootstrap-table/1.11.1/bootstrap-table.css" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/Libraries/bootstrap-table/1.11.1/bootstrap-table.min.css" />
+    </environment>
+}
+
+<div style="padding: 0px 2em;">
+    <div id="toolbar" class="btn-group">
+        <button id="btn-insert" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            <span>新增</span>
+        </button>
+        <button id="btn-update" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+            <span>修改</span>
+        </button>
+        <button id="btn-delete" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+            <span>删除</span>
+        </button>
+    </div>
+    <table id="table"></table>
+</div>
+
+@section Scripts
+{
+    <environment include="Development">
+        <script src="~/Libraries/bootstrap-table/1.11.1/bootstrap-table.js"></script>
+        <script src="~/Libraries/bootstrap-table/1.11.1/locale/bootstrap-table-zh-CN.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/Libraries/bootstrap-table/1.11.1/bootstrap-table.min.js"></script>
+        <script src="~/Libraries/bootstrap-table/1.11.1/locale/bootstrap-table-zh-CN.min.js"></script>
+    </environment>
+    <script>
+        $(function () {
+            var options = $.extend($.BootstrapTable.DEFAULT, {
+                url: '@this.Url.Action("Query")',
+                columns: [
+                    { checkbox: true },
+                    { halign: 'center', field: 'Account', title: '帐号', sortable: true, width: '200px' },
+                    { halign: 'center', field: 'Name', title: '用户名', sortable: true, width: '200px' },
+                    { halign: 'center', field: 'Remark', title: '备注', sortable: true, align: 'left' }
+                ]
+            })
+            var $table = $('#table').bootstrapTable(options);
+
+			$(window).resize(function () {
+				$table.bootstrapTable('resetView', {
+					height: $('body').height()
+				});
+			}).resize()
+			var edit = function (id) {
+				id = id ? id : ''
+				window.top.layer.open({
+					type: 2,
+					title: '编辑',
+					maxmin: false, //开启最大化最小化按钮
+					area: ['80%', '80%'],
+					content: '@this.Url.Action("Edit")' + '?ID=' + id
+				})
+				window.top.RefreshList = function () {
+					$table.bootstrapTable('refresh');
+				}
+			}
+            $('#btn-insert').click(function () {
+                edit('')
+			})
+			$('#btn-update').click(function () {
+				var selections = $table.bootstrapTable('getSelections');
+				if (selections.length == 0) {
+                    window.top.layer.msg.warning('请选择')
+				} else {
+					edit(selections[0].ID)
+				}
+			})
+            $('#btn-delete').click(function () {
+                var selections = $table.bootstrapTable('getSelections');
+                if (selections.length == 0) {
+                    window.top.layer.msg.warning('请选择')
+                } else {
+                    $.ajax({
+                        url: '@this.Url.Action("Remove")' + '/' + selections[0].ID,
+                        type: 'post',
+                        success: function () {
+                            window.top.layer.msg.success('删除成功')
+                            $table.bootstrapTable('refresh');
+                        }
+                    })
+                }
+            })
+		})
+    </script>
+}
