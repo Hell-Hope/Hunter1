@@ -9,7 +9,7 @@ namespace Hunter.WebUI.Controllers
 {
     public class DynamicFormController : SharedController
     {
-        public DynamicFormController(IHostingEnvironment hostingEnvironment, Managers.Manager manager) : base (manager)
+        public DynamicFormController(IHostingEnvironment hostingEnvironment, Managers.Manager manager) : base(manager)
         {
             this.HostingEnvironment = hostingEnvironment;
         }
@@ -80,7 +80,7 @@ namespace Hunter.WebUI.Controllers
             this.Manager.DynamicFormManager.Remove(id, dataID);
             return this.Ok();
         }
-        
+
         public IActionResult Download(string id, string dataID, string type)
         {
             var entity = this.Manager.DynamicFormManager.Find(id, dataID);
@@ -100,6 +100,6 @@ namespace Hunter.WebUI.Controllers
         }
 
 
-        
+
     }
 }
