@@ -56,10 +56,20 @@ namespace Hunter.WebUI.Controllers
             return this.ActionResult(result);
         }
 
-
-
+        public IActionResult Logout()
+        {
+            return this.SignOut(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme);
+        }
 
         [AllowAnonymous]
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return this.View();
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
         public IActionResult Login(Models.User.Login login)
         {
             var result = this.Manager.UserManager.Login(login);

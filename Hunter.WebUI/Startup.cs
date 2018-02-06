@@ -28,11 +28,16 @@ namespace Hunter.WebUI
             {
                 options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            }).AddCookie();
+            }).AddCookie(options => {
+                options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/User/Login");
+            });
             services.AddMvc().AddJsonOptions(op => 
             {
                 // json大小写
                 op.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
+            }).AddViewOptions(options => {
+                //options.HtmlHelperOptions.ClientValidationEnabled = true;
+                
             });
         }
 
@@ -48,9 +53,10 @@ namespace Hunter.WebUI
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-
+            
             app.UseStaticFiles();
             app.UseAuthentication();
+           
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
