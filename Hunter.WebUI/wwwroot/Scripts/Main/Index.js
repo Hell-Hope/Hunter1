@@ -9,7 +9,7 @@
         $('.app-container').toggleClass('expanded');
         $('.navbar-expand-toggle').toggleClass('fa-rotate-90');
     });
-    return $('.navbar-right-expand-toggle').click(function () {
+    $('.navbar-right-expand-toggle').click(function () {
         $('.navbar-right').toggleClass('expanded');
         $('.navbar-right-expand-toggle').toggleClass('fa-rotate-90');
     });
