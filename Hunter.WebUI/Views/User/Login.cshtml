@@ -26,7 +26,12 @@
     <script src="~/Libraries/layer/3.1.1/layer.js"></script>
     <script>
         $(function () {
+            var validate_options = $.extend($.Validate.DEFAULT, {})
+            var validator = $('form').validate(validate_options);
+            
             $('#btn-login').click(function () {
+                if (!validator.form())
+                    return false
                 var data = $('form').serializeData()
                 $.ajax({
                     type: 'post',

@@ -108,6 +108,25 @@
         window.top.layer.close(xhr.index)
     });
 
+    // jquery Validate
+    if (!$.Validate)
+        $.Validate = {}
+    $.Validate.DEFAULT = {
+        errorPlacement: function ($label, input) {
+            var $input = $(input)
+            var index = $input.attr('data-layer-index')
+            window.top.layer.close(index)
+            var msg = $label.text()
+            if (msg)
+                $input.attr('data-layer-index', window.top.layer.tips(msg, $input, { tipsMore: true, tips: [2, '#78BA32'] }))
+        },
+        success: function ($label, input) {
+            var $input = $(input)
+            var index = $input.attr('data-layer-index')
+            window.top.layer.close(index)
+        }
+    }
+
     // bootstrap table
     $.BootstrapTable = {}
     $.BootstrapTable.DEFAULT = {
