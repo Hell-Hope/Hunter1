@@ -112,20 +112,21 @@
     if (!$.Validate)
         $.Validate = {}
     $.Validate.DEFAULT = {
-        tipPosition: 3,
+        tipsPosition: 2,
+        tipsColor: '#78BA32',
         errorPlacement: function ($label, input) {
-            console.log(this)
+            var tips = [this.settings.tipsPosition, this.settings.tipsColor]
             var $input = $(input)
             var index = $input.attr('data-layer-index')
-            window.top.layer.close(index)
+            window.layer.close(index)
             var msg = $label.text()
             if (msg)
-                $input.attr('data-layer-index', window.top.layer.tips(msg, $input, { tipsMore: true, tips: [3, '#78BA32'] }))
+                $input.attr('data-layer-index', window.layer.tips(msg, $input, { tipsMore: true, tips: tips }))
         },
         success: function ($label, input) {
             var $input = $(input)
             var index = $input.attr('data-layer-index')
-            window.top.layer.close(index)
+            window.layer.close(index)
         }
     }
 
