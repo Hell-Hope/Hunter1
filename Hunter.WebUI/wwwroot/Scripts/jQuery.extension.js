@@ -112,13 +112,15 @@
     if (!$.Validate)
         $.Validate = {}
     $.Validate.DEFAULT = {
+        tipPosition: 3,
         errorPlacement: function ($label, input) {
+            console.log(this)
             var $input = $(input)
             var index = $input.attr('data-layer-index')
             window.top.layer.close(index)
             var msg = $label.text()
             if (msg)
-                $input.attr('data-layer-index', window.top.layer.tips(msg, $input, { tipsMore: true, tips: [2, '#78BA32'] }))
+                $input.attr('data-layer-index', window.top.layer.tips(msg, $input, { tipsMore: true, tips: [3, '#78BA32'] }))
         },
         success: function ($label, input) {
             var $input = $(input)
