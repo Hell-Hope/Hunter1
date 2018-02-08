@@ -30,8 +30,8 @@
             var validator = $('form').validate(validate_options);
             
             $('#btn-login').click(function () {
-                //if (!validator.form())
-                    //return false
+                if (!validator.form())
+                    return false
                 var data = $('form').serializeData()
                 $.ajax({
                     type: 'post',

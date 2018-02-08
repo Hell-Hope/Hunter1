@@ -17,6 +17,8 @@ namespace Hunter.WebUI.Controllers
             return this.View();
         }
 
+
+        [ActionFilters.ModelStateErrorFilterAttribute]
         public IActionResult Query([FromBody]Models.PageParam<Models.Permit.Condition> pageParam)
         {
             var result = this.Manager.PermitManager.Query(pageParam);
@@ -39,6 +41,7 @@ namespace Hunter.WebUI.Controllers
             }
         }
 
+        [ActionFilters.ModelStateErrorFilterAttribute]
         public IActionResult Save([FromBody]Models.Permit.Edit edit)
         {
             var result = this.Manager.PermitManager.Save(edit);

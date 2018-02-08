@@ -38,12 +38,14 @@ namespace Hunter.WebUI.Controllers
             }
         }
 
+        [ActionFilters.ModelStateErrorFilterAttribute]
         public IActionResult Save([FromBody]Models.Form.Edit edit)
         {
             this.Manager.FormManager.Save(edit);
             return this.Ok();
         }
 
+        [ActionFilters.ModelStateErrorFilterAttribute]
         public IActionResult Query([FromBody]Models.PageParam<Models.Form.Condition> pageParam)
         {
             var result = this.Manager.FormManager.Query(pageParam);
@@ -86,6 +88,7 @@ namespace Hunter.WebUI.Controllers
         }
 
         [HttpPost]
+        [ActionFilters.ModelStateErrorFilterAttribute]
         public IActionResult SaveFlowChart(string id, [FromBody]Models.Form.FlowChart flowChart)
         {
             this.Manager.FormManager.SaveFlowChart(id, flowChart);

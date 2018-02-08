@@ -22,6 +22,7 @@ namespace Hunter.WebUI.Controllers
             return View(entity);
         }
 
+        [ActionFilters.ModelStateErrorFilterAttribute]
         public IActionResult Query(string id, [FromBody]Models.PageParam<Models.DynamicForm.Condition> pageParam)
         {
             var result = this.Manager.DynamicFormManager.Query(id, pageParam);
@@ -57,6 +58,7 @@ namespace Hunter.WebUI.Controllers
             return this.ActionResult(result);
         }
 
+        [ActionFilters.ModelStateErrorFilterAttribute]
         public IActionResult Finish(string id, string dataID)
         {
             var result = this.Manager.DynamicFormManager.Finish(id, dataID);
