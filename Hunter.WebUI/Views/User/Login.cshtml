@@ -30,14 +30,14 @@
             var validator = $('form').validate(validate_options);
             
             $('#btn-login').click(function () {
-                if (!validator.form())
-                    return false
+                //if (!validator.form())
+                    //return false
                 var data = $('form').serializeData()
                 $.ajax({
                     type: 'post',
                     data: data,
                     success: function () {
-                        window.top.open('/', '_self')
+                        window.top.open('@this.Url.Action("Index", "Main")', '_self')
                     }
                 })
             })

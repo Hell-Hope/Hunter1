@@ -20,6 +20,7 @@ namespace Hunter.WebUI.Controllers
             return this.View();
         }
 
+        [ActionFilters.ModelStateErrorFilterAttribute]
         public IActionResult Query([FromBody]Models.PageParam<Models.User.Condition> pageParam)
         {
             var result = this.Manager.UserManager.Query(pageParam);
@@ -43,6 +44,7 @@ namespace Hunter.WebUI.Controllers
         }
 
         [HttpPost]
+        [ActionFilters.ModelStateErrorFilterAttribute]
         public IActionResult Save([FromBody]Models.User.Edit edit)
         {
             var result = this.Manager.UserManager.Save(edit);
@@ -70,6 +72,7 @@ namespace Hunter.WebUI.Controllers
 
         [AllowAnonymous]
         [HttpPost]
+        [ActionFilters.ModelStateErrorFilterAttribute]
         public IActionResult Login(Models.User.Login login)
         {
             var result = this.Manager.UserManager.Login(login);

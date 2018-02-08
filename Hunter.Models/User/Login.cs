@@ -15,6 +15,7 @@ namespace Hunter.Models.User
 
         [DisplayName("密码")]
         [Required()]
+        [MinLength(6)]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
