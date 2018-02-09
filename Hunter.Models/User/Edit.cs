@@ -29,5 +29,7 @@ namespace Hunter.Models.User
         [DataType(DataType.MultilineText)]
         public string Remark { get; set; }
 
+        [DisplayName("权限")]
+        public HashSet<string> Permits { get; set; }
     }
 }

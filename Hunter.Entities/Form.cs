@@ -72,11 +72,14 @@ namespace Hunter.Entities
 
             public List<string> Fields { get; set; }
 
+            public HashSet<string> Permits { get; set; }
+
             [MongoDB.Bson.Serialization.Attributes.BsonIgnore]
             public bool IsEndType { get => Helper.IsEndTypeNode(this.Type); }
 
             [MongoDB.Bson.Serialization.Attributes.BsonIgnore]
             public bool IsStartType { get => Helper.IsStartTypeNode(this.Type); }
+
 
         }
 

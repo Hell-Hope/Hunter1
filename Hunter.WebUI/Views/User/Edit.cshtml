@@ -1,5 +1,8 @@
 ﻿@model Hunter.Models.User.Edit
-
+@{ 
+    var permits = this.ViewData["Permits"] as List<Hunter.Models.Permit.Choose>;
+    this.Model.Permits = this.Model.Permits ?? new HashSet<string>();
+}
 <form id="form" class="position-absolute layout" style="left: 1em; right: 1em; bottom: 4.5em;">
     <input type="hidden" asp-for="ID" />
     <table class="table">
@@ -25,6 +28,24 @@
             </td>
             <td>
                 <input class="form-control" asp-for="Name" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label asp-for="Permits"></label>
+            </td>
+            <td style="text-align: left;">
+                <div class="container-fluid">
+                    <div class="row">
+                        @foreach (var permit in permits)
+                        {
+                            <label class="col-md-4 col-xs-6" style="margin-bottom: 10px;">
+                                <input type="checkbox" id="Permits" name="Permits" @(this.Model.Permits.Any(m => m == permit.Code) ? "checked" : "") value="@permit.Code"/>
+                                <span>@permit.Name</span>
+                            </label>
+                        }
+                    </div>
+                </div>
             </td>
         </tr>
         <tr>

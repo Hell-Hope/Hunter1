@@ -20,6 +20,21 @@ namespace Hunter.Managers
             }
         }
 
+        public List<Models.Permit.Choose> GetAllForChoose()
+        {
+            var filter = Builders<Entities.Permit>.Filter.Empty;
+            var projections = new ProjectionDefinition<Entities.Permit>[]
+            {
+                Builders<Entities.Permit>.Projection.Include(nameof(Entities.Permit.ID)),
+                Builders<Entities.Permit>.Projection.Include(nameof(Entities.Permit.Code)),
+                Builders<Entities.Permit>.Projection.Include(nameof(Entities.Permit.Name))
+            };
+            var projection = Builders<Entities.Permit>.Projection.Combine(projections);
+            var list = this.Collection.Find(filter).Project(projection).As<Entities.Permit>().ToList();
+            var result = AutoMapper.Mapper.Map<List<Models.Permit.Choose>>(list);
+            return result ?? new List<Models.Permit.Choose>();
+        }
+
         public Entities.Permit Find(string id)
         {
             var filter = this.BuildFilterEqualID<Entities.Permit>(id);

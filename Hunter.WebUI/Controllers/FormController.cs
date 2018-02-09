@@ -83,7 +83,8 @@ namespace Hunter.WebUI.Controllers
                 var model = this.Manager.FormManager.Convert(entity);
                 return this.Ok(model);
             }
-            this.ViewData["ID"] = id;
+            this.ModelState.Clear();
+            this.ViewData["Permits"] = this.Manager.PermitManager.GetAllForChoose();
             return this.View(entity);
         }
 

@@ -39,6 +39,7 @@ namespace Hunter.WebUI.Controllers
             else
             {
                 this.ModelState.Clear();
+                this.ViewData["Permits"] = this.Manager.PermitManager.GetAllForChoose();
                 return this.View(edit);
             }
         }

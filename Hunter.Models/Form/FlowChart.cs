@@ -44,6 +44,9 @@ namespace Hunter.Models.Form
 
         [JsonProperty("fields")]
         public List<string> Fields { get; set; }
+
+        [JsonProperty("permits")]
+        public HashSet<string> Permits { get; set; }
     }
 
     public class Line

@@ -41,14 +41,16 @@ namespace Hunter.Managers
             return result;
         }
 
-        private List<TDestination> DictionaryToList<TSource, TDestination, ID>(Dictionary<ID, TSource> sources)
+        protected List<TDestination> DictionaryToList<TSource, TDestination, ID>(Dictionary<ID, TSource> sources, Action<ID, TSource, TDestination> action)
         {
             var result = new List<TDestination>();
             if (sources == null)
                 return result;
             foreach (var item in sources)
             {
-                result.Add(AutoMapper.Mapper.Map<TDestination>(item));
+                var temp = AutoMapper.Mapper.Map<TSource, TDestination>(item.Value);
+                action(item.Key, item.Value, temp);
+                result.Add(temp);
             }
             return result;
         }
@@ -81,6 +83,7 @@ namespace Hunter.Managers
         {
             this.CreateMap<Models.Permit.Edit, Entities.Permit>();
             this.CreateMap<Entities.Permit, Models.Permit.Edit>();
+            this.CreateMap<Entities.Permit, Models.Permit.Choose>();
         }
 
         private void ConfigureUser()
@@ -120,13 +123,13 @@ namespace Hunter.Managers
             this.CreateMap<Models.Form.Area, Entities.Form.Area>();
             this.CreateMap<Models.Form.FlowChart, Entities.Form>().ForMember(destination => destination.Nodes, options =>
             {
-                options.ResolveUsing(entity => this.DictionaryToList<Models.Form.Node, Entities.Form.Node, string>(entity.Nodes));
+                options.ResolveUsing(entity => this.DictionaryToList<Models.Form.Node, Entities.Form.Node, string>(entity.Nodes, (id, source, dest) => dest.ID = id));
             }).ForMember(destination => destination.Lines, options =>
             {
-                options.ResolveUsing(entity => this.DictionaryToList<Models.Form.Line, Entities.Form.Line, string>(entity.Lines));
+                options.ResolveUsing(entity => this.DictionaryToList<Models.Form.Line, Entities.Form.Line, string>(entity.Lines, (id, source, dest) => dest.ID = id));
             }).ForMember(destination => destination.Areas, options =>
             {
-                options.ResolveUsing(entity => this.DictionaryToList<Models.Form.Area, Entities.Form.Area, string>(entity.Areas));
+                options.ResolveUsing(entity => this.DictionaryToList<Models.Form.Area, Entities.Form.Area, string>(entity.Areas, (id, source, dest) => dest.ID = id));
             });
 
             // Entity to Model

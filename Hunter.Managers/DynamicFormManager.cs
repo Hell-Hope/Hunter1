@@ -66,9 +66,9 @@ namespace Hunter.Managers
         public void Copy(Entities.Form source, Entities.DynamicForm destination)
         {
             destination.Html = (source?.Html) ?? String.Empty;
-            AutoMapper.Mapper.Map(source.Nodes, destination.Nodes);
-            AutoMapper.Mapper.Map(source.Lines, destination.Lines);
-            AutoMapper.Mapper.Map(source.Areas, destination.Areas);
+            destination.Nodes = AutoMapper.Mapper.Map<List<Entities.DynamicForm.Node>>(source.Nodes);
+            destination.Lines = AutoMapper.Mapper.Map<List<Entities.DynamicForm.Line>>(source.Lines);
+            destination.Areas = AutoMapper.Mapper.Map<List<Entities.DynamicForm.Area>>(source.Areas);
         }
 
         public void Remove(string formID, string dataID)

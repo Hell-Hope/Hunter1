@@ -5,8 +5,7 @@ using System.Text;
 
 namespace Hunter.Models.DynamicForm
 {
-
-
+    
     public class FlowChart
     {
         [JsonProperty("nodes")]
@@ -51,6 +50,9 @@ namespace Hunter.Models.DynamicForm
 
         [JsonProperty("fields")]
         public List<string> Fields { get; set; }
+
+        [JsonProperty("permits")]
+        public HashSet<string> Permits { get; set; }
     }
 
     public class Line
