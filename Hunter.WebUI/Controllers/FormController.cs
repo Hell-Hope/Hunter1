@@ -97,8 +97,11 @@ namespace Hunter.WebUI.Controllers
         [HttpGet]
         public IActionResult Columns(string id)
         {
-            var entity = this.Manager.FormManager.Find(id);
-            return this.View(entity);
+            this.ModelState.Clear();
+            this.ViewData["Fields"] = this.Manager.FormManager.GetFields(id) ?? new List<Models.Form.Field>();
+            this.ViewData["Columns"] = this.Manager.FormManager.GetColumns(id) ?? new List<Models.Form.Column>();
+            this.ViewData["ID"] = id;
+            return this.View();
         }
 
         public IActionResult SaveColumns(string id, [FromBody]List<Dictionary<string, object>> list)

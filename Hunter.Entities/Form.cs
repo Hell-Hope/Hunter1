@@ -18,15 +18,13 @@ namespace Hunter.Entities
 
         public List<Field> Fields { get; set; }
 
-        public List<Dictionary<string, object>> Columns { get; set; }
+        public List<Column> Columns { get; set; }
 
         public List<Node> Nodes { get; set; }
 
         public List<Line> Lines { get; set; }
 
         public List<Area> Areas { get; set; }
-
-        
 
         public class Field
         {
@@ -49,6 +47,23 @@ namespace Hunter.Entities
                     return this.Name == temp.Name;
                 return false;
             }
+        }
+
+        public class Column
+        {
+            public string Sequence { get; set; }
+
+            public string Field { get; set; }
+
+            public string Width { get; set; }
+
+            public string Align { get; set; }
+
+            public string VAlign { get; set; }
+
+            public string Title { get; set; }
+
+            public long TimeSpan { get; set; }
         }
 
 

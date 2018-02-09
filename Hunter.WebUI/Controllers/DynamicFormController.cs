@@ -18,8 +18,10 @@ namespace Hunter.WebUI.Controllers
 
         public IActionResult List(string id)
         {
-            var entity = this.Manager.FormManager.Find(id);
-            return View(entity);
+            var columns = this.Manager.FormManager.GetColumns(id) ?? new List<Models.Form.Column>();
+            this.ViewData["ID"] = id;
+            this.ViewData["Columns"] = columns;
+            return View();
         }
 
         [ActionFilters.ModelStateErrorFilterAttribute]

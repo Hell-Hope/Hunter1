@@ -66,6 +66,40 @@ namespace Hunter.Managers
             return AutoMapper.Mapper.Map<Models.Form.Design>(entity);
         }
 
+        public Models.Form.FlowChart GetFlowChart(string id)
+        {
+            var entity = this.Find(id);
+            return AutoMapper.Mapper.Map<Models.Form.FlowChart>(entity);
+        }
+
+        public List<Models.Form.Field> GetFields(string id)
+        {
+            var filter = this.BuildFilterEqualID<Entities.Form>(id);
+            var projections = new ProjectionDefinition<Entities.Form>[]
+            {
+                Builders<Entities.Form>.Projection.Include(nameof(Entities.Form.Fields))
+            };
+            var projection = Builders<Entities.Form>.Projection.Combine(projections);
+            var entity = this.Collection.Find(filter).Project(projection).As<Entities.Form>().FirstOrDefault();
+            if (entity == null)
+                return null;
+            return AutoMapper.Mapper.Map<List<Models.Form.Field>>(entity.Fields);
+        }
+
+        public List<Models.Form.Column> GetColumns(string id)
+        {
+            var filter = this.BuildFilterEqualID<Entities.Form>(id);
+            var projections = new ProjectionDefinition<Entities.Form>[]
+            {
+                Builders<Entities.Form>.Projection.Include(nameof(Entities.Form.Column))
+            };
+            var projection = Builders<Entities.Form>.Projection.Combine(projections);
+            var entity = this.Collection.Find(filter).Project(projection).As<Entities.Form>().FirstOrDefault();
+            if (entity == null)
+                return null;
+            return AutoMapper.Mapper.Map<List<Models.Form.Column>>(entity.Columns);
+        }
+
         public void Save(Models.Form.Edit edit)
         {
             var entity = this.Find(edit.ID);
@@ -106,26 +140,6 @@ namespace Hunter.Managers
             var areas = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Areas), entity.Areas);
             var set = Builders<Entities.Form>.Update.Combine(nodes, lines, areas);
             this.Collection.UpdateOne(filter, set, UpdateOptions);
-        }
-
-        public Models.Form.FlowChart GetFlowChart(string id)
-        {
-            var entity = this.Find(id);
-            return AutoMapper.Mapper.Map<Models.Form.FlowChart>(entity);
-        }
-
-        public List<Models.Form.Field> GetFields(string id)
-        {
-            var filter = this.BuildFilterEqualID<Entities.Form>(id);
-            var projections = new ProjectionDefinition<Entities.Form>[]
-            {
-                Builders<Entities.Form>.Projection.Include(nameof(Entities.Form.Fields))
-            };
-            var projection = Builders<Entities.Form>.Projection.Combine(projections);
-            var entity = this.Collection.Find(filter).Project(projection).As<Entities.Form>().FirstOrDefault();
-            if (entity == null)
-                return null;
-            return AutoMapper.Mapper.Map<List<Models.Form.Field>>(entity.Fields);
         }
 
         public void SaveColumns(string id, List<Dictionary<string, object>> list)

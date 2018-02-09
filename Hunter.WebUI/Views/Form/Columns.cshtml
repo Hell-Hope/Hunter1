@@ -1,6 +1,7 @@
-﻿@model Hunter.Entities.Form
+﻿
 @{
-    this.Model.Fields = this.Model.Fields ?? new List<Hunter.Entities.Form.Field>();
+    var fields = this.ViewData["Fields"] as List<Hunter.Models.Form.Field>;
+    var columns = this.ViewData["Columns"] as List<Hunter.Models.Form.Column>;
 }
 @section Styles
 {
@@ -29,7 +30,7 @@
                 </td>
                 <td>
                     <select class="form-control" name="field">
-                    @foreach(var item in this.Model.Fields)
+                    @foreach(var item in fields)
                     {
                         <option value="@item.Name">@item.Name</option>
                     }
@@ -91,7 +92,7 @@
     </div>
     <table id="table"></table>
 </div>
-<div style="display:none;" id="initialize-data">@this.Json.Serialize(this.Model.Columns)</div>
+<div style="display:none;" id="initialize-data">@this.Json.Serialize(columns)</div>
 
 @section Scripts
 {
@@ -246,7 +247,7 @@
             })
             $('#btn-save').click(function () {
                 $.ajax({
-                    url: '@this.Url.Action("SaveColumns", new { id = this.Model.ID })',
+                    url: '@this.Url.Action("SaveColumns", new { id = this.ViewData["ID"] })',
                     type: 'post',
                     contentType: 'application/json',
                     data: JSON.stringify(options.data),
