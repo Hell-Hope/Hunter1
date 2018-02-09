@@ -91,7 +91,7 @@ namespace Hunter.Managers
             var filter = this.BuildFilterEqualID<Entities.Form>(id);
             var projections = new ProjectionDefinition<Entities.Form>[]
             {
-                Builders<Entities.Form>.Projection.Include(nameof(Entities.Form.Column))
+                Builders<Entities.Form>.Projection.Include(nameof(Entities.Form.Columns))
             };
             var projection = Builders<Entities.Form>.Projection.Combine(projections);
             var entity = this.Collection.Find(filter).Project(projection).As<Entities.Form>().FirstOrDefault();
@@ -142,7 +142,7 @@ namespace Hunter.Managers
             this.Collection.UpdateOne(filter, set, UpdateOptions);
         }
 
-        public void SaveColumns(string id, List<Dictionary<string, object>> list)
+        public void SaveColumns(string id, List<Models.Form.Column> list)
         {
             var filter = this.BuildFilterEqualID<Entities.Form>(id);
             var set = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Columns), list);

@@ -104,7 +104,7 @@ namespace Hunter.WebUI.Controllers
             return this.View();
         }
 
-        public IActionResult SaveColumns(string id, [FromBody]List<Dictionary<string, object>> list)
+        public IActionResult SaveColumns(string id, [FromBody]List<Models.Form.Column> list)
         {
             this.Manager.FormManager.SaveColumns(id, list);
             return this.Ok();
