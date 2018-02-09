@@ -58,24 +58,24 @@ namespace Hunter.Managers
         private void ConfigureDynamicForm()
         {
             // Model to Entity
-            this.CreateMap<Models.DynamicForm.Node, Entities.DynamicForm.Node>();
-            this.CreateMap<Models.DynamicForm.Line, Entities.DynamicForm.Line>();
-            this.CreateMap<Models.DynamicForm.Area, Entities.DynamicForm.Area>();
+            this.CreateMap<Models.DynamicForm.FlowChart.Node, Entities.DynamicForm.Node>();
+            this.CreateMap<Models.DynamicForm.FlowChart.Line, Entities.DynamicForm.Line>();
+            this.CreateMap<Models.DynamicForm.FlowChart.Area, Entities.DynamicForm.Area>();
 
 
             // Entity to Model
-            this.CreateMap<Entities.DynamicForm.Node, Models.DynamicForm.Node>();
-            this.CreateMap<Entities.DynamicForm.Line, Models.DynamicForm.Line>();
-            this.CreateMap<Entities.DynamicForm.Area, Models.DynamicForm.Area>();
+            this.CreateMap<Entities.DynamicForm.Node, Models.DynamicForm.FlowChart.Node>();
+            this.CreateMap<Entities.DynamicForm.Line, Models.DynamicForm.FlowChart.Line>();
+            this.CreateMap<Entities.DynamicForm.Area, Models.DynamicForm.FlowChart.Area>();
             this.CreateMap<Entities.DynamicForm, Models.DynamicForm.Progress>().ForMember(destination => destination.Nodes, options =>
             {
-                options.ResolveUsing(entity => this.ListToDictionary<Entities.DynamicForm.Node, Models.DynamicForm.Node, string>(entity.Nodes, m => m.ID));
+                options.ResolveUsing(entity => this.ListToDictionary<Entities.DynamicForm.Node, Models.DynamicForm.Progress.Node, string>(entity.Nodes, m => m.ID));
             }).ForMember(destination => destination.Lines, options =>
             {
-                options.ResolveUsing(entity => this.ListToDictionary<Entities.DynamicForm.Line, Models.DynamicForm.Line, string>(entity.Lines, m => m.ID));
+                options.ResolveUsing(entity => this.ListToDictionary<Entities.DynamicForm.Line, Models.DynamicForm.Progress.Line, string>(entity.Lines, m => m.ID));
             }).ForMember(destination => destination.Areas, options =>
             {
-                options.ResolveUsing(entity => this.ListToDictionary<Entities.DynamicForm.Area, Models.DynamicForm.Area, string>(entity.Areas, m => m.ID));
+                options.ResolveUsing(entity => this.ListToDictionary<Entities.DynamicForm.Area, Models.DynamicForm.Progress.Area, string>(entity.Areas, m => m.ID));
             });
         }
 
@@ -118,35 +118,35 @@ namespace Hunter.Managers
         {
             // Model to Entity
             this.CreateMap<Models.Form.Edit, Entities.Form>();
-            this.CreateMap<Models.Form.Node, Entities.Form.Node>();
-            this.CreateMap<Models.Form.Line, Entities.Form.Line>();
-            this.CreateMap<Models.Form.Area, Entities.Form.Area>();
+            this.CreateMap<Models.Form.FlowChart.Node, Entities.Form.Node>();
+            this.CreateMap<Models.Form.FlowChart.Line, Entities.Form.Line>();
+            this.CreateMap<Models.Form.FlowChart.Area, Entities.Form.Area>();
             this.CreateMap<Models.Form.FlowChart, Entities.Form>().ForMember(destination => destination.Nodes, options =>
             {
-                options.ResolveUsing(entity => this.DictionaryToList<Models.Form.Node, Entities.Form.Node, string>(entity.Nodes, (id, source, dest) => dest.ID = id));
+                options.ResolveUsing(entity => this.DictionaryToList<Models.Form.FlowChart.Node, Entities.Form.Node, string>(entity.Nodes, (id, source, dest) => dest.ID = id));
             }).ForMember(destination => destination.Lines, options =>
             {
-                options.ResolveUsing(entity => this.DictionaryToList<Models.Form.Line, Entities.Form.Line, string>(entity.Lines, (id, source, dest) => dest.ID = id));
+                options.ResolveUsing(entity => this.DictionaryToList<Models.Form.FlowChart.Line, Entities.Form.Line, string>(entity.Lines, (id, source, dest) => dest.ID = id));
             }).ForMember(destination => destination.Areas, options =>
             {
-                options.ResolveUsing(entity => this.DictionaryToList<Models.Form.Area, Entities.Form.Area, string>(entity.Areas, (id, source, dest) => dest.ID = id));
+                options.ResolveUsing(entity => this.DictionaryToList<Models.Form.FlowChart.Area, Entities.Form.Area, string>(entity.Areas, (id, source, dest) => dest.ID = id));
             });
 
             // Entity to Model
             this.CreateMap<Entities.Form, Models.Form.Edit>();
-            this.CreateMap<Entities.Form.Node, Models.Form.Node>();
-            this.CreateMap<Entities.Form.Line, Models.Form.Line>();
-            this.CreateMap<Entities.Form.Area, Models.Form.Area>();
+            this.CreateMap<Entities.Form.Node, Models.Form.FlowChart.Node>();
+            this.CreateMap<Entities.Form.Line, Models.Form.FlowChart.Line>();
+            this.CreateMap<Entities.Form.Area, Models.Form.FlowChart.Area>();
             this.CreateMap<Entities.Form, Models.Form.MenuItem>();
             this.CreateMap<Entities.Form, Models.Form.FlowChart>().ForMember(destination => destination.Nodes, options =>
             {
-                options.ResolveUsing(entity => this.ListToDictionary<Entities.Form.Node, Models.Form.Node, string>(entity.Nodes, m => m.ID));
+                options.ResolveUsing(entity => this.ListToDictionary<Entities.Form.Node, Models.Form.FlowChart.Node, string>(entity.Nodes, m => m.ID));
             }).ForMember(destination => destination.Lines, options =>
             {
-                options.ResolveUsing(entity => this.ListToDictionary<Entities.Form.Line, Models.Form.Line, string>(entity.Lines, m => m.ID));
+                options.ResolveUsing(entity => this.ListToDictionary<Entities.Form.Line, Models.Form.FlowChart.Line, string>(entity.Lines, m => m.ID));
             }).ForMember(destination => destination.Areas, options =>
             {
-                options.ResolveUsing(entity => this.ListToDictionary<Entities.Form.Area, Models.Form.Area, string>(entity.Areas, m => m.ID));
+                options.ResolveUsing(entity => this.ListToDictionary<Entities.Form.Area, Models.Form.FlowChart.Area, string>(entity.Areas, m => m.ID));
             });
         }
     }

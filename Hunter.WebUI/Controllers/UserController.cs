@@ -99,11 +99,7 @@ namespace Hunter.WebUI.Controllers
             var result = this.SignIn(claimsPrincipal, Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme);
             return result;
         }
-
-        public IActionResult GetApplicationUser()
-        {
-            return this.Ok(this.Manager.ApplicationUser);
-        }
+        
 
     }
 }
