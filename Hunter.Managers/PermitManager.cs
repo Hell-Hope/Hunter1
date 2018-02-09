@@ -32,7 +32,7 @@ namespace Hunter.Managers
             var projection = Builders<Entities.Permit>.Projection.Combine(projections);
             var list = this.Collection.Find(filter).Project(projection).As<Entities.Permit>().ToList();
             var result = AutoMapper.Mapper.Map<List<Models.Permit.Choose>>(list);
-            return result ?? new List<Models.Permit.Choose>();
+            return result;
         }
 
         public Entities.Permit Find(string id)

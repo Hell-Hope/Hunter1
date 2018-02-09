@@ -7,6 +7,8 @@ namespace Hunter.Models.Form
 {
     public class FlowChart
     {
+        public string ID { get; set; }
+
         [JsonProperty("nodes")]
         public Dictionary<string, Node> Nodes { get; set; }
 

@@ -27,8 +27,6 @@ namespace Hunter.Managers
             return this.Collection.Find(filter).FirstOrDefault();
         }
 
-
-
         public List<Models.Form.MenuItem> GetMenuItems()
         {
             var id = Builders<Entities.Form>.Projection.Include(nameof(Entities.Form.ID));
@@ -53,6 +51,21 @@ namespace Hunter.Managers
             return AutoMapper.Mapper.Map<Models.Form.Edit>(entity);
         }
 
+        public Models.Form.Design GetDesign(string id)
+        {
+            var filter = this.BuildFilterEqualID<Entities.Form>(id);
+            var projections = new ProjectionDefinition<Entities.Form>[]
+            {
+                Builders<Entities.Form>.Projection.Include(nameof(Entities.Form.ID)),
+                Builders<Entities.Form>.Projection.Include(nameof(Entities.Form.Html))
+            };
+            var projection = Builders<Entities.Form>.Projection.Combine(projections);
+            var entity = this.Collection.Find(filter).Project(projection).As<Entities.Form>().FirstOrDefault();
+            if (entity == null)
+                return null;
+            return AutoMapper.Mapper.Map<Models.Form.Design>(entity);
+        }
+
         public void Save(Models.Form.Edit edit)
         {
             var entity = this.Find(edit.ID);
@@ -74,20 +87,20 @@ namespace Hunter.Managers
         /// <param name="id"></param>
         /// <param name="html"></param>
         /// <returns></returns>
-        public void SaveHtml(string id, string html)
+        public void Save(Models.Form.Design design)
         {
-            var fields = ParseHtml(html);
-            var filter = this.BuildFilterEqualID<Entities.Form>(id);
-            var setHtml = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Html), html);
+            var fields = ParseHtml(design.Html);
+            var filter = this.BuildFilterEqualID<Entities.Form>(design.ID);
+            var setHtml = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Html), design.Html);
             var setFields = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Fields), fields);
             var set = Builders<Entities.Form>.Update.Combine(setHtml, setFields);
             this.Collection.UpdateOne(filter, set, UpdateOptions);
         }
 
-        public void SaveFlowChart(string id, Models.Form.FlowChart model)
+        public void Save(Models.Form.FlowChart model)
         {
             var entity = AutoMapper.Mapper.Map<Entities.Form>(model);
-            var filter = this.BuildFilterEqualID<Entities.Form>(id);
+            var filter = this.BuildFilterEqualID<Entities.Form>(model.ID);
             var nodes = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Nodes), entity.Nodes);
             var lines = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Lines), entity.Lines);
             var areas = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Areas), entity.Areas);
@@ -98,12 +111,21 @@ namespace Hunter.Managers
         public Models.Form.FlowChart GetFlowChart(string id)
         {
             var entity = this.Find(id);
-            return this.Convert(entity);
+            return AutoMapper.Mapper.Map<Models.Form.FlowChart>(entity);
         }
 
-        public Models.Form.FlowChart Convert(Entities.Form entity)
+        public List<Models.Form.Field> GetFields(string id)
         {
-            return AutoMapper.Mapper.Map<Models.Form.FlowChart>(entity);
+            var filter = this.BuildFilterEqualID<Entities.Form>(id);
+            var projections = new ProjectionDefinition<Entities.Form>[]
+            {
+                Builders<Entities.Form>.Projection.Include(nameof(Entities.Form.Fields))
+            };
+            var projection = Builders<Entities.Form>.Projection.Combine(projections);
+            var entity = this.Collection.Find(filter).Project(projection).As<Entities.Form>().FirstOrDefault();
+            if (entity == null)
+                return null;
+            return AutoMapper.Mapper.Map<List<Models.Form.Field>>(entity.Fields);
         }
 
         public void SaveColumns(string id, List<Dictionary<string, object>> list)
@@ -180,7 +202,7 @@ namespace Hunter.Managers
             result.Total = collection.Count();
             var projections = new ProjectionDefinition<Entities.Form>[]
             {
-                Builders<Entities.Form>.Projection.Include(nameof(Entities.User.ID)),
+                Builders<Entities.Form>.Projection.Include(nameof(Entities.Form.ID)),
                 Builders<Entities.Form>.Projection.Include(nameof(Entities.Form.Name))
             };
             var projection = Builders<Entities.Form>.Projection.Combine(projections);

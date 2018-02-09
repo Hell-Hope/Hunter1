@@ -14,8 +14,6 @@ namespace Hunter.WebUI.Controllers
         public FormController(Manager manager) : base(manager)
         { 
         }
-        
-       
 
         public IActionResult List()
         {
@@ -55,44 +53,44 @@ namespace Hunter.WebUI.Controllers
         [HttpGet]
         public IActionResult Design(string id)
         {
-            var entity = this.Manager.FormManager.Find(id);
-            if (entity == null)
+            var design = this.Manager.FormManager.GetDesign(id);
+            if (design == null)
             {
-                entity = new Entities.Form() { ID = this.Manager.FormManager.GenerateMongoID };
+
             }
-            return this.View(entity);
+            this.ModelState.Clear();
+            return this.View(design);
         }
 
         [HttpPost]
-        public IActionResult Design(string id, string html)
+        public IActionResult Design(Models.Form.Design design)
         {
-            this.Manager.FormManager.SaveHtml(id, html);
-            var entity = this.Manager.FormManager.Find(id);
-            return this.View(entity);
+            this.Manager.FormManager.Save(design);
+            return this.View(design);
         }
 
         public IActionResult FlowChart(string id)
         {
-            var entity = this.Manager.FormManager.Find(id);
-            if (entity == null)
+            var model = this.Manager.FormManager.GetFlowChart(id);
+            if (model == null)
             {
                 return this.NotFound();
             }
             if (String.Equals("post", this.Request.Method, StringComparison.OrdinalIgnoreCase))
             {
-                var model = this.Manager.FormManager.Convert(entity);
                 return this.Ok(model);
             }
             this.ModelState.Clear();
+            this.ViewData["Fields"] = this.Manager.FormManager.GetFields(id) ?? new List<Models.Form.Field>();
             this.ViewData["Permits"] = this.Manager.PermitManager.GetAllForChoose();
-            return this.View(entity);
+            return this.View(model);
         }
 
         [HttpPost]
         [ActionFilters.ModelStateErrorFilterAttribute]
-        public IActionResult SaveFlowChart(string id, [FromBody]Models.Form.FlowChart flowChart)
+        public IActionResult SaveFlowChart([FromBody]Models.Form.FlowChart flowChart)
         {
-            this.Manager.FormManager.SaveFlowChart(id, flowChart);
+            this.Manager.FormManager.Save(flowChart);
             return this.Ok();
         }
 

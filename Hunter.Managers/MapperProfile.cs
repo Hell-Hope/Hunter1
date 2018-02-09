@@ -58,15 +58,15 @@ namespace Hunter.Managers
         private void ConfigureDynamicForm()
         {
             // Model to Entity
-            this.CreateMap<Models.DynamicForm.FlowChart.Node, Entities.DynamicForm.Node>();
-            this.CreateMap<Models.DynamicForm.FlowChart.Line, Entities.DynamicForm.Line>();
-            this.CreateMap<Models.DynamicForm.FlowChart.Area, Entities.DynamicForm.Area>();
+            //this.CreateMap<Models.DynamicForm.FlowChart.Node, Entities.DynamicForm.Node>();
+            //this.CreateMap<Models.DynamicForm.FlowChart.Line, Entities.DynamicForm.Line>();
+            //this.CreateMap<Models.DynamicForm.FlowChart.Area, Entities.DynamicForm.Area>();
 
 
             // Entity to Model
-            this.CreateMap<Entities.DynamicForm.Node, Models.DynamicForm.FlowChart.Node>();
-            this.CreateMap<Entities.DynamicForm.Line, Models.DynamicForm.FlowChart.Line>();
-            this.CreateMap<Entities.DynamicForm.Area, Models.DynamicForm.FlowChart.Area>();
+            this.CreateMap<Entities.DynamicForm.Node, Models.DynamicForm.Progress.Node>();
+            this.CreateMap<Entities.DynamicForm.Line, Models.DynamicForm.Progress.Line>();
+            this.CreateMap<Entities.DynamicForm.Area, Models.DynamicForm.Progress.Area>();
             this.CreateMap<Entities.DynamicForm, Models.DynamicForm.Progress>().ForMember(destination => destination.Nodes, options =>
             {
                 options.ResolveUsing(entity => this.ListToDictionary<Entities.DynamicForm.Node, Models.DynamicForm.Progress.Node, string>(entity.Nodes, m => m.ID));
