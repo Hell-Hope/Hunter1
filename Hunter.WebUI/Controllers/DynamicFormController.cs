@@ -50,7 +50,19 @@ namespace Hunter.WebUI.Controllers
         [HttpPost]
         public IActionResult SaveData(string id, string dataID, [FromBody]Dictionary<string, object> dictionary)
         {
-            var result = this.Manager.DynamicFormManager.SaveData(id, dataID, dictionary);
+            var dic = new Dictionary<string, object>(dictionary.Count);
+            foreach (var item in dictionary)
+            {
+                if (item.Value is Newtonsoft.Json.Linq.JArray jarray)
+                {
+                    dic[item.Key] = jarray.ToObject<object[]>();
+                }
+                else
+                {
+                    dic[item.Key] = item.Value;
+                }
+            }
+            var result = this.Manager.DynamicFormManager.SaveData(id, dataID, dic);
             return this.ActionResult(result);
         }
 

@@ -23,6 +23,9 @@ namespace Hunter.Entities
 
         public bool Finish { get; set; } = false;
 
+        public string CreatedUserID { get; set; }
+
+        public string CreatedUserName { get; set; }
 
         public class Node
         {

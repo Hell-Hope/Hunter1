@@ -33,6 +33,8 @@ namespace Hunter.Managers
                 entity = new Entities.DynamicForm() { ID = dataID, Data = new Dictionary<string, object>() };
                 this.Copy(form, entity);
                 entity.CurrentNode = entity.Nodes.GetStartNode();
+                entity.CreatedUserID = this.ApplicationUser.ID;
+                entity.CreatedUserName = this.ApplicationUser.Name;
                 this.DynamicForms(formID).ReplaceOne(m => m.ID == dataID, entity, UpdateOptions);
             }
             var data = entity.Data;
