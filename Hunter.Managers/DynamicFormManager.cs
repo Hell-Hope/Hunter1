@@ -96,7 +96,6 @@ namespace Hunter.Managers
         {
             var filter = this.BuildFilter(pageParam.Condition);
             var collection = this.DynamicForms(formID).Find(filter);
-
             var result = new Models.PageResult<Entities.DynamicForm>();
             result.Total = collection.Count();
             result.Data = collection.Sort(pageParam).Pagination(pageParam).ToList();
