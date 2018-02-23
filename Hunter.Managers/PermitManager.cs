@@ -7,7 +7,7 @@ namespace Hunter.Managers
 {
     public class PermitManager : Manager
     {
-        public PermitManager(MongoClient mongoClient) : base(mongoClient)
+        internal PermitManager(Shared shared) : base(shared)
         {
 
         }

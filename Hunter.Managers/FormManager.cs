@@ -9,7 +9,7 @@ namespace Hunter.Managers
 {
     public class FormManager : Manager
     {
-        public FormManager(MongoClient mongoClient) : base(mongoClient)
+        internal FormManager(Shared shared) : base(shared)
         {
         }
 

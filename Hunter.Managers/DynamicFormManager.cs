@@ -9,7 +9,7 @@ namespace Hunter.Managers
 {
     public class DynamicFormManager : Manager
     {
-        public DynamicFormManager(MongoClient mongoClient) : base(mongoClient)
+        internal DynamicFormManager(Shared shared) : base(shared)
         {
         }
 
@@ -37,26 +37,14 @@ namespace Hunter.Managers
                 entity.CreatedUserName = this.ApplicationUser.Name;
                 this.DynamicForms(formID).ReplaceOne(m => m.ID == dataID, entity, UpdateOptions);
             }
-            var data = entity.Data;
-            if (data == null)
+            if (this.ApplicationUser.HasPermit(entity.CurrentNode.Permits) == false)
+                return Models.Result.CreateForbidden();
+            var data = entity.Data ?? new Dictionary<string, object>();
+            var fields = entity.CurrentNode.Fields ?? new List<string>();
+            foreach (var field in fields)
             {
-                data = new Dictionary<string, object>();
-            }
-            var fields = entity.CurrentNode.Fields;
-            if (fields != null)
-            {
-                foreach (var field in fields)
-                {
-                    if (dictionary.TryGetValue(field, out object value))
-                        data[field] = value;
-                }
-            }
-            else
-            {
-                foreach (var item in dictionary)
-                {
-                    data[item.Key] = item.Value;
-                }
+                if (dictionary.TryGetValue(field, out object value))
+                    data[field] = value;
             }
             var filter = this.BuildFilterEqualID<Entities.DynamicForm>(dataID);
             var set = Builders<Entities.DynamicForm>.Update.Set(nameof(Entities.DynamicForm.Data), data);
@@ -103,6 +91,12 @@ namespace Hunter.Managers
             return list;
         }
 
+        /// <summary> 流转到下一个节点
+        /// </summary>
+        /// <param name="formID"></param>
+        /// <param name="dataID"></param>
+        /// <param name="lineID"></param>
+        /// <returns></returns>
         public Models.Result Next(string formID, string dataID, string lineID)
         {
             var entity = this.Find(formID, dataID);
@@ -110,6 +104,8 @@ namespace Hunter.Managers
                 return Models.Result.Create(Models.Code.NotFound, "没找到数据");
             if (entity.Finish)
                 return Models.Result.Create(Models.Code.Fail, "已结束");
+            if (this.ApplicationUser.HasPermit(entity.CurrentNode.Permits) == false)
+                return Models.Result.CreateForbidden();
             var line = entity.Lines.Where(l => l.ID == lineID && l.From == entity.CurrentNode.ID).FirstOrDefault();
             if (line == null)
                 return Models.Result.Create(Models.Code.NotFound, "没找到线数据");
@@ -123,6 +119,11 @@ namespace Hunter.Managers
             return Models.Result.Create();
         }
 
+        /// <summary> 结束流程
+        /// </summary>
+        /// <param name="formID"></param>
+        /// <param name="dataID"></param>
+        /// <returns></returns>
         public Models.Result Finish(string formID, string dataID)
         {
             var entity = this.Find(formID, dataID);
@@ -132,6 +133,8 @@ namespace Hunter.Managers
                 return Models.Result.Create(Models.Code.Fail, "已结束");
             if (entity.CurrentNode.IsEndType)
                 return Models.Result.Create(Models.Code.Fail, "此节点不是结束节点");
+            if (this.ApplicationUser.HasPermit(entity.CurrentNode.Permits) == false)
+                return Models.Result.CreateForbidden();
             var filter = this.BuildFilterEqualID<Entities.DynamicForm>(dataID);
             var set = Builders<Entities.DynamicForm>.Update.Set(nameof(Entities.DynamicForm.Finish), true);
             this.DynamicForms(formID).UpdateOne(filter, set, UpdateOptions);

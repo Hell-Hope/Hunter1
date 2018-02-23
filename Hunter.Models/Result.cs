@@ -14,6 +14,11 @@ namespace Hunter.Models
             return new InvalidResult<T>() { Code = Code.Fail, Data = t };
         }
 
+        public static Result CreateForbidden(string message = "没有权限访问或执行")
+        {
+            return Create(Code.Forbidden, message);
+        }
+
         public static Result Create(Code code = Code.Success, string message = null)
         {
             return new Result(code, message);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using MongoDB.Driver;
 
@@ -7,7 +8,7 @@ namespace Hunter.Managers
 {
     public class UserManager : Manager
     {
-        public UserManager(MongoClient mongoClient) : base(mongoClient)
+        internal UserManager(Shared shared) : base(shared)
         {
         }
 
@@ -31,6 +32,12 @@ namespace Hunter.Managers
             if (entity == null)
                 return null;
             return AutoMapper.Mapper.Map<Models.User.Edit>(entity);
+        }
+
+        public IEnumerable<string> GetPermits(string id)
+        {
+            var user = this.Find(id);
+            return user?.Permits;
         }
 
         public bool ExistAccount(string account, string id)
