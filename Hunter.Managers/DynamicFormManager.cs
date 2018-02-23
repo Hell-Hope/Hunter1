@@ -24,21 +24,46 @@ namespace Hunter.Managers
             return this.DynamicForms(formID).Find(filter).FirstOrDefault();
         }
 
+        public Models.Result HasPermit(Entities.DynamicForm entity)
+        {
+            if (this.ApplicationUser.HasPermit(entity.CurrentNode.Permits) == false)
+                return Models.Result.CreateForbidden();
+            return Models.Result.Create();
+        }
+
+        public Models.Result Create(string formID, string dataID)
+        {
+            var form = this.FormManager.Find(formID);
+            var entity = new Entities.DynamicForm() { ID = dataID, Data = new Dictionary<string, object>() };
+            this.Copy(form, entity);
+            entity.CurrentNode = entity.Nodes.GetStartNode();
+            entity.CreatedUserID = this.ApplicationUser.ID;
+            entity.CreatedUserName = this.ApplicationUser.Name;
+            var result = this.HasPermit(entity);
+            if (result.Success == false)
+                return result;
+            this.DynamicForms(formID).ReplaceOne(m => m.ID == dataID, entity, UpdateOptions);
+            return Models.Result.CreateDataResult(entity);
+        }
+
         public Models.Result SaveData(string formID, string dataID, Dictionary<string, object> dictionary)
         {
+            Models.Result result = null;
             var entity = this.Find(formID, dataID);
             if (entity == null)
             {
-                var form = this.FormManager.Find(formID);
-                entity = new Entities.DynamicForm() { ID = dataID, Data = new Dictionary<string, object>() };
-                this.Copy(form, entity);
-                entity.CurrentNode = entity.Nodes.GetStartNode();
-                entity.CreatedUserID = this.ApplicationUser.ID;
-                entity.CreatedUserName = this.ApplicationUser.Name;
-                this.DynamicForms(formID).ReplaceOne(m => m.ID == dataID, entity, UpdateOptions);
+                result = this.Create(formID, dataID);
+                if (result is Models.DataResult<Entities.DynamicForm> temp)
+                    entity = temp.Data;
+                else
+                    return result;
             }
-            if (this.ApplicationUser.HasPermit(entity.CurrentNode.Permits) == false)
-                return Models.Result.CreateForbidden();
+            else
+            {
+                result = this.HasPermit(entity);
+                if (result.Success == false)
+                    return result;
+            }
             var data = entity.Data ?? new Dictionary<string, object>();
             var fields = entity.CurrentNode.Fields ?? new List<string>();
             foreach (var field in fields)
@@ -104,8 +129,9 @@ namespace Hunter.Managers
                 return Models.Result.Create(Models.Code.NotFound, "没找到数据");
             if (entity.Finish)
                 return Models.Result.Create(Models.Code.Fail, "已结束");
-            if (this.ApplicationUser.HasPermit(entity.CurrentNode.Permits) == false)
-                return Models.Result.CreateForbidden();
+            var result = this.HasPermit(entity);
+            if (result.Success == false)
+                return result;
             var line = entity.Lines.Where(l => l.ID == lineID && l.From == entity.CurrentNode.ID).FirstOrDefault();
             if (line == null)
                 return Models.Result.Create(Models.Code.NotFound, "没找到线数据");
@@ -133,8 +159,9 @@ namespace Hunter.Managers
                 return Models.Result.Create(Models.Code.Fail, "已结束");
             if (entity.CurrentNode.IsEndType)
                 return Models.Result.Create(Models.Code.Fail, "此节点不是结束节点");
-            if (this.ApplicationUser.HasPermit(entity.CurrentNode.Permits) == false)
-                return Models.Result.CreateForbidden();
+            var result = this.HasPermit(entity);
+            if (result.Success == false)
+                return result;
             var filter = this.BuildFilterEqualID<Entities.DynamicForm>(dataID);
             var set = Builders<Entities.DynamicForm>.Update.Set(nameof(Entities.DynamicForm.Finish), true);
             this.DynamicForms(formID).UpdateOne(filter, set, UpdateOptions);
