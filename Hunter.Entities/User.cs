@@ -17,6 +17,6 @@ namespace Hunter.Entities
 
         public string Remark { get; set; }
 
-
+        public HashSet<string> Permits { get; set; }
     }
 }

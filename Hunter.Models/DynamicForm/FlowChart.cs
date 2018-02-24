@@ -5,8 +5,7 @@ using System.Text;
 
 namespace Hunter.Models.DynamicForm
 {
-
-
+    
     public class FlowChart
     {
         [JsonProperty("nodes")]
@@ -21,94 +20,98 @@ namespace Hunter.Models.DynamicForm
         public bool Finish { get; set; }
 
         public Node CurrentNode { get; set; }
-    }
 
-    public class Node
-    {
+        public class Node
+        {
 
-        public string ID { get; set; }
+            public string ID { get; set; }
 
-        [JsonProperty("alt")]
-        public bool Alt { get; set; }
+            [JsonProperty("alt")]
+            public bool Alt { get; set; }
 
-        [JsonProperty("top")]
-        public int Top { get; set; }
+            [JsonProperty("top")]
+            public int Top { get; set; }
 
-        [JsonProperty("left")]
-        public int Left { get; set; }
+            [JsonProperty("left")]
+            public int Left { get; set; }
 
-        [JsonProperty("width")]
-        public int Width { get; set; }
+            [JsonProperty("width")]
+            public int Width { get; set; }
 
-        [JsonProperty("height")]
-        public int Height { get; set; }
+            [JsonProperty("height")]
+            public int Height { get; set; }
 
-        [JsonProperty("name")]
-        public string Name { get; set; }
+            [JsonProperty("name")]
+            public string Name { get; set; }
 
-        [JsonProperty("type")]
-        public string Type { get; set; }
+            [JsonProperty("type")]
+            public string Type { get; set; }
 
-        [JsonProperty("fields")]
-        public List<string> Fields { get; set; }
-    }
+            [JsonProperty("fields")]
+            public List<string> Fields { get; set; }
 
-    public class Line
-    {
+            [JsonProperty("permits")]
+            public HashSet<string> Permits { get; set; }
+        }
 
-        public string ID { get; set; }
+        public class Line
+        {
 
-        [JsonProperty("M")]
-        public double M { get; set; }
+            public string ID { get; set; }
 
-        [JsonProperty("alt")]
-        public bool Alt { get; set; }
+            [JsonProperty("M")]
+            public double M { get; set; }
 
-        [JsonProperty("marked")]
-        public bool Marked { get; set; }
+            [JsonProperty("alt")]
+            public bool Alt { get; set; }
 
-        [JsonProperty("dash")]
-        public bool Dash { get; set; }
+            [JsonProperty("marked")]
+            public bool Marked { get; set; }
 
-        [JsonProperty("name")]
-        public string Name { get; set; }
+            [JsonProperty("dash")]
+            public bool Dash { get; set; }
 
-        [JsonProperty("from")]
-        public string From { get; set; }
+            [JsonProperty("name")]
+            public string Name { get; set; }
 
-        [JsonProperty("to")]
-        public string To { get; set; }
+            [JsonProperty("from")]
+            public string From { get; set; }
 
-        [JsonProperty("type")]
-        public string Type { get; set; }
+            [JsonProperty("to")]
+            public string To { get; set; }
 
-    }
+            [JsonProperty("type")]
+            public string Type { get; set; }
 
-    public class Area
-    {
+        }
 
-        public string ID { get; set; }
+        public class Area
+        {
 
-        [JsonProperty("alt")]
-        public bool Alt { get; set; }
+            public string ID { get; set; }
 
-        [JsonProperty("top")]
-        public int Top { get; set; }
+            [JsonProperty("alt")]
+            public bool Alt { get; set; }
 
-        [JsonProperty("left")]
-        public int Left { get; set; }
+            [JsonProperty("top")]
+            public int Top { get; set; }
 
-        [JsonProperty("width")]
-        public int Width { get; set; }
+            [JsonProperty("left")]
+            public int Left { get; set; }
 
-        [JsonProperty("height")]
-        public int Height { get; set; }
+            [JsonProperty("width")]
+            public int Width { get; set; }
 
-        [JsonProperty("name")]
-        public string Name { get; set; }
+            [JsonProperty("height")]
+            public int Height { get; set; }
 
-        [JsonProperty("color")]
-        public string Color { get; set; }
+            [JsonProperty("name")]
+            public string Name { get; set; }
+
+            [JsonProperty("color")]
+            public string Color { get; set; }
+        }
+
     }
 
 

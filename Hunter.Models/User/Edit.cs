@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Hunter.Models.DataAnnotations;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Hunter.Models.User
@@ -29,5 +29,7 @@ namespace Hunter.Models.User
         [DataType(DataType.MultilineText)]
         public string Remark { get; set; }
 
+        [DisplayName("权限")]
+        public HashSet<string> Permits { get; set; }
     }
 }

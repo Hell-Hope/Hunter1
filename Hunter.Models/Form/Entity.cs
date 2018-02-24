@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Hunter.Models
+namespace Hunter.Models.Form
 {
-    public interface IEdit
+    public class Entity
     {
-
-        string ID { get; set; }
-
     }
 }

@@ -57,6 +57,10 @@ namespace Hunter.Models
         /// <summary> 验证不通过
         /// </summary>
         Invalid = -6,
+
+        /// <summary> 没有权限访问或执行
+        /// </summary>
+        Forbidden = -403,
     }
 
 }

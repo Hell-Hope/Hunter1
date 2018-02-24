@@ -9,11 +9,11 @@ namespace Hunter.Managers
 {
     public class FormManager : Manager
     {
-        public FormManager(MongoClient mongoClient) : base(mongoClient)
+        internal FormManager(Shared shared) : base(shared)
         {
         }
 
-        public IMongoCollection<Entities.Form> Forms
+        public IMongoCollection<Entities.Form> Collection
         {
             get
             {
@@ -24,7 +24,7 @@ namespace Hunter.Managers
         public Entities.Form Find(string id)
         {
             var filter = this.BuildFilterEqualID<Entities.Form>(id);
-            return this.Forms.Find(filter).FirstOrDefault();
+            return this.Collection.Find(filter).FirstOrDefault();
         }
 
         public List<Models.Form.MenuItem> GetMenuItems()
@@ -32,7 +32,7 @@ namespace Hunter.Managers
             var id = Builders<Entities.Form>.Projection.Include(nameof(Entities.Form.ID));
             var name = Builders<Entities.Form>.Projection.Include(nameof(Entities.Form.Name));
             var projection = Builders<Entities.Form>.Projection.Combine(id, name);
-            var list = this.Forms.Find(Builders<Entities.Form>.Filter.Empty).Project(projection).ToList();
+            var list = this.Collection.Find(Builders<Entities.Form>.Filter.Empty).Project(projection).ToList();
             var result = new List<Models.Form.MenuItem>();
             foreach (var item in list)
             {
@@ -51,6 +51,55 @@ namespace Hunter.Managers
             return AutoMapper.Mapper.Map<Models.Form.Edit>(entity);
         }
 
+        public Models.Form.Design GetDesign(string id)
+        {
+            var filter = this.BuildFilterEqualID<Entities.Form>(id);
+            var projections = new ProjectionDefinition<Entities.Form>[]
+            {
+                Builders<Entities.Form>.Projection.Include(nameof(Entities.Form.ID)),
+                Builders<Entities.Form>.Projection.Include(nameof(Entities.Form.Html))
+            };
+            var projection = Builders<Entities.Form>.Projection.Combine(projections);
+            var entity = this.Collection.Find(filter).Project(projection).As<Entities.Form>().FirstOrDefault();
+            if (entity == null)
+                return null;
+            return AutoMapper.Mapper.Map<Models.Form.Design>(entity);
+        }
+
+        public Models.Form.FlowChart GetFlowChart(string id)
+        {
+            var entity = this.Find(id);
+            return AutoMapper.Mapper.Map<Models.Form.FlowChart>(entity);
+        }
+
+        public List<Models.Form.Field> GetFields(string id)
+        {
+            var filter = this.BuildFilterEqualID<Entities.Form>(id);
+            var projections = new ProjectionDefinition<Entities.Form>[]
+            {
+                Builders<Entities.Form>.Projection.Include(nameof(Entities.Form.Fields))
+            };
+            var projection = Builders<Entities.Form>.Projection.Combine(projections);
+            var entity = this.Collection.Find(filter).Project(projection).As<Entities.Form>().FirstOrDefault();
+            if (entity == null)
+                return null;
+            return AutoMapper.Mapper.Map<List<Models.Form.Field>>(entity.Fields);
+        }
+
+        public List<Models.Form.Column> GetColumns(string id)
+        {
+            var filter = this.BuildFilterEqualID<Entities.Form>(id);
+            var projections = new ProjectionDefinition<Entities.Form>[]
+            {
+                Builders<Entities.Form>.Projection.Include(nameof(Entities.Form.Columns))
+            };
+            var projection = Builders<Entities.Form>.Projection.Combine(projections);
+            var entity = this.Collection.Find(filter).Project(projection).As<Entities.Form>().FirstOrDefault();
+            if (entity == null)
+                return null;
+            return AutoMapper.Mapper.Map<List<Models.Form.Column>>(entity.Columns);
+        }
+
         public void Save(Models.Form.Edit edit)
         {
             var entity = this.Find(edit.ID);
@@ -59,12 +108,12 @@ namespace Hunter.Managers
             else
                 AutoMapper.Mapper.Map(edit, entity);
             entity.Fields = this.ParseHtml(edit.Html);
-            this.Forms.ReplaceOne(m => m.ID == edit.ID, entity, UpdateOptions);
+            this.Collection.ReplaceOne(m => m.ID == edit.ID, entity, UpdateOptions);
         }
 
         public void Remove(string id)
         {
-            var r = this.Forms.DeleteOne(m => m.ID == id);
+            var r = this.Collection.DeleteOne(m => m.ID == id);
         }
 
         /// <summary> 保存Html数据
@@ -72,43 +121,32 @@ namespace Hunter.Managers
         /// <param name="id"></param>
         /// <param name="html"></param>
         /// <returns></returns>
-        public void SaveHtml(string id, string html)
+        public void Save(Models.Form.Design design)
         {
-            var fields = ParseHtml(html);
-            var filter = this.BuildFilterEqualID<Entities.Form>(id);
-            var setHtml = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Html), html);
+            var fields = ParseHtml(design.Html);
+            var filter = this.BuildFilterEqualID<Entities.Form>(design.ID);
+            var setHtml = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Html), design.Html);
             var setFields = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Fields), fields);
             var set = Builders<Entities.Form>.Update.Combine(setHtml, setFields);
-            this.Forms.UpdateOne(filter, set, UpdateOptions);
+            this.Collection.UpdateOne(filter, set, UpdateOptions);
         }
 
-        public void SaveFlowChart(string id, Models.Form.FlowChart model)
+        public void Save(Models.Form.FlowChart model)
         {
             var entity = AutoMapper.Mapper.Map<Entities.Form>(model);
-            var filter = this.BuildFilterEqualID<Entities.Form>(id);
+            var filter = this.BuildFilterEqualID<Entities.Form>(model.ID);
             var nodes = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Nodes), entity.Nodes);
             var lines = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Lines), entity.Lines);
             var areas = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Areas), entity.Areas);
             var set = Builders<Entities.Form>.Update.Combine(nodes, lines, areas);
-            this.Forms.UpdateOne(filter, set, UpdateOptions);
+            this.Collection.UpdateOne(filter, set, UpdateOptions);
         }
 
-        public Models.Form.FlowChart GetFlowChart(string id)
-        {
-            var entity = this.Find(id);
-            return this.Convert(entity);
-        }
-
-        public Models.Form.FlowChart Convert(Entities.Form entity)
-        {
-            return AutoMapper.Mapper.Map<Models.Form.FlowChart>(entity);
-        }
-
-        public void SaveColumns(string id, List<Dictionary<string, object>> list)
+        public void SaveColumns(string id, List<Models.Form.Column> list)
         {
             var filter = this.BuildFilterEqualID<Entities.Form>(id);
             var set = Builders<Entities.Form>.Update.Set(nameof(Entities.Form.Columns), list);
-            this.Forms.UpdateOne(filter, set, UpdateOptions);
+            this.Collection.UpdateOne(filter, set, UpdateOptions);
         }
 
         protected List<Entities.Form.Field> ParseHtml(string html)
@@ -169,15 +207,21 @@ namespace Hunter.Managers
             }
         }
 
-
-        public Models.PageResult<Entities.Form> Query(Models.PageParam<Models.Form.Condition> pageParam)
+        public Models.PageResult<Models.Form.QueryResultData> Query(Models.PageParam<Models.Form.Condition> pageParam)
         {
             var filter = this.BuildFilter(pageParam.Condition);
-            var collection = this.Forms.Find(filter);
+            var collection = this.Collection.Find(filter);
 
-            var result = new Models.PageResult<Entities.Form>();
+            var result = new Models.PageResult<Models.Form.QueryResultData>();
             result.Total = collection.Count();
-            result.Data = collection.Sort(pageParam).Pagination(pageParam).ToList();
+            var projections = new ProjectionDefinition<Entities.Form>[]
+            {
+                Builders<Entities.Form>.Projection.Include(nameof(Entities.Form.ID)),
+                Builders<Entities.Form>.Projection.Include(nameof(Entities.Form.Name))
+            };
+            var projection = Builders<Entities.Form>.Projection.Combine(projections);
+            var list = collection.Sort(pageParam).Pagination(pageParam).Project(projection).As<Entities.Form>().ToList();
+            result.Data = AutoMapper.Mapper.Map<List<Models.Form.QueryResultData>>(list);
             return result;
         }
 
