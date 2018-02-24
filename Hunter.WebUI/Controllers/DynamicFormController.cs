@@ -110,9 +110,10 @@ namespace Hunter.WebUI.Controllers
                 var fontProvider = new iText.Html2pdf.Resolver.Font.DefaultFontProvider(true, true, true);
                 var converterProperties = new iText.Html2pdf.ConverterProperties();
                 converterProperties.SetFontProvider(fontProvider);
-                converterProperties.SetCreateAcroForm(true);
+                //converterProperties.SetCreateAcroForm(true);
+                
                 iText.Html2pdf.HtmlConverter.ConvertToPdf(html, stream, converterProperties);
-                byte[] bytes = stream.ToArray();
+                var bytes = stream.ToArray();
                 return this.File(bytes, "application/pdf");
             }
             return this.Content(html, "text/html");
