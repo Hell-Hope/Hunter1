@@ -29,7 +29,7 @@
             var validate_options = $.extend($.Validate.DEFAULT, {})
             var validator = $('form').validate(validate_options);
             
-            $('#btn-login').click(function () {
+            var $btnLogin = $('#btn-login').click(function () {
                 if (!validator.form())
                     return false
                 var data = $('form').serializeData()
@@ -40,6 +40,12 @@
                         window.top.open('@this.Url.Action("Index", "Main")', '_self')
                     }
                 })
+            })
+
+            $(document).keyup(function (event) {
+                if (event.keyCode == 13) {
+                    $btnLogin.trigger('click')
+                }
             })
         })
     </script>
