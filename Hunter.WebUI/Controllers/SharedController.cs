@@ -42,5 +42,10 @@ namespace Hunter.WebUI.Controllers
             return new BadRequestObjectResult(result);
         }
 
+        public IActionResult DisplayResult(Models.Result result)
+        {
+            return this.View("~/Views/Shared/_DisplayResult.cshtml", result);
+        }
+
     }
 }

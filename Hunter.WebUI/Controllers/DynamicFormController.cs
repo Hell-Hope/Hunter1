@@ -42,6 +42,9 @@ namespace Hunter.WebUI.Controllers
                 this.Manager.DynamicFormManager.Copy(form, entity);
                 entity.CurrentNode = entity.Nodes.GetStartNode();
             }
+            var result = this.Manager.DynamicFormManager.HasPermit(entity);
+            if (result.Success == false)
+                return this.DisplayResult(result);
             this.ViewData["id"] = id;
             this.ViewData["DataID"] = entity.ID;
             return this.View(entity);

@@ -74,7 +74,6 @@ namespace Hunter.Managers
             var filter = this.BuildFilterEqualID<Entities.DynamicForm>(dataID);
             var set = Builders<Entities.DynamicForm>.Update.Set(nameof(Entities.DynamicForm.Data), data);
             this.DynamicForms(formID).UpdateOne(filter, set, UpdateOptions);
-
             return Models.Result.Create();
         }
 
