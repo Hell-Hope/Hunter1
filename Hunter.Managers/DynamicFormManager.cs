@@ -111,6 +111,26 @@ namespace Hunter.Managers
             var list = new List<FilterDefinition<Entities.DynamicForm>>();
             if (condition == null)
                 return list;
+            foreach (var item in condition)
+            {
+                var array = item.Key.Split('$');
+                if (array.Length != 2 || item.Value == null || String.Empty.Equals(item.Value))
+                    continue;
+                var field = array[0];
+                var comparer = array[1];
+                var value = item.Value;
+                FilterDefinition<Entities.DynamicForm> filter = null;
+                if (comparer == "like")
+                    filter = Builders<Entities.DynamicForm>.Filter.Regex(field, Helper.FormatQueryString(value.ToString()));
+                else if (comparer == "gt")
+                    filter = Builders<Entities.DynamicForm>.Filter.Gt(field, value);
+                else if (comparer == "gte")
+                    filter = Builders<Entities.DynamicForm>.Filter.Gte(field, value);
+                else if (comparer == "lt")
+                    filter = Builders<Entities.DynamicForm>.Filter.Lt(field, value);
+                else if (comparer == "lte")
+                    filter = Builders<Entities.DynamicForm>.Filter.Lte(field, value);
+            }
             return list;
         }
 

@@ -53,17 +53,31 @@ namespace Hunter.Entities
         {
             public string Sequence { get; set; }
 
+            /// <summary> 字段名
+            /// </summary>
             public string Field { get; set; }
 
+            /// <summary> 宽度
+            /// </summary>
             public string Width { get; set; }
 
+            /// <summary> 水平对齐方式
+            /// </summary>
             public string Align { get; set; }
 
+            /// <summary> 垂直对齐方式
+            /// </summary>
             public string VAlign { get; set; }
 
+            /// <summary>
+            /// </summary>
             public string Title { get; set; }
 
             public long TimeSpan { get; set; }
+
+            /// <summary> 查询方法
+            /// </summary>
+            public string Find { get; set; }
         }
 
 

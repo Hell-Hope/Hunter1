@@ -56,7 +56,7 @@
     $.fn.fillData = function (data) {
         for (var name in data) {
             var value = data[name];
-            var $element = this.find("[name=" + name + "]");
+            var $element = this.find("[name=\"" + name.replace('$', '\\$') + "\"]");
             var element = $element.get(0)
             if ($element.length == 0) {
 
@@ -166,6 +166,8 @@
             var condition = window[this.searchText];
             if (condition && $.isFunction(condition))
                 condition = condition()
+            if (!condition)
+                condition = {}
             var temp = {
                 Size: params.limit,   //页面大小
                 Index: Math.ceil(params.offset / params.limit) + 1,  //页码

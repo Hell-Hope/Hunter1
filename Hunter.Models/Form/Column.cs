@@ -28,6 +28,8 @@ namespace Hunter.Models.Form
         [JsonProperty("timespan")]
         public long TimeSpan { get; set; }
 
+        [JsonProperty("find")]
+        public string Find { get; set; }
     }
 
 }

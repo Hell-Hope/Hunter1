@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Hunter.Models.DynamicForm
 {
-    public class Condition
+    public class Condition : Dictionary<string, object>
     {
     }
 }

@@ -12,6 +12,34 @@
 	</environment>
 }
 
+<div id="search-dialog" style="display: none;">
+    <table class="table">
+        @foreach(var column in columns)
+        {
+            <tr>
+                <td style="width: 100px">
+                    <label>@column.Title</label>
+                </td>
+            @if (column.Find == "$like")
+            {
+                <td colspan="3">
+                    <input type="text" class="form-control" name="@(column.Field + "$like")" />
+                </td>
+            }
+            else if (column.Find == "$range")
+            {
+                <td>
+                    <input type="text" class="form-control" name="@(column.Field + "$gte")" />
+                </td>
+                <td style="text-align: center; width: 20px;">至</td>
+                <td>
+                    <input type="text" class="form-control" name="@(column.Field + "$lte")" />
+                </td>
+            }
+            </tr>
+        }
+    </table>
+</div>
 <div style="padding: 0px 2em;">
     <div id="toolbar" class="btn-group">
         <button id="btn-insert" type="button" class="btn btn-default">
@@ -29,6 +57,10 @@
         <button id="btn-delete" type="button" class="btn btn-default">
             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
             <span>删除</span>
+        </button>
+        <button id="btn-search" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+            <span>查询</span>
         </button>
         <button id="btn-pdf" type="button" class="btn btn-default">
             <span class="glyphicon glyphicon-file" aria-hidden="true"></span>
@@ -61,7 +93,6 @@
             }
             var result = [{ checkbox: true }]
             for (var i = 0, length = temp.length; i < length; i++) {
-                temp[i].field = "Data." + temp[i].field
                 result.push(temp[i])
             }
             return result
@@ -132,6 +163,28 @@
                         }
                     })
                 }
+            })
+            var _searchCondition = {}
+            $('#btn-search').click(function () {
+                window.GetSearchCondition = function () {
+                    return _searchCondition;
+                }
+                window.top.layer.open({
+					type: 1,
+					title: '查询',
+					maxmin: false, //开启最大化最小化按钮
+					area: ['500px', '500px'],
+                    content: $('#search-dialog').html(),
+                    btn: ['查询'],
+                    success: function (layero, index) {
+                        layero.fillData(_searchCondition)
+                    },
+                    yes: function (index, layero) {
+                        _searchCondition = layero.serializeData();
+                        $table.bootstrapTable('refresh');
+                        window.top.layer.close(index)
+                    }
+				})
             })
             $('#btn-pdf').click(function () {
                 var selections = $table.bootstrapTable('getSelections');

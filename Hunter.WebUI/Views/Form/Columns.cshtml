@@ -32,7 +32,7 @@
                     <select class="form-control" name="field">
                     @foreach(var item in fields)
                     {
-                        <option value="@item.Name">@item.Name</option>
+                        <option value="Data.@item.Name">@item.Name</option>
                     }
                     </select>
                 </td>
@@ -47,7 +47,7 @@
             </tr>
             <tr>
                 <td>
-                    <label for="name">水平居中</label>
+                    <label for="align">水平居中</label>
                 </td>
                 <td>
                     <select class="form-control" name="align">
@@ -59,13 +59,24 @@
             </tr>
             <tr>
                 <td>
-                    <label for="name">垂直居中</label>
+                    <label for="valign">垂直居中</label>
                 </td>
                 <td>
                     <select class="form-control" name="valign">
                         <option value="top">上</option>
                         <option value="middle" selected="selected">中间</option>
                         <option value="bottom">下</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>查询方式</label>
+                </td>
+                <td>
+                    <select class="form-control" name="find">
+                        <option value="$like" selected="selected">模糊</option>
+                        <option value="$range">范围</option>
                     </select>
                 </td>
             </tr>
@@ -122,7 +133,7 @@
                 columns: [
                     { checkbox: true },
                     { halign: 'center', field: 'sequence', title: '序号', width: '60px' },
-                    { halign: 'center', field: 'field', title: '字段名称' },
+                    { halign: 'center', field: 'title', title: '字段名称' },
                     { halign: 'center', field: 'width', title: '宽度', width: '100px' }
                 ]
             })
@@ -199,7 +210,7 @@
                     },
                     yes: function (index, layero) {
                         var o = layero.serializeData();
-                        o.title = o.field
+                        o.title = layero.find('[name=field]').find('option:selected').text();
                         o.halign = 'center'
                         if (obj.timespan)
                             o.timespan = obj.timespan
