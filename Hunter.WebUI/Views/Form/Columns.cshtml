@@ -30,10 +30,10 @@
                 </td>
                 <td>
                     <select class="form-control" name="field">
-                    @foreach(var item in fields)
-                    {
-                        <option value="Data.@item.Name">@item.Name</option>
-                    }
+                        @foreach (var item in fields)
+                {
+                    <option value="Data.@item.Name">@item.Name</option>
+        }
                     </select>
                 </td>
             </tr>
@@ -66,6 +66,17 @@
                         <option value="top">上</option>
                         <option value="middle" selected="selected">中间</option>
                         <option value="bottom">下</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="visible">是否显示</label>
+                </td>
+                <td>
+                    <select class="form-control" name="visible">
+                        <option value="True" selected="selected">是</option>
+                        <option value="False">否</option>
                     </select>
                 </td>
             </tr>

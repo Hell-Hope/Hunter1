@@ -78,6 +78,10 @@ namespace Hunter.Entities
             /// <summary> 查询方法
             /// </summary>
             public string Find { get; set; }
+
+            /// <summary> 是否显示
+            /// </summary>
+            public bool Visible { get; set; }
         }
 
 

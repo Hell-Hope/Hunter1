@@ -30,6 +30,9 @@ namespace Hunter.Models.Form
 
         [JsonProperty("find")]
         public string Find { get; set; }
+
+        [JsonProperty("visible")]
+        public bool Visible { get; set; }
     }
 
 }
