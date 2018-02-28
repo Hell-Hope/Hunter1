@@ -130,6 +130,8 @@ namespace Hunter.Managers
                     filter = Builders<Entities.DynamicForm>.Filter.Lt(field, value);
                 else if (comparer == "lte")
                     filter = Builders<Entities.DynamicForm>.Filter.Lte(field, value);
+                if (filter != null)
+                    list.Add(filter);
             }
             return list;
         }
