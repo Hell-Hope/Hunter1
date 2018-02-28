@@ -89,7 +89,14 @@
                     $element.val(value)
                 }
             } else if ($element.is("select")) {
-                $element.val(value)
+                if (value != null)
+                    $element.val(value.toString())
+                else
+                    $element.val(value)
+                if (name == "visible")
+                    console.log(value)
+                if (value != null)
+                    console.log(value.toString())
             } else if ($element.is("textarea")) {
                 $element.val(value)
             }
