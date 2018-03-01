@@ -35,6 +35,7 @@ namespace Hunter.WebUI.Controllers
             }
         }
 
+        [NonAction]
         public IActionResult ActionResult(Models.Result result)
         {
             if (result.Success)
@@ -42,6 +43,7 @@ namespace Hunter.WebUI.Controllers
             return new BadRequestObjectResult(result);
         }
 
+        [NonAction]
         public IActionResult DisplayResult(Models.Result result)
         {
             return this.View("~/Views/Shared/_DisplayResult.cshtml", result);

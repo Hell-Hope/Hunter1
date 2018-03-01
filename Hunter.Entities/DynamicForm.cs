@@ -50,10 +50,10 @@ namespace Hunter.Entities
             public HashSet<string> Permits { get; set; }
 
             [MongoDB.Bson.Serialization.Attributes.BsonIgnore]
-            public bool IsEndType { get => Helper.IsEndTypeNode(this.Type); }
+            public bool IsEndType { get => Helper.IsEndTypeNode(this?.Type); }
 
             [MongoDB.Bson.Serialization.Attributes.BsonIgnore]
-            public bool IsStartType { get => Helper.IsStartTypeNode(this.Type); }
+            public bool IsStartType { get => Helper.IsStartTypeNode(this?.Type); }
 
         }
 

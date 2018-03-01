@@ -41,6 +41,8 @@ namespace Hunter.WebUI.Controllers
                 var form = this.Manager.FormManager.Find(id);
                 this.Manager.DynamicFormManager.Copy(form, entity);
                 entity.CurrentNode = entity.Nodes.GetStartNode();
+                if (entity.CurrentNode == null)
+                    return this.DisplayResult(Models.Result.CreateFail("缺少开始节点"));
             }
             var result = this.Manager.DynamicFormManager.HasPermit(entity);
             if (result.Success == false)

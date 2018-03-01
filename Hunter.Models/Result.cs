@@ -19,6 +19,11 @@ namespace Hunter.Models
             return Create(Code.Forbidden, message);
         }
 
+        public static Result CreateFail(string message)
+        {
+            return Create(Code.Fail, message);
+        }
+
         public static Result Create(Code code = Code.Success, string message = null)
         {
             return new Result(code, message);
