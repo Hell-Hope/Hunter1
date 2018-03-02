@@ -25,7 +25,7 @@ namespace Hunter.WebUI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IValidationAttributeAdapterProvider, DataAnnotations.ValidationAttributeAdapterProvider>();
-            services.AddTransient(provider => new MongoDB.Driver.MongoClient("mongodb://127.0.0.1:27017"));
+            services.AddTransient(provider => new MongoDB.Driver.MongoClient(this.Configuration.GetConnectionString("Default")));
             services.AddTransient<Managers.Manager>();
             services.AddAuthentication(options =>
             {
