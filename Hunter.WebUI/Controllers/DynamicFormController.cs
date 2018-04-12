@@ -109,7 +109,7 @@ namespace Hunter.WebUI.Controllers
             if (String.Equals("pdf", type, StringComparison.OrdinalIgnoreCase))
             {
                 var stream = new System.IO.MemoryStream();
-                var fontProvider = new iText.Html2pdf.Resolver.Font.DefaultFontProvider();
+                var fontProvider = new iText.Html2pdf.Resolver.Font.DefaultFontProvider(true, true, true);
                 var converterProperties = new iText.Html2pdf.ConverterProperties();
                 converterProperties.SetFontProvider(fontProvider);
                 iText.Html2pdf.HtmlConverter.ConvertToPdf(html, stream, converterProperties);
