@@ -50,14 +50,25 @@ namespace System.Linq
 
     public static class Helper
     {
-        public static Node GetStartNode(this IEnumerable<Node> that)
+
+        public static Form.Node GetStartNode(this IEnumerable<Form.Node> that)
         {
-            return that.Where(m => m.IsStartType).FirstOrDefault();
+            return that?.Where(m => m.IsStartType).FirstOrDefault();
         }
 
-        public static IEnumerable<Line> ByFrom(this IEnumerable<Line> that, string from)
+        public static IEnumerable<Form.Line> ByFrom(this IEnumerable<Form.Line> that, string from)
         {
-            return that.Where(m => m.From == from);
+            return that?.Where(m => m.From == from);
+        }
+
+        public static DynamicForm.Node GetStartNode(this IEnumerable<DynamicForm.Node> that)
+        {
+            return that?.Where(m => m.IsStartType)?.FirstOrDefault();
+        }
+
+        public static IEnumerable<DynamicForm.Line> ByFrom(this IEnumerable<DynamicForm.Line> that, string from)
+        {
+            return that?.Where(m => m.From == from);
         }
 
     }

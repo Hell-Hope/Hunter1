@@ -18,21 +18,13 @@ namespace Hunter.Entities
 
         public List<Field> Fields { get; set; }
 
-        public List<Dictionary<string, object>> Columns { get; set; }
+        public List<Column> Columns { get; set; }
 
         public List<Node> Nodes { get; set; }
 
         public List<Line> Lines { get; set; }
 
         public List<Area> Areas { get; set; }
-
-        public void  CopyTo(Entities.DynamicForm destination)
-        {
-            destination.Html = (this?.Html) ?? String.Empty;
-            destination.Nodes = (this?.Nodes) ?? new List<Entities.Node>();
-            destination.Lines = (this?.Lines) ?? new List<Entities.Line>();
-            destination.Areas = (this?.Areas) ?? new List<Entities.Area>();
-        }
 
         public class Field
         {
@@ -57,6 +49,113 @@ namespace Hunter.Entities
             }
         }
 
+        public class Column
+        {
+            public string Sequence { get; set; }
+
+            /// <summary> 字段名
+            /// </summary>
+            public string Field { get; set; }
+
+            /// <summary> 宽度
+            /// </summary>
+            public string Width { get; set; }
+
+            /// <summary> 水平对齐方式
+            /// </summary>
+            public string Align { get; set; }
+
+            /// <summary> 垂直对齐方式
+            /// </summary>
+            public string VAlign { get; set; }
+
+            /// <summary>
+            /// </summary>
+            public string Title { get; set; }
+
+            public long TimeSpan { get; set; }
+
+            /// <summary> 查询方法
+            /// </summary>
+            public string Find { get; set; }
+
+            /// <summary> 是否显示
+            /// </summary>
+            public bool Visible { get; set; }
+        }
+
+
+        public class Node
+        {
+            public string ID { get; set; }
+
+            public bool Alt { get; set; }
+
+            public int Top { get; set; }
+
+            public int Left { get; set; }
+
+            public int Width { get; set; }
+
+            public int Height { get; set; }
+
+            public string Name { get; set; }
+
+            public string Type { get; set; }
+
+            public List<string> Fields { get; set; }
+
+            public HashSet<string> Permits { get; set; }
+
+            [MongoDB.Bson.Serialization.Attributes.BsonIgnore]
+            public bool IsEndType { get => Helper.IsEndTypeNode(this.Type); }
+
+            [MongoDB.Bson.Serialization.Attributes.BsonIgnore]
+            public bool IsStartType { get => Helper.IsStartTypeNode(this.Type); }
+
+
+        }
+
+        public class Line
+        {
+            public string ID { get; set; }
+
+            public double M { get; set; }
+
+            public bool Alt { get; set; }
+
+            public bool Marked { get; set; }
+
+            public bool Dash { get; set; }
+
+            public string Name { get; set; }
+
+            public string From { get; set; }
+
+            public string To { get; set; }
+
+            public string Type { get; set; }
+
+        }
+
+        public class Area
+        {
+            public string ID { get; set; }
+
+            public bool Alt { get; set; }
+
+            public int Top { get; set; }
+
+            public int Left { get; set; }
+
+            public int Width { get; set; }
+
+            public int Height { get; set; }
+
+            public string Name { get; set; }
+
+            public string Color { get; set; }
+        }
 
     }
 }

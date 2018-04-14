@@ -7,7 +7,7 @@ namespace Hunter.Managers
 {
     public class FlowTraceManager : Manager
     {
-        public FlowTraceManager(MongoClient mongoClient) : base(mongoClient)
+        internal FlowTraceManager(Shared shared) : base(shared)
         {
         }
 

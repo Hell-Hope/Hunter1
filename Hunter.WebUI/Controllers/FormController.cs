@@ -14,8 +14,6 @@ namespace Hunter.WebUI.Controllers
         public FormController(Manager manager) : base(manager)
         { 
         }
-        
-       
 
         public IActionResult List()
         {
@@ -38,12 +36,14 @@ namespace Hunter.WebUI.Controllers
             }
         }
 
+        [ActionFilters.ModelStateErrorFilterAttribute]
         public IActionResult Save([FromBody]Models.Form.Edit edit)
         {
             this.Manager.FormManager.Save(edit);
             return this.Ok();
         }
 
+        [ActionFilters.ModelStateErrorFilterAttribute]
         public IActionResult Query([FromBody]Models.PageParam<Models.Form.Condition> pageParam)
         {
             var result = this.Manager.FormManager.Query(pageParam);
@@ -53,53 +53,58 @@ namespace Hunter.WebUI.Controllers
         [HttpGet]
         public IActionResult Design(string id)
         {
-            var entity = this.Manager.FormManager.Find(id);
-            if (entity == null)
+            var design = this.Manager.FormManager.GetDesign(id);
+            if (design == null)
             {
-                entity = new Entities.Form() { ID = this.Manager.FormManager.GenerateMongoID };
+
             }
-            return this.View(entity);
+            this.ModelState.Clear();
+            return this.View(design);
         }
 
         [HttpPost]
-        public IActionResult Design(string id, string html)
+        public IActionResult Design(Models.Form.Design design)
         {
-            this.Manager.FormManager.SaveHtml(id, html);
-            var entity = this.Manager.FormManager.Find(id);
-            return this.View(entity);
+            this.Manager.FormManager.Save(design);
+            return this.View(design);
         }
 
         public IActionResult FlowChart(string id)
         {
-            var entity = this.Manager.FormManager.Find(id);
-            if (entity == null)
+            var model = this.Manager.FormManager.GetFlowChart(id);
+            if (model == null)
             {
                 return this.NotFound();
             }
             if (String.Equals("post", this.Request.Method, StringComparison.OrdinalIgnoreCase))
             {
-                var model = this.Manager.FormManager.Convert(entity);
                 return this.Ok(model);
             }
-            this.ViewData["ID"] = id;
-            return this.View(entity);
+            this.ModelState.Clear();
+            this.ViewData["Fields"] = this.Manager.FormManager.GetFields(id) ?? new List<Models.Form.Field>();
+            this.ViewData["Permits"] = this.Manager.PermitManager.GetAllForChoose();
+            return this.View(model);
         }
 
         [HttpPost]
-        public IActionResult SaveFlowChart(string id, [FromBody]Models.Form.FlowChart flowChart)
+        [ActionFilters.ModelStateErrorFilterAttribute]
+        public IActionResult SaveFlowChart([FromBody]Models.Form.FlowChart flowChart)
         {
-            this.Manager.FormManager.SaveFlowChart(id, flowChart);
+            this.Manager.FormManager.Save(flowChart);
             return this.Ok();
         }
 
         [HttpGet]
         public IActionResult Columns(string id)
         {
-            var entity = this.Manager.FormManager.Find(id);
-            return this.View(entity);
+            this.ModelState.Clear();
+            this.ViewData["Fields"] = this.Manager.FormManager.GetFields(id) ?? new List<Models.Form.Field>();
+            this.ViewData["Columns"] = this.Manager.FormManager.GetColumns(id) ?? new List<Models.Form.Column>();
+            this.ViewData["ID"] = id;
+            return this.View();
         }
 
-        public IActionResult SaveColumns(string id, [FromBody]List<Dictionary<string, object>> list)
+        public IActionResult SaveColumns(string id, [FromBody]List<Models.Form.Column> list)
         {
             this.Manager.FormManager.SaveColumns(id, list);
             return this.Ok();

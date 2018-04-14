@@ -137,7 +137,7 @@
         $(function () {
             @foreach(var field in this.Model.CurrentNode.Fields)
             {
-                @:$('input[name=@this.Html.Raw(field)]').removeAttr('readonly')
+                @:$('[name=@this.Html.Raw(field)]').removeAttr('readonly')
             }
         })
     </script>

@@ -14,6 +14,7 @@ namespace Hunter.WebUI.Controllers
 
         public IActionResult Index()
         {
+            this.ViewData[nameof(ApplicationUser)] = this.ApplicationUser;
             this.ViewData["FormMenuItems"] = this.Manager.FormManager.GetMenuItems();
             return this.View();
         }

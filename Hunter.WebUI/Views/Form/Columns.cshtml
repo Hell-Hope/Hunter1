@@ -1,6 +1,7 @@
-﻿@model Hunter.Entities.Form
+﻿
 @{
-    this.Model.Fields = this.Model.Fields ?? new List<Hunter.Entities.Form.Field>();
+    var fields = this.ViewData["Fields"] as List<Hunter.Models.Form.Field>;
+    var columns = this.ViewData["Columns"] as List<Hunter.Models.Form.Column>;
 }
 @section Styles
 {
@@ -29,10 +30,10 @@
                 </td>
                 <td>
                     <select class="form-control" name="field">
-                    @foreach(var item in this.Model.Fields)
-                    {
-                        <option value="@item.Name">@item.Name</option>
-                    }
+                        @foreach (var item in fields)
+                {
+                    <option value="Data.@item.Name">@item.Name</option>
+        }
                     </select>
                 </td>
             </tr>
@@ -46,7 +47,7 @@
             </tr>
             <tr>
                 <td>
-                    <label for="name">水平居中</label>
+                    <label for="align">水平居中</label>
                 </td>
                 <td>
                     <select class="form-control" name="align">
@@ -58,13 +59,35 @@
             </tr>
             <tr>
                 <td>
-                    <label for="name">垂直居中</label>
+                    <label for="valign">垂直居中</label>
                 </td>
                 <td>
                     <select class="form-control" name="valign">
                         <option value="top">上</option>
                         <option value="middle" selected="selected">中间</option>
                         <option value="bottom">下</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="visible">是否显示</label>
+                </td>
+                <td>
+                    <select class="form-control" name="visible">
+                        <option value="true" selected="selected">是</option>
+                        <option value="false">否</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>查询方式</label>
+                </td>
+                <td>
+                    <select class="form-control" name="find">
+                        <option value="$like" selected="selected">模糊</option>
+                        <option value="$range">范围</option>
                     </select>
                 </td>
             </tr>
@@ -91,7 +114,7 @@
     </div>
     <table id="table"></table>
 </div>
-<div style="display:none;" id="initialize-data">@this.Json.Serialize(this.Model.Columns)</div>
+<div style="display:none;" id="initialize-data">@this.Json.Serialize(columns)</div>
 
 @section Scripts
 {
@@ -121,7 +144,7 @@
                 columns: [
                     { checkbox: true },
                     { halign: 'center', field: 'sequence', title: '序号', width: '60px' },
-                    { halign: 'center', field: 'field', title: '字段名称' },
+                    { halign: 'center', field: 'title', title: '字段名称' },
                     { halign: 'center', field: 'width', title: '宽度', width: '100px' }
                 ]
             })
@@ -198,7 +221,7 @@
                     },
                     yes: function (index, layero) {
                         var o = layero.serializeData();
-                        o.title = o.field
+                        o.title = layero.find('[name=field]').find('option:selected').text();
                         o.halign = 'center'
                         if (obj.timespan)
                             o.timespan = obj.timespan
@@ -246,7 +269,7 @@
             })
             $('#btn-save').click(function () {
                 $.ajax({
-                    url: '@this.Url.Action("SaveColumns", new { id = this.Model.ID })',
+                    url: '@this.Url.Action("SaveColumns", new { id = this.ViewData["ID"] })',
                     type: 'post',
                     contentType: 'application/json',
                     data: JSON.stringify(options.data),

@@ -9,7 +9,7 @@ namespace Hunter.Managers
 {
     public class DynamicFormManager : Manager
     {
-        public DynamicFormManager(MongoClient mongoClient) : base(mongoClient)
+        internal DynamicFormManager(Shared shared) : base(shared)
         {
         }
 
@@ -24,43 +24,65 @@ namespace Hunter.Managers
             return this.DynamicForms(formID).Find(filter).FirstOrDefault();
         }
 
+        public Models.Result HasPermit(Entities.DynamicForm entity)
+        {
+            if (this.ApplicationUser.HasPermit(entity.CurrentNode.Permits) == false)
+                return Models.Result.CreateForbidden();
+            return Models.Result.Create();
+        }
+
+        public Models.Result Create(string formID, string dataID)
+        {
+            var form = this.FormManager.Find(formID);
+            var entity = new Entities.DynamicForm() { ID = dataID, Data = new Dictionary<string, object>() };
+            this.Copy(form, entity);
+            entity.CurrentNode = entity.Nodes.GetStartNode();
+            entity.CreatedUserID = this.ApplicationUser.ID;
+            entity.CreatedUserName = this.ApplicationUser.Name;
+            var result = this.HasPermit(entity);
+            if (result.Success == false)
+                return result;
+            this.DynamicForms(formID).ReplaceOne(m => m.ID == dataID, entity, UpdateOptions);
+            return Models.Result.CreateDataResult(entity);
+        }
+
         public Models.Result SaveData(string formID, string dataID, Dictionary<string, object> dictionary)
         {
+            Models.Result result = null;
             var entity = this.Find(formID, dataID);
             if (entity == null)
             {
-                var form = this.FormManager.Find(formID);
-                entity = new Entities.DynamicForm() { ID = dataID, Data = new Dictionary<string, object>() };
-                form.CopyTo(entity);
-                entity.CurrentNode = entity.Nodes.GetStartNode();
-                this.DynamicForms(formID).ReplaceOne(m => m.ID == dataID, entity, UpdateOptions);
-            }
-            var data = entity.Data;
-            if (data == null)
-            {
-                data = new Dictionary<string, object>();
-            }
-            var fields = entity.CurrentNode.Fields;
-            if (fields != null)
-            {
-                foreach (var field in fields)
-                {
-                    if (dictionary.TryGetValue(field, out object value))
-                        data[field] = value;
-                }
+                result = this.Create(formID, dataID);
+                if (result is Models.DataResult<Entities.DynamicForm> temp)
+                    entity = temp.Data;
+                else
+                    return result;
             }
             else
             {
-                foreach (var item in dictionary)
-                {
-                    data[item.Key] = item.Value;
-                }
+                result = this.HasPermit(entity);
+                if (result.Success == false)
+                    return result;
+            }
+            var data = entity.Data ?? new Dictionary<string, object>();
+            var fields = entity.CurrentNode.Fields ?? new List<string>();
+            foreach (var field in fields)
+            {
+                if (dictionary.TryGetValue(field, out object value))
+                    data[field] = value;
             }
             var filter = this.BuildFilterEqualID<Entities.DynamicForm>(dataID);
             var set = Builders<Entities.DynamicForm>.Update.Set(nameof(Entities.DynamicForm.Data), data);
             this.DynamicForms(formID).UpdateOne(filter, set, UpdateOptions);
-
             return Models.Result.Create();
+        }
+
+        public void Copy(Entities.Form source, Entities.DynamicForm destination)
+        {
+            destination.Html = (source?.Html) ?? String.Empty;
+            destination.Nodes = AutoMapper.Mapper.Map<List<Entities.DynamicForm.Node>>(source.Nodes);
+            destination.Lines = AutoMapper.Mapper.Map<List<Entities.DynamicForm.Line>>(source.Lines);
+            destination.Areas = AutoMapper.Mapper.Map<List<Entities.DynamicForm.Area>>(source.Areas);
         }
 
         public void Remove(string formID, string dataID)
@@ -73,7 +95,6 @@ namespace Hunter.Managers
         {
             var filter = this.BuildFilter(pageParam.Condition);
             var collection = this.DynamicForms(formID).Find(filter);
-
             var result = new Models.PageResult<Entities.DynamicForm>();
             result.Total = collection.Count();
             result.Data = collection.Sort(pageParam).Pagination(pageParam).ToList();
@@ -90,9 +111,37 @@ namespace Hunter.Managers
             var list = new List<FilterDefinition<Entities.DynamicForm>>();
             if (condition == null)
                 return list;
+            foreach (var item in condition)
+            {
+                var array = item.Key.Split('$');
+                if (array.Length != 2 || item.Value == null || String.Empty.Equals(item.Value))
+                    continue;
+                var field = array[0];
+                var comparer = array[1];
+                var value = item.Value;
+                FilterDefinition<Entities.DynamicForm> filter = null;
+                if (comparer == "like")
+                    filter = Builders<Entities.DynamicForm>.Filter.Regex(field, Helper.FormatQueryString(value.ToString()));
+                else if (comparer == "gt")
+                    filter = Builders<Entities.DynamicForm>.Filter.Gt(field, value);
+                else if (comparer == "gte")
+                    filter = Builders<Entities.DynamicForm>.Filter.Gte(field, value);
+                else if (comparer == "lt")
+                    filter = Builders<Entities.DynamicForm>.Filter.Lt(field, value);
+                else if (comparer == "lte")
+                    filter = Builders<Entities.DynamicForm>.Filter.Lte(field, value);
+                if (filter != null)
+                    list.Add(filter);
+            }
             return list;
         }
 
+        /// <summary> 流转到下一个节点
+        /// </summary>
+        /// <param name="formID"></param>
+        /// <param name="dataID"></param>
+        /// <param name="lineID"></param>
+        /// <returns></returns>
         public Models.Result Next(string formID, string dataID, string lineID)
         {
             var entity = this.Find(formID, dataID);
@@ -100,6 +149,9 @@ namespace Hunter.Managers
                 return Models.Result.Create(Models.Code.NotFound, "没找到数据");
             if (entity.Finish)
                 return Models.Result.Create(Models.Code.Fail, "已结束");
+            var result = this.HasPermit(entity);
+            if (result.Success == false)
+                return result;
             var line = entity.Lines.Where(l => l.ID == lineID && l.From == entity.CurrentNode.ID).FirstOrDefault();
             if (line == null)
                 return Models.Result.Create(Models.Code.NotFound, "没找到线数据");
@@ -113,6 +165,11 @@ namespace Hunter.Managers
             return Models.Result.Create();
         }
 
+        /// <summary> 结束流程
+        /// </summary>
+        /// <param name="formID"></param>
+        /// <param name="dataID"></param>
+        /// <returns></returns>
         public Models.Result Finish(string formID, string dataID)
         {
             var entity = this.Find(formID, dataID);
@@ -122,6 +179,9 @@ namespace Hunter.Managers
                 return Models.Result.Create(Models.Code.Fail, "已结束");
             if (entity.CurrentNode.IsEndType)
                 return Models.Result.Create(Models.Code.Fail, "此节点不是结束节点");
+            var result = this.HasPermit(entity);
+            if (result.Success == false)
+                return result;
             var filter = this.BuildFilterEqualID<Entities.DynamicForm>(dataID);
             var set = Builders<Entities.DynamicForm>.Update.Set(nameof(Entities.DynamicForm.Finish), true);
             this.DynamicForms(formID).UpdateOne(filter, set, UpdateOptions);

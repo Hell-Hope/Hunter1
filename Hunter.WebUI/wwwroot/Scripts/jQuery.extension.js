@@ -56,7 +56,7 @@
     $.fn.fillData = function (data) {
         for (var name in data) {
             var value = data[name];
-            var $element = this.find("[name=" + name + "]");
+            var $element = this.find("[name=\"" + name.replace('$', '\\$') + "\"]");
             var element = $element.get(0)
             if ($element.length == 0) {
 
@@ -89,7 +89,10 @@
                     $element.val(value)
                 }
             } else if ($element.is("select")) {
-                $element.val(value)
+                if (value != null)
+                    $element.val(value.toString())
+                else
+                    $element.val(value)
             } else if ($element.is("textarea")) {
                 $element.val(value)
             }
@@ -107,6 +110,28 @@
     $(document).ajaxComplete(function (event, xhr, settings) {
         window.top.layer.close(xhr.index)
     });
+
+    // jquery Validate
+    if (!$.Validate)
+        $.Validate = {}
+    $.Validate.DEFAULT = {
+        tipsPosition: 2,
+        tipsColor: '#78BA32',
+        errorPlacement: function ($label, input) {
+            var tips = [this.settings.tipsPosition, this.settings.tipsColor]
+            var $input = $(input)
+            var index = $input.attr('data-layer-index')
+            window.layer.close(index)
+            var msg = $label.text()
+            if (msg)
+                $input.attr('data-layer-index', window.layer.tips(msg, $input, { tipsMore: true, tips: tips }))
+        },
+        success: function ($label, input) {
+            var $input = $(input)
+            var index = $input.attr('data-layer-index')
+            window.layer.close(index)
+        }
+    }
 
     // bootstrap table
     $.BootstrapTable = {}
@@ -144,6 +169,8 @@
             var condition = window[this.searchText];
             if (condition && $.isFunction(condition))
                 condition = condition()
+            if (!condition)
+                condition = {}
             var temp = {
                 Size: params.limit,   //页面大小
                 Index: Math.ceil(params.offset / params.limit) + 1,  //页码

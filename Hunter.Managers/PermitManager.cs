@@ -7,7 +7,7 @@ namespace Hunter.Managers
 {
     public class PermitManager : Manager
     {
-        public PermitManager(MongoClient mongoClient) : base(mongoClient)
+        internal PermitManager(Shared shared) : base(shared)
         {
 
         }
@@ -18,6 +18,21 @@ namespace Hunter.Managers
             {
                 return this.DefaultDatabase.GetCollection<Entities.Permit>(nameof(Entities.Permit));
             }
+        }
+
+        public List<Models.Permit.Choose> GetAllForChoose()
+        {
+            var filter = Builders<Entities.Permit>.Filter.Empty;
+            var projections = new ProjectionDefinition<Entities.Permit>[]
+            {
+                Builders<Entities.Permit>.Projection.Include(nameof(Entities.Permit.ID)),
+                Builders<Entities.Permit>.Projection.Include(nameof(Entities.Permit.Code)),
+                Builders<Entities.Permit>.Projection.Include(nameof(Entities.Permit.Name))
+            };
+            var projection = Builders<Entities.Permit>.Projection.Combine(projections);
+            var list = this.Collection.Find(filter).Project(projection).As<Entities.Permit>().ToList();
+            var result = AutoMapper.Mapper.Map<List<Models.Permit.Choose>>(list);
+            return result;
         }
 
         public Entities.Permit Find(string id)
@@ -63,13 +78,21 @@ namespace Hunter.Managers
             return Models.Result.Create();
         }
 
-        public Models.PageResult<Entities.Permit> Query(Models.PageParam<Models.Permit.Condition> pageParam)
+        public Models.PageResult<Models.Permit.QueryResultData> Query(Models.PageParam<Models.Permit.Condition> pageParam)
         {
             var filter = this.BuildFilter(pageParam.Condition);
             var collection = this.Collection.Find(filter);
-            var result = new Models.PageResult<Entities.Permit>();
+            var result = new Models.PageResult<Models.Permit.QueryResultData>();
             result.Total = collection.Count();
-            result.Data = collection.Sort(pageParam).Pagination(pageParam).ToList();
+            var projections = new ProjectionDefinition<Entities.Permit>[]
+            {
+                Builders<Entities.Permit>.Projection.Include(nameof(Entities.Permit.ID)),
+                Builders<Entities.Permit>.Projection.Include(nameof(Entities.Permit.Name)),
+                Builders<Entities.Permit>.Projection.Include(nameof(Entities.Permit.Code))
+            };
+            var projection = Builders<Entities.Permit>.Projection.Combine(projections);
+            var list = collection.Sort(pageParam).Pagination(pageParam).Project(projection).As<Entities.Permit>().ToList();
+            result.Data = AutoMapper.Mapper.Map<List<Models.Permit.QueryResultData>>(list);
             return result;
         }
 

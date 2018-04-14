@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using MongoDB.Driver;
 
@@ -7,7 +8,7 @@ namespace Hunter.Managers
 {
     public class UserManager : Manager
     {
-        public UserManager(MongoClient mongoClient) : base(mongoClient)
+        internal UserManager(Shared shared) : base(shared)
         {
         }
 
@@ -31,6 +32,12 @@ namespace Hunter.Managers
             if (entity == null)
                 return null;
             return AutoMapper.Mapper.Map<Models.User.Edit>(entity);
+        }
+
+        public IEnumerable<string> GetPermits(string id)
+        {
+            var user = this.Find(id);
+            return user?.Permits;
         }
 
         public bool ExistAccount(string account, string id)
@@ -79,13 +86,21 @@ namespace Hunter.Managers
             return Models.Result.CreateDataResult(applicationUser);   
         }
 
-        public Models.PageResult<Entities.User> Query(Models.PageParam<Models.User.Condition> pageParam)
+        public Models.PageResult<Models.User.QueryResultData> Query(Models.PageParam<Models.User.Condition> pageParam)
         {
             var filter = this.BuildFilter(pageParam.Condition);
             var collection = this.Collection.Find(filter);
-            var result = new Models.PageResult<Entities.User>();
+            var result = new Models.PageResult<Models.User.QueryResultData>();
             result.Total = collection.Count();
-            result.Data = collection.Sort(pageParam).Pagination(pageParam).ToList();
+            var projections = new ProjectionDefinition<Entities.User>[]
+            {
+                Builders<Entities.User>.Projection.Include(nameof(Entities.User.ID)),
+                Builders<Entities.User>.Projection.Include(nameof(Entities.User.Name)),
+                Builders<Entities.User>.Projection.Include(nameof(Entities.User.Account))
+            };
+            var projection = Builders<Entities.User>.Projection.Combine(projections);
+            var list = collection.Sort(pageParam).Pagination(pageParam).Project(projection).As<Entities.User>().ToList();
+            result.Data = AutoMapper.Mapper.Map<List<Models.User.QueryResultData>>(list);
             return result;
         }
 
